@@ -1,4 +1,4 @@
-# Next.js + Vite Migration Assessment for Blog Creator Agent
+# Next.js Migration Assessment for Blog Creator Agent
 
 **Document Version:** 1.0  
 **Date:** November 22, 2024  
@@ -8,7 +8,7 @@
 
 ## Executive Summary
 
-This document provides a comprehensive assessment of migrating the Blog Creator Agent from its current Chainlit-based UI to a modern Next.js + Vite architecture with Chakra UI. The analysis covers current project state, technical challenges, risk assessment, implementation options, and recommended strategies.
+This document provides a comprehensive assessment of migrating the Blog Creator Agent from its current Chainlit-based UI to a modern Next.js architecture with Chakra UI. The analysis covers current project state, technical challenges, risk assessment, implementation options, and recommended strategies.
 
 ### Key Findings
 
@@ -81,15 +81,14 @@ Python Backend (Well-Structured)
 
 ---
 
-## 2. Proposed Architecture: Next.js + Vite + Chakra UI
+## 2. Proposed Architecture: Next.js + Chakra UI
 
 ### 2.1 Technology Stack Recommendation
 
 **Frontend Stack:**
 ```
 Modern React Ecosystem
-├── Next.js 14+ (App Router)
-├── Vite (for ultra-fast dev experience)
+├── Next.js 14+ (App Router with Fast Refresh)
 ├── Chakra UI (High-quality component library)
 ├── React Query (Server state management)
 ├── Zustand/Jotai (Client state management)
@@ -506,14 +505,12 @@ blog-creator-agent/
 - ✅ **React Server Components (RSC)** - Reduced JavaScript bundle
 - ✅ **Streaming SSR** - Progressive rendering for better UX
 - ✅ **Built-in optimization** - Image, font, script optimization
+- ✅ **Fast Refresh** - Instant feedback during development (< 200ms)
 - ✅ **API routes** - Can handle simple backend logic
 - ✅ **File-based routing** - Intuitive project structure
+- ✅ **Optimized bundler** - Turbopack (beta) for ultra-fast builds
 
-#### Why Vite for Development?
-- ✅ **Instant HMR** - Ultra-fast hot module replacement
-- ✅ **Native ESM** - No bundling in dev mode
-- ✅ **Optimized builds** - Rollup-based production builds
-- ⚠️ Note: Use Vite for **development tools**, not main app (Next.js has its own bundler)
+**Note:** Next.js 14+ provides excellent development experience out of the box with Fast Refresh and optimized bundling. No additional build tools needed.
 
 #### Why Chakra UI?
 - ✅ **Accessible by default** - WCAG compliant components
@@ -982,7 +979,7 @@ async def test_streaming_response(websocket_client):
                 break
         
         assert len(chunks) > 0
-        assert "".join(chunks).contains("Retrieval")
+        assert "Retrieval" in "".join(chunks)
 ```
 
 ---

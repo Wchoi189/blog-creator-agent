@@ -8,7 +8,7 @@
 
 ## Executive Summary
 
-This repository contains a detailed assessment for migrating the Blog Creator Agent from Chainlit to a modern Next.js + Vite architecture with Chakra UI.
+This repository contains a detailed assessment for migrating the Blog Creator Agent from Chainlit to a modern Next.js architecture with Chakra UI.
 
 ### Current State
 
