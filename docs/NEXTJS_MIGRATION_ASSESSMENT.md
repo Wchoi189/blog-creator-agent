@@ -570,7 +570,7 @@ const provider = new WebsocketProvider('ws://localhost:1234', 'my-room', ydoc);
 try:
     from chainlit import LangchainCallbackHandler
     response = self.llm.invoke(prompt, callbacks=[LangchainCallbackHandler()])
-except Exception:
+except (ImportError, ModuleNotFoundError):
     response = self.llm.invoke(prompt)
 ```
 
