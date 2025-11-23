@@ -17,8 +17,8 @@ services:
       - DISPLAY=${DISPLAY}
       - UV_LINK_MODE=copy
     ports:
-      - "8000:8000"   # Backend FastAPI
-      - "3000:3000"   # Frontend Next.js
+      - "8002:8002"   # Backend FastAPI
+      - "3002:3002"   # Frontend Next.js
       - "2226:22"     # SSH access
     depends_on:
       - redis

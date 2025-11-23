@@ -23,11 +23,11 @@ class Settings(BaseSettings):
 
     # Server
     HOST: str = "0.0.0.0"
-    PORT: int = 8000
+    PORT: int = 8002
 
     # CORS
     CORS_ORIGINS: List[str] = Field(
-        default=["http://localhost:3000", "http://localhost:8000"]
+        default=["http://localhost:3002", "http://localhost:8002"]
     )
 
     # Security

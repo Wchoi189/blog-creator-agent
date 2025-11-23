@@ -117,7 +117,7 @@ sleep infinity" > /usr/local/bin/start.sh' && \
     sudo chmod +x /usr/local/bin/start.sh
 
 # Expose ports for development services
-EXPOSE 8000 3000 6379 9200 5601 22
+EXPOSE 8002 3002 6379 9200 5601 22
 
 # Default command - start SSH daemon
 CMD ["/usr/local/bin/start.sh"]
