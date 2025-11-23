@@ -1,181 +1,533 @@
----
-type: "implementation_plan"
-category: "development"
-status: "planned"
-version: "1.0"
-tags: ['implementation', 'plan', 'migration', 'frontend', 'nextjs', 'react']
-title: "Part 2: Frontend Development - Next.js, React, Tiptap"
-date: "2025-11-23 20:15 (KST)"
----
+# Part 2: Frontend Development (Next.js)
 
-# Master Prompt
+## Status: ⏸️ Pending (0%)
 
-You are an autonomous AI agent, my Chief of Staff for implementing **Part 2: Frontend Development** of the Blog Creator Agent migration. Your primary responsibility is to execute the "Living Implementation Blueprint" systematically, handle outcomes, and keep track of our progress. Do not ask for clarification on what to do next; your next task is always explicitly defined.
+**Goal**: Build a modern Next.js frontend with rich text editing and real-time collaboration capabilities.
 
----
+## Architecture Overview
 
-**Your Core Workflow is a Goal-Execute-Update Loop:**
-1. **Goal:** A clear `🎯 Goal` will be provided for you to achieve.
-2. **Execute:** You will start working on the task defined in the `NEXT TASK`
-3. **Handle Outcome & Update:** Based on the success or failure of the command, you will follow the specified contingency plan. Your response must be in two parts:
-   * **Part 1: Execution Report:** Provide a concise summary of the results and analysis of the outcome (e.g., "All tests passed" or "Test X failed due to an IndexError...").
-   * **Part 2: Blueprint Update Confirmation:** Confirm that the living blueprint has been updated with the new progress status and next task. The updated blueprint is available in the workspace file.
+```
+frontend/
+├── src/
+│   ├── app/                    # Next.js 14 app directory
+│   │   ├── layout.tsx         # Root layout
+│   │   ├── page.tsx           # Home page
+│   │   ├── (auth)/            # Auth group
+│   │   │   ├── login/
+│   │   │   └── register/
+│   │   ├── (dashboard)/       # Protected routes
+│   │   │   ├── layout.tsx    # Dashboard layout
+│   │   │   ├── documents/    # Document management
+│   │   │   ├── editor/       # Blog editor
+│   │   │   └── settings/     # User settings
+│   │   └── api/              # API routes (if needed)
+│   ├── components/           # React components
+│   │   ├── ui/              # Shadcn UI components
+│   │   ├── editor/          # Tiptap editor components
+│   │   ├── layout/          # Layout components
+│   │   └── documents/       # Document components
+│   ├── lib/                 # Utility libraries
+│   │   ├── api.ts          # API client
+│   │   ├── auth.ts         # Auth utilities
+│   │   ├── websocket.ts    # WebSocket client
+│   │   └── yjs.ts          # Yjs setup
+│   ├── hooks/              # Custom React hooks
+│   │   ├── useAuth.ts
+│   │   ├── useEditor.ts
+│   │   └── useWebSocket.ts
+│   ├── store/              # State management (Zustand)
+│   │   ├── authStore.ts
+│   │   ├── editorStore.ts
+│   │   └── documentStore.ts
+│   └── types/              # TypeScript types
+│       ├── api.ts
+│       ├── editor.ts
+│       └── document.ts
+├── public/                 # Static assets
+├── package.json
+├── tsconfig.json
+├── tailwind.config.ts
+└── next.config.js
+```
 
----
+## Phase 2.1: Next.js Foundation
 
-# Living Implementation Blueprint: Part 2 - Frontend Development
+### Task 2.1.1: Initialize Next.js Project
 
-## Progress Tracker
-- **STATUS:** Planned
-- **CURRENT STEP:** Phase 1, Task 1.1 - Next.js Project Setup
-- **LAST COMPLETED TASK:** None (Waiting for Part 1 completion)
-- **NEXT TASK:** Set up Next.js 14 project with TypeScript and essential dependencies
+**Objective**: Setup Next.js 14 with TypeScript and Tailwind
 
-### Implementation Outline (Checklist)
+**Actions**:
+```bash
+npx create-next-app@latest frontend \
+  --typescript \
+  --tailwind \
+  --app \
+  --no-src-dir
+```
 
-#### **Phase 1: Next.js Foundation (Week 1-2)**
-1. [ ] **Task 1.1: Next.js Project Setup**
-   - [ ] Initialize Next.js 14 with TypeScript
-   - [ ] Configure Tailwind CSS for styling
-   - [ ] Set up ESLint and Prettier
-   - [ ] Configure build and development scripts
+**Configuration**:
+- Enable `src/` directory
+- Configure Tailwind CSS
+- Setup path aliases (@/)
+- Configure ESLint & Prettier
 
-2. [ ] **Task 1.2: Core Layout & Navigation**
-   - [ ] Create main application layout
-   - [ ] Implement responsive navigation
-   - [ ] Set up routing structure
-   - [ ] Add theme provider for dark/light mode
+**Dependencies**:
+```json
+{
+  "dependencies": {
+    "next": "14.0.4",
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
+    "typescript": "5.3.3",
+    "@tiptap/react": "2.1.13",
+    "@tiptap/starter-kit": "2.1.13",
+    "yjs": "13.6.10",
+    "y-websocket": "1.5.0",
+    "axios": "1.6.2",
+    "swr": "2.2.4",
+    "zustand": "4.4.7",
+    "tailwindcss": "3.4.0",
+    "@radix-ui/react-*": "latest",
+    "class-variance-authority": "0.7.0",
+    "clsx": "2.0.0",
+    "tailwind-merge": "2.2.0"
+  },
+  "devDependencies": {
+    "@types/node": "20.10.6",
+    "@types/react": "18.2.46",
+    "@types/react-dom": "18.2.18",
+    "eslint": "8.56.0",
+    "eslint-config-next": "14.0.4",
+    "prettier": "3.1.1"
+  }
+}
+```
 
-3. [ ] **Task 1.3: Authentication Integration**
-   - [ ] Implement login/logout UI
-   - [ ] Add JWT token management
-   - [ ] Create protected route components
-   - [ ] Handle authentication state
+### Task 2.1.2: Setup UI Component Library
 
-4. [ ] **Task 1.4: File Upload Interface**
-   - [ ] Create drag-and-drop upload component
-   - [ ] Add file type validation
-   - [ ] Implement upload progress indicators
-   - [ ] Handle multiple file uploads
+**Objective**: Install and configure Shadcn UI
 
-#### **Phase 2: Document Editor (Week 3-4)**
-5. [ ] **Task 2.1: Tiptap Editor Setup**
-   - [ ] Install and configure Tiptap editor
-   - [ ] Add essential editing extensions
-   - [ ] Implement toolbar with formatting options
-   - [ ] Create editor component with proper styling
+**Actions**:
+```bash
+npx shadcn-ui@latest init
+```
 
-6. [ ] **Task 2.2: Collaborative Features**
-   - [ ] Integrate Yjs for real-time collaboration
-   - [ ] Add user presence indicators
-   - [ ] Implement conflict resolution
-   - [ ] Create collaborative cursors
+**Components to add**:
+- Button, Input, Textarea
+- Card, Dialog, DropdownMenu
+- Tabs, Accordion, Select
+- Toast, Progress, Skeleton
 
-7. [ ] **Task 2.3: Document Management**
-   - [ ] Create document list view
-   - [ ] Implement document versioning
-   - [ ] Add save/publish functionality
-   - [ ] Create document templates
+### Task 2.1.3: Create API Client
 
-8. [ ] **Task 2.4: Real-time Updates**
-   - [ ] Implement WebSocket connections
-   - [ ] Add real-time document synchronization
-   - [ ] Create live preview functionality
-   - [ ] Handle connection recovery
+**Objective**: Build type-safe API client for backend communication
 
----
+**Files**:
+- `src/lib/api.ts` - Axios instance with interceptors
+- `src/types/api.ts` - TypeScript types matching backend models
 
-## 📋 **Technical Requirements Checklist**
+**Features**:
+- Automatic JWT token handling
+- Request/response interceptors
+- Error handling
+- TypeScript types for all endpoints
 
-### **Architecture & Design**
-- [ ] Next.js 14 with App Router architecture
-- [ ] TypeScript for type safety throughout
-- [ ] Component-based architecture with proper separation
-- [ ] Responsive design for desktop and mobile
-- [ ] Accessibility compliance (WCAG 2.1 AA)
+**Example**:
+```typescript
+// src/lib/api.ts
+import axios from 'axios';
 
-### **Integration Points**
-- [ ] FastAPI backend integration via REST/WebSocket
-- [ ] Yjs CRDT for real-time collaboration
-- [ ] Tiptap for rich text editing
-- [ ] Existing authentication system compatibility
+const api = axios.create({
+  baseURL: process.env.NEXT_PUBLIC_API_URL,
+  timeout: 30000,
+});
 
-### **Quality Assurance**
-- [ ] Unit test coverage > 80% for React components
-- [ ] E2E tests for critical user flows
-- [ ] Performance tests (Lighthouse score > 90)
-- [ ] Cross-browser compatibility testing
+// Request interceptor for JWT
+api.interceptors.request.use((config) => {
+  const token = localStorage.getItem('token');
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+});
 
----
+// Response interceptor for errors
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 401) {
+      // Redirect to login
+      window.location.href = '/login';
+    }
+    return Promise.reject(error);
+  }
+);
 
-## 🎯 **Success Criteria Validation**
+export const authAPI = {
+  login: (email: string, password: string) =>
+    api.post('/api/v1/auth/login', { email, password }),
+  register: (data: RegisterData) =>
+    api.post('/api/v1/auth/register', data),
+  // ... more methods
+};
 
-### **Functional Requirements**
-- [ ] Next.js application builds and runs successfully
-- [ ] File upload interface functional with progress feedback
-- [ ] Tiptap editor provides rich text editing capabilities
-- [ ] Real-time collaboration works between multiple users
-- [ ] Document save/publish workflow operational
-- [ ] Responsive design works on all screen sizes
+export const documentsAPI = {
+  upload: (file: File) => {
+    const formData = new FormData();
+    formData.append('file', file);
+    return api.post('/api/v1/documents/upload', formData);
+  },
+  list: () => api.get('/api/v1/documents'),
+  // ... more methods
+};
+```
 
-### **Technical Requirements**
-- [ ] TypeScript compilation without errors
-- [ ] Bundle size optimized (< 500KB initial load)
-- [ ] SEO optimized with proper meta tags
-- [ ] Performance metrics meet targets (< 3s initial load)
-- [ ] Accessibility audit passes WCAG guidelines
+### Task 2.1.4: Core Layout & Navigation
 
----
+**Objective**: Create responsive layout with navigation
 
-## 📊 **Risk Mitigation & Fallbacks**
+**Files**:
+- `src/app/layout.tsx` - Root layout
+- `src/app/(dashboard)/layout.tsx` - Dashboard layout
+- `src/components/layout/Navbar.tsx` - Navigation bar
+- `src/components/layout/Sidebar.tsx` - Sidebar navigation
 
-### **Current Risk Level**: MEDIUM
-### **Active Mitigation Strategies**:
-1. Start with basic Next.js setup before adding complex features
-2. Implement collaborative features incrementally
-3. Regular testing of integration points with backend
-4. Use established libraries (Tiptap, Yjs) to reduce custom code
+**Features**:
+- Responsive design (mobile, tablet, desktop)
+- User menu with logout
+- Active route highlighting
+- Breadcrumbs
 
-### **Fallback Options**:
-1. If Yjs complexity too high: Start with single-user editing, add collaboration later
-2. If Tiptap customization issues: Use simpler rich text editor initially
-3. If real-time performance issues: Implement optimistic updates with conflict resolution
-4. If bundle size concerns: Implement code splitting and lazy loading
+### Task 2.1.5: Authentication Flow
 
----
+**Objective**: Implement login/register pages and protected routes
 
-## 🔄 **Blueprint Update Protocol**
+**Files**:
+- `src/app/(auth)/login/page.tsx`
+- `src/app/(auth)/register/page.tsx`
+- `src/hooks/useAuth.ts`
+- `src/store/authStore.ts`
 
-**Update Triggers:**
-- Task completion (move to next task)
-- Blocker encountered (document and propose solution)
-- Technical discovery (update approach if needed)
-- Quality gate failure (address issues before proceeding)
+**Features**:
+- Login form with validation
+- Registration form
+- Protected route middleware
+- Persistent authentication (localStorage)
+- Auto-redirect after login
 
-**Update Format:**
-1. Update Progress Tracker (STATUS, CURRENT STEP, LAST COMPLETED TASK, NEXT TASK)
-2. Mark completed items with [x]
-3. Add any new discoveries or changes to approach
-4. Update risk assessment if needed
+## Phase 2.2: Document Editor
 
----
+### Task 2.2.1: Setup Tiptap Editor
 
-## 🚀 **Immediate Next Action**
+**Objective**: Integrate Tiptap rich text editor
 
-**TASK:** Set up Next.js 14 project with TypeScript and essential dependencies
+**Files**:
+- `src/components/editor/TiptapEditor.tsx`
+- `src/hooks/useEditor.ts`
 
-**OBJECTIVE:** Create a solid foundation for the Next.js frontend application with proper tooling and configuration
+**Extensions**:
+- StarterKit (basic formatting)
+- Placeholder
+- CharacterCount
+- Link
+- Image
+- CodeBlock
+- Table
 
-**APPROACH:**
-1. Initialize Next.js 14 project with TypeScript template
-2. Install essential dependencies (Tailwind, ESLint, Prettier)
-3. Configure development environment and scripts
-4. Set up basic project structure and folder organization
-5. Create initial pages and layout components
+**Features**:
+- Toolbar with formatting options
+- Markdown shortcuts
+- Character count
+- Word count
+- Auto-save
 
-**SUCCESS CRITERIA:**
-- Next.js development server starts successfully
-- TypeScript compilation works without errors
-- Tailwind CSS configured and functional
-- ESLint and Prettier configured with proper rules
-- Basic routing and layout structure in place
+**Example**:
+```typescript
+// src/components/editor/TiptapEditor.tsx
+import { useEditor, EditorContent } from '@tiptap/react';
+import StarterKit from '@tiptap/starter-kit';
+
+export function TiptapEditor({ content, onChange }) {
+  const editor = useEditor({
+    extensions: [StarterKit],
+    content,
+    onUpdate: ({ editor }) => {
+      onChange(editor.getHTML());
+    },
+  });
+
+  return (
+    <div className="border rounded-lg">
+      <EditorToolbar editor={editor} />
+      <EditorContent editor={editor} className="prose p-4" />
+    </div>
+  );
+}
+```
+
+### Task 2.2.2: Add Yjs for Collaboration
+
+**Objective**: Enable real-time collaborative editing
+
+**Files**:
+- `src/lib/yjs.ts` - Yjs provider setup
+- `src/components/editor/CollaborativeEditor.tsx`
+
+**Dependencies**:
+- `yjs` - CRDT library
+- `y-websocket` - WebSocket provider
+- `@tiptap/extension-collaboration` - Tiptap Yjs integration
+
+**Features**:
+- Real-time sync across clients
+- Conflict-free editing
+- User cursors
+- Presence awareness
+
+**Example**:
+```typescript
+import { WebsocketProvider } from 'y-websocket';
+import * as Y from 'yjs';
+import Collaboration from '@tiptap/extension-collaboration';
+
+const ydoc = new Y.Doc();
+const provider = new WebsocketProvider(
+  'ws://localhost:8000/ws',
+  'document-id',
+  ydoc
+);
+
+const editor = useEditor({
+  extensions: [
+    StarterKit,
+    Collaboration.configure({
+      document: ydoc,
+    }),
+  ],
+});
+```
+
+### Task 2.2.3: Document Management UI
+
+**Objective**: Build document listing and management interface
+
+**Files**:
+- `src/app/(dashboard)/documents/page.tsx`
+- `src/components/documents/DocumentList.tsx`
+- `src/components/documents/DocumentCard.tsx`
+- `src/components/documents/UploadDialog.tsx`
+
+**Features**:
+- List all documents with thumbnails
+- Upload new documents (drag & drop)
+- Delete documents
+- Search and filter
+- Document metadata display
+
+### Task 2.2.4: Real-time Updates via WebSocket
+
+**Objective**: Implement WebSocket connection for live updates
+
+**Files**:
+- `src/lib/websocket.ts`
+- `src/hooks/useWebSocket.ts`
+
+**Features**:
+- Automatic reconnection
+- Heartbeat/ping-pong
+- Event handling (document processed, draft updated)
+- Connection status indicator
+
+**Example**:
+```typescript
+// src/hooks/useWebSocket.ts
+export function useWebSocket(sessionId: string) {
+  const [status, setStatus] = useState<'connecting' | 'connected' | 'disconnected'>('connecting');
+
+  useEffect(() => {
+    const ws = new WebSocket(`ws://localhost:8000/ws/${sessionId}`);
+
+    ws.onopen = () => setStatus('connected');
+    ws.onclose = () => setStatus('disconnected');
+    ws.onmessage = (event) => {
+      const data = JSON.parse(event.data);
+      // Handle different message types
+    };
+
+    return () => ws.close();
+  }, [sessionId]);
+
+  return { status };
+}
+```
+
+## Phase 2.3: Blog Creation Flow
+
+### Task 2.3.1: File Upload Interface
+
+**Objective**: Create intuitive file upload experience
+
+**Files**:
+- `src/components/documents/FileUpload.tsx`
+
+**Features**:
+- Drag and drop zone
+- Multiple file support
+- File type validation
+- Upload progress bar
+- Preview thumbnails
+
+### Task 2.3.2: Document Processing UI
+
+**Objective**: Show processing status and results
+
+**Files**:
+- `src/components/documents/ProcessingStatus.tsx`
+
+**Features**:
+- Processing progress indicator
+- Chunk count and metadata display
+- Error handling
+- Retry failed processing
+
+### Task 2.3.3: Draft Generation & Editing
+
+**Objective**: Generate and edit blog drafts
+
+**Files**:
+- `src/app/(dashboard)/editor/[draftId]/page.tsx`
+- `src/components/editor/DraftEditor.tsx`
+
+**Features**:
+- Generate draft from documents
+- Stream LLM responses
+- Edit draft in Tiptap editor
+- Refine with AI (send feedback)
+- Version history
+- Undo/redo
+
+### Task 2.3.4: Preview & Export
+
+**Objective**: Preview and export blog posts
+
+**Files**:
+- `src/components/editor/PreviewPane.tsx`
+- `src/components/editor/ExportDialog.tsx`
+
+**Features**:
+- Live markdown preview
+- Export to .md file
+- Copy to clipboard
+- Publish to GitHub (Part 3)
+
+## State Management
+
+Using **Zustand** for global state:
+
+```typescript
+// src/store/editorStore.ts
+import create from 'zustand';
+
+interface EditorStore {
+  content: string;
+  isDirty: boolean;
+  setContent: (content: string) => void;
+  save: () => Promise<void>;
+}
+
+export const useEditorStore = create<EditorStore>((set, get) => ({
+  content: '',
+  isDirty: false,
+  setContent: (content) => set({ content, isDirty: true }),
+  save: async () => {
+    const { content } = get();
+    await documentsAPI.saveDraft(content);
+    set({ isDirty: false });
+  },
+}));
+```
+
+## Styling
+
+### Tailwind Configuration
+
+```typescript
+// tailwind.config.ts
+export default {
+  content: ['./src/**/*.{js,ts,jsx,tsx}'],
+  theme: {
+    extend: {
+      colors: {
+        primary: '#3b82f6',
+        secondary: '#6366f1',
+      },
+      typography: {
+        DEFAULT: {
+          css: {
+            maxWidth: '65ch',
+            // ... custom prose styles
+          },
+        },
+      },
+    },
+  },
+  plugins: [require('@tailwindcss/typography')],
+};
+```
+
+## Testing
+
+### Unit Tests (Jest + React Testing Library)
+
+```typescript
+// src/components/editor/__tests__/TiptapEditor.test.tsx
+import { render, screen } from '@testing-library/react';
+import { TiptapEditor } from '../TiptapEditor';
+
+test('renders editor with content', () => {
+  render(<TiptapEditor content="Hello" onChange={() => {}} />);
+  expect(screen.getByText('Hello')).toBeInTheDocument();
+});
+```
+
+### E2E Tests (Playwright)
+
+```typescript
+// tests/e2e/editor.spec.ts
+import { test, expect } from '@playwright/test';
+
+test('can create and edit blog draft', async ({ page }) => {
+  await page.goto('/editor/new');
+  await page.fill('[data-testid="editor"]', 'My blog post');
+  await page.click('[data-testid="save"]');
+  await expect(page.locator('.toast')).toContainText('Saved');
+});
+```
+
+## Environment Variables
+
+```bash
+# .env.local
+NEXT_PUBLIC_API_URL=http://localhost:8000
+NEXT_PUBLIC_WS_URL=ws://localhost:8000
+NEXT_PUBLIC_APP_NAME="Blog Creator"
+```
+
+## Success Criteria
+
+- ✅ Next.js app running on port 3000
+- ✅ Authentication flow working
+- ✅ Document upload and processing functional
+- ✅ Tiptap editor integrated
+- ✅ Real-time updates via WebSocket
+- ✅ Responsive design (mobile + desktop)
+- ✅ All components tested
+- ✅ Type-safe API client
+
+## Next Steps
+
+After completing Part 2:
+1. Update progress in `docs/plans/README.md`
+2. Commit changes: "feat: complete Next.js frontend (Part 2)"
+3. Push to branch
+4. Begin Part 3 (Advanced Features)

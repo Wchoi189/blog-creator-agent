@@ -1,181 +1,467 @@
----
-type: "implementation_plan"
-category: "development"
-status: "planned"
-version: "1.0"
-tags: ['implementation', 'plan', 'migration', 'collaboration', 'yjs', 'publishing']
-title: "Part 3: Advanced Features - Yjs CRDT, GitHub Publishing"
-date: "2025-11-23 20:30 (KST)"
----
+# Part 3: Advanced Features
 
-# Master Prompt
+## Status: ⏸️ Pending (0%)
 
-You are an autonomous AI agent, my Chief of Staff for implementing **Part 3: Advanced Features** of the Blog Creator Agent migration. Your primary responsibility is to execute the "Living Implementation Blueprint" systematically, handle outcomes, and keep track of our progress. Do not ask for clarification on what to do next; your next task is always explicitly defined.
+**Goal**: Implement real-time collaboration with Yjs CRDT and automated GitHub publishing.
 
----
+## Phase 3.1: Yjs CRDT Integration
 
-**Your Core Workflow is a Goal-Execute-Update Loop:**
-1. **Goal:** A clear `🎯 Goal` will be provided for you to achieve.
-2. **Execute:** You will start working on the task defined in the `NEXT TASK`
-3. **Handle Outcome & Update:** Based on the success or failure of the command, you will follow the specified contingency plan. Your response must be in two parts:
-   * **Part 1: Execution Report:** Provide a concise summary of the results and analysis of the outcome (e.g., "All tests passed" or "Test X failed due to an IndexError...").
-   * **Part 2: Blueprint Update Confirmation:** Confirm that the living blueprint has been updated with the new progress status and next task. The updated blueprint is available in the workspace file.
+### Overview
 
----
+**Yjs** (pronounced "why-js") is a CRDT (Conflict-free Replicated Data Type) library that enables real-time collaborative editing without conflicts. It's used by Notion, Figma, and other modern collaboration tools.
 
-# Living Implementation Blueprint: Part 3 - Advanced Features
+### Task 3.1.1: Setup Yjs Backend Provider
 
-## Progress Tracker
-- **STATUS:** Planned
-- **CURRENT STEP:** Phase 1, Task 1.1 - Yjs CRDT Integration Planning
-- **LAST COMPLETED TASK:** None (Waiting for Part 2 completion)
-- **NEXT TASK:** Design Yjs CRDT integration architecture for real-time collaboration
+**Objective**: Create WebSocket server for Yjs synchronization
 
-### Implementation Outline (Checklist)
+**Files**:
+- `backend/services/yjs_service.py` - Yjs document management
+- `backend/api/v1/yjs.py` - Yjs WebSocket endpoint
 
-#### **Phase 1: Real-time Collaboration Foundation (Week 1-2)**
-1. [ ] **Task 1.1: Yjs CRDT Integration Planning**
-   - [ ] Analyze collaboration requirements
-   - [ ] Design Yjs document structure
-   - [ ] Plan conflict resolution strategies
-   - [ ] Define synchronization protocols
+**Features**:
+- Persistent Y.Doc storage (Redis or filesystem)
+- Multi-client synchronization
+- Document awareness (who's online)
+- Automatic garbage collection
 
-2. [ ] **Task 1.2: Yjs Backend Integration**
-   - [ ] Set up Yjs WebSocket provider
-   - [ ] Implement document persistence
-   - [ ] Create collaboration rooms/sessions
-   - [ ] Add user presence tracking
+**Implementation**:
+```python
+# backend/api/v1/yjs.py
+from fastapi import WebSocket, WebSocketDisconnect
+from ypy_websocket import WebsocketServer, WebsocketProvider
 
-3. [ ] **Task 1.3: Conflict Resolution**
-   - [ ] Implement operational transformation
-   - [ ] Add merge conflict handling
-   - [ ] Create conflict resolution UI
-   - [ ] Test concurrent editing scenarios
+class YjsWebSocketHandler:
+    def __init__(self):
+        self.rooms = {}  # document_id -> YDoc
+        self.connections = {}  # document_id -> [WebSocket]
 
-4. [ ] **Task 1.4: Performance Optimization**
-   - [ ] Optimize Yjs document updates
-   - [ ] Implement efficient synchronization
-   - [ ] Add connection pooling
-   - [ ] Monitor collaboration performance
+    async def handle_connection(
+        self,
+        websocket: WebSocket,
+        document_id: str
+    ):
+        await websocket.accept()
 
-#### **Phase 2: Publishing & Integration (Week 3)**
-5. [ ] **Task 2.1: GitHub Publishing Integration**
-   - [ ] Implement GitHub API client
-   - [ ] Create repository management
-   - [ ] Add automated publishing workflow
-   - [ ] Handle authentication and permissions
+        # Get or create Y.Doc
+        if document_id not in self.rooms:
+            self.rooms[document_id] = self._load_document(document_id)
 
-6. [ ] **Task 2.2: Jekyll/Markdown Export**
-   - [ ] Create Jekyll-compatible export
-   - [ ] Implement frontmatter generation
-   - [ ] Add image and asset handling
-   - [ ] Generate GitHub Pages structure
+        ydoc = self.rooms[document_id]
 
-7. [ ] **Task 2.3: Publishing Pipeline**
-   - [ ] Create automated publishing queue
-   - [ ] Add publishing status tracking
-   - [ ] Implement rollback functionality
-   - [ ] Add publishing notifications
+        # Add client to room
+        if document_id not in self.connections:
+            self.connections[document_id] = []
+        self.connections[document_id].append(websocket)
 
-8. [ ] **Task 2.4: Advanced Collaboration Features**
-   - [ ] Add commenting system
-   - [ ] Implement review workflows
-   - [ ] Create version history
-   - [ ] Add collaborative templates
+        try:
+            while True:
+                data = await websocket.receive_bytes()
+                # Sync Y.Doc updates
+                await self._sync_update(document_id, data, websocket)
+        except WebSocketDisconnect:
+            self.connections[document_id].remove(websocket)
+            if not self.connections[document_id]:
+                self._save_document(document_id, ydoc)
+                del self.rooms[document_id]
+```
 
----
+### Task 3.1.2: Implement Collaborative Cursors
 
-## 📋 **Technical Requirements Checklist**
+**Objective**: Show where other users are editing
 
-### **Architecture & Design**
-- [ ] Yjs CRDT for conflict-free replicated data types
-- [ ] WebSocket-based real-time synchronization
-- [ ] Scalable collaboration architecture
-- [ ] GitHub API integration for publishing
-- [ ] Jekyll-compatible blog generation
+**Files**:
+- `frontend/src/components/editor/CollaborativeCursors.tsx`
+- `frontend/src/lib/yjs-awareness.ts`
 
-### **Integration Points**
-- [ ] Seamless integration with Tiptap editor
-- [ ] FastAPI backend for collaboration state
-- [ ] GitHub OAuth for publishing authentication
-- [ ] Existing document management system
+**Features**:
+- Show cursor position of all users
+- Display user name and color
+- Fade out after inactivity
+- Selection highlighting
 
-### **Quality Assurance**
-- [ ] Collaboration tests with multiple concurrent users
-- [ ] Conflict resolution testing scenarios
-- [ ] Publishing pipeline integration tests
-- [ ] Performance tests under load
+**Example**:
+```typescript
+// frontend/src/components/editor/CollaborativeCursors.tsx
+import { Awareness } from 'y-protocols/awareness';
+import { useEffect, useState } from 'react';
 
----
+interface User {
+  id: string;
+  name: string;
+  color: string;
+  cursor: { from: number; to: number } | null;
+}
 
-## 🎯 **Success Criteria Validation**
+export function CollaborativeCursors({ awareness }: { awareness: Awareness }) {
+  const [users, setUsers] = useState<User[]>([]);
 
-### **Functional Requirements**
-- [ ] Multiple users can edit documents simultaneously
-- [ ] Conflicts resolved automatically or with user input
-- [ ] Documents publish successfully to GitHub Pages
-- [ ] Jekyll blogs generated with proper formatting
-- [ ] Real-time presence indicators working
-- [ ] Version history and rollback functional
+  useEffect(() => {
+    const updateUsers = () => {
+      const states = Array.from(awareness.getStates().entries());
+      const activeUsers = states
+        .filter(([clientId]) => clientId !== awareness.clientID)
+        .map(([clientId, state]) => ({
+          id: String(clientId),
+          name: state.user?.name || 'Anonymous',
+          color: state.user?.color || '#000',
+          cursor: state.cursor || null,
+        }));
+      setUsers(activeUsers);
+    };
 
-### **Technical Requirements**
-- [ ] <100ms latency for collaborative edits
-- [ ] Support for 50+ concurrent users per document
-- [ ] Automatic publishing completes in <30 seconds
-- [ ] 99.9% uptime for collaboration services
-- [ ] Full compatibility with GitHub Pages
+    awareness.on('change', updateUsers);
+    return () => awareness.off('change', updateUsers);
+  }, [awareness]);
 
----
+  return (
+    <>
+      {users.map(user => user.cursor && (
+        <div
+          key={user.id}
+          className="absolute pointer-events-none"
+          style={{
+            top: user.cursor.from,
+            left: 0,
+            borderLeft: `2px solid ${user.color}`,
+          }}
+        >
+          <span
+            className="px-1 py-0.5 text-xs text-white rounded"
+            style={{ backgroundColor: user.color }}
+          >
+            {user.name}
+          </span>
+        </div>
+      ))}
+    </>
+  );
+}
+```
 
-## 📊 **Risk Mitigation & Fallbacks**
+### Task 3.1.3: Add Presence Awareness
 
-### **Current Risk Level**: HIGH
-### **Active Mitigation Strategies**:
-1. Start with simple Yjs integration before complex features
-2. Implement comprehensive testing for conflict scenarios
-3. Use established GitHub API libraries
-4. Regular performance monitoring and optimization
+**Objective**: Show who's currently viewing/editing the document
 
-### **Fallback Options**:
-1. If Yjs complexity too high: Implement basic operational transform without CRDT
-2. If real-time performance issues: Add optimistic updates with periodic sync
-3. If GitHub API rate limits: Implement queuing and retry mechanisms
-4. If Jekyll export issues: Support multiple blog formats (Hugo, etc.)
+**Files**:
+- `frontend/src/components/editor/PresenceAvatars.tsx`
 
----
+**Features**:
+- Avatar list of active users
+- Online/offline status
+- Join/leave notifications
+- User count badge
 
-## 🔄 **Blueprint Update Protocol**
+### Task 3.1.4: Implement Conflict Resolution
 
-**Update Triggers:**
-- Task completion (move to next task)
-- Blocker encountered (document and propose solution)
-- Technical discovery (update approach if needed)
-- Quality gate failure (address issues before proceeding)
+**Objective**: Handle edge cases and conflicts gracefully
 
-**Update Format:**
-1. Update Progress Tracker (STATUS, CURRENT STEP, LAST COMPLETED TASK, NEXT TASK)
-2. Mark completed items with [x]
-3. Add any new discoveries or changes to approach
-4. Update risk assessment if needed
+**Features**:
+- Automatic merge of concurrent edits
+- Last-write-wins for metadata
+- Undo/redo that works with collaboration
+- Network partition recovery
 
----
+**Testing**:
+- Test with 10+ concurrent users
+- Simulate network issues
+- Test rapid concurrent edits
+- Verify no data loss
 
-## 🚀 **Immediate Next Action**
+## Phase 3.2: GitHub Publishing
 
-**TASK:** Design Yjs CRDT integration architecture for real-time collaboration
+### Overview
 
-**OBJECTIVE:** Create a comprehensive design for integrating Yjs CRDT into the Next.js frontend and FastAPI backend for real-time collaborative editing
+Enable users to publish blog posts directly to their GitHub Pages repository.
 
-**APPROACH:**
-1. Analyze current document editing workflow
-2. Design Yjs document structure for blog content
-3. Plan WebSocket integration with FastAPI
-4. Define conflict resolution strategies
-5. Create architecture diagrams and integration points
+### Task 3.2.1: GitHub OAuth Integration
 
-**SUCCESS CRITERIA:**
-- Yjs integration architecture documented
-- WebSocket communication design complete
-- Conflict resolution strategy defined
-- Integration points with existing systems identified
-- Performance and scalability considerations addressed
+**Objective**: Allow users to authenticate with GitHub
+
+**Files**:
+- `backend/api/v1/github.py` - GitHub OAuth endpoints
+- `backend/services/github_service.py` - GitHub API wrapper
+- `frontend/src/components/settings/GitHubConnect.tsx`
+
+**Endpoints**:
+- `GET /api/v1/github/oauth/authorize` - Redirect to GitHub OAuth
+- `GET /api/v1/github/oauth/callback` - Handle OAuth callback
+- `GET /api/v1/github/user` - Get authenticated GitHub user
+- `POST /api/v1/github/disconnect` - Revoke GitHub access
+
+**Implementation**:
+```python
+# backend/api/v1/github.py
+from fastapi import APIRouter, Depends
+from httpx import AsyncClient
+import jwt
+
+router = APIRouter()
+
+@router.get("/oauth/authorize")
+async def github_oauth_authorize():
+    """Redirect user to GitHub OAuth page"""
+    client_id = settings.GITHUB_CLIENT_ID
+    redirect_uri = f"{settings.API_URL}/api/v1/github/oauth/callback"
+    scope = "repo,user:email"
+
+    url = (
+        f"https://github.com/login/oauth/authorize"
+        f"?client_id={client_id}"
+        f"&redirect_uri={redirect_uri}"
+        f"&scope={scope}"
+    )
+    return {"url": url}
+
+@router.get("/oauth/callback")
+async def github_oauth_callback(code: str, current_user: User = Depends(get_current_user)):
+    """Exchange code for access token"""
+    async with AsyncClient() as client:
+        response = await client.post(
+            "https://github.com/login/oauth/access_token",
+            data={
+                "client_id": settings.GITHUB_CLIENT_ID,
+                "client_secret": settings.GITHUB_CLIENT_SECRET,
+                "code": code,
+            },
+            headers={"Accept": "application/json"},
+        )
+        data = response.json()
+        access_token = data["access_token"]
+
+    # Store access token for user
+    await save_github_token(current_user.id, access_token)
+
+    return {"success": True}
+```
+
+### Task 3.2.2: Repository Selection UI
+
+**Objective**: Let users choose which repository to publish to
+
+**Files**:
+- `frontend/src/components/github/RepositorySelector.tsx`
+- `backend/api/v1/github.py` (extend)
+
+**Endpoints**:
+- `GET /api/v1/github/repositories` - List user's repositories
+- `POST /api/v1/github/repositories/{repo_id}/select` - Select repository
+
+**Features**:
+- List all user repositories
+- Filter by name
+- Show repository metadata (stars, forks)
+- Create new repository option
+
+### Task 3.2.3: Jekyll Format Conversion
+
+**Objective**: Convert markdown to Jekyll front matter format
+
+**Files**:
+- `backend/services/jekyll_service.py`
+
+**Features**:
+- Generate Jekyll front matter (title, date, categories, tags)
+- Extract metadata from content
+- Format images correctly
+- Handle code blocks
+
+**Example**:
+```python
+# backend/services/jekyll_service.py
+from datetime import datetime
+import yaml
+
+def convert_to_jekyll(
+    title: str,
+    content: str,
+    categories: list[str] = None,
+    tags: list[str] = None,
+) -> str:
+    """Convert markdown content to Jekyll format"""
+
+    # Front matter
+    front_matter = {
+        "layout": "post",
+        "title": title,
+        "date": datetime.now().strftime("%Y-%m-%d %H:%M:%S %z"),
+        "categories": categories or [],
+        "tags": tags or [],
+    }
+
+    # Format
+    yaml_front_matter = yaml.dump(front_matter, sort_keys=False)
+    jekyll_content = f"---\n{yaml_front_matter}---\n\n{content}"
+
+    return jekyll_content
+```
+
+### Task 3.2.4: Automated Git Push Workflow
+
+**Objective**: Push blog post to GitHub repository
+
+**Files**:
+- `backend/services/github_service.py` (extend)
+- `backend/api/v1/blog.py` (add publish endpoint)
+
+**Endpoints**:
+- `POST /api/v1/blog/{draft_id}/publish` - Publish to GitHub
+
+**Workflow**:
+1. Convert draft to Jekyll format
+2. Generate filename (YYYY-MM-DD-title.md)
+3. Create commit via GitHub API
+4. Push to `_posts/` directory
+5. Trigger GitHub Pages rebuild
+6. Return published URL
+
+**Implementation**:
+```python
+async def publish_to_github(
+    draft_id: str,
+    user_id: str,
+    repository: str,
+    branch: str = "main"
+):
+    """Publish blog post to GitHub Pages"""
+
+    # Get draft and GitHub token
+    draft = await get_draft(draft_id)
+    github_token = await get_github_token(user_id)
+
+    # Convert to Jekyll format
+    jekyll_content = convert_to_jekyll(
+        title=draft.title,
+        content=draft.content,
+        categories=draft.categories,
+        tags=draft.tags,
+    )
+
+    # Generate filename
+    filename = f"_posts/{datetime.now().strftime('%Y-%m-%d')}-{slugify(draft.title)}.md"
+
+    # Create or update file via GitHub API
+    async with AsyncClient() as client:
+        # Check if file exists
+        response = await client.get(
+            f"https://api.github.com/repos/{repository}/contents/{filename}",
+            headers={"Authorization": f"token {github_token}"},
+        )
+
+        sha = response.json().get("sha") if response.status_code == 200 else None
+
+        # Create/update file
+        await client.put(
+            f"https://api.github.com/repos/{repository}/contents/{filename}",
+            headers={"Authorization": f"token {github_token}"},
+            json={
+                "message": f"Publish: {draft.title}",
+                "content": base64.b64encode(jekyll_content.encode()).decode(),
+                "sha": sha,
+                "branch": branch,
+            },
+        )
+
+    # Build published URL
+    username = repository.split("/")[0]
+    repo_name = repository.split("/")[1]
+    slug = slugify(draft.title)
+    published_url = f"https://{username}.github.io/{repo_name}/{slug}/"
+
+    return {"url": published_url, "filename": filename}
+```
+
+## Phase 3.3: Additional Features
+
+### Task 3.3.1: Draft Versioning
+
+**Objective**: Track changes and enable rollback
+
+**Features**:
+- Auto-save every N seconds
+- Version history UI
+- Compare versions (diff view)
+- Restore previous version
+
+### Task 3.3.2: Commenting System
+
+**Objective**: Allow inline comments and feedback
+
+**Features**:
+- Add comments to specific text selections
+- Comment threads
+- Resolve/unresolve comments
+- Notifications
+
+### Task 3.3.3: Export Options
+
+**Objective**: Export to multiple formats
+
+**Features**:
+- Markdown (.md)
+- PDF
+- HTML
+- Medium format
+- Dev.to format
+
+## Testing Strategy
+
+### Collaboration Tests
+
+```typescript
+// Test concurrent editing
+test('handles concurrent edits without conflicts', async () => {
+  const doc1 = new Y.Doc();
+  const doc2 = new Y.Doc();
+
+  const text1 = doc1.getText('content');
+  const text2 = doc2.getText('content');
+
+  // User 1 types
+  text1.insert(0, 'Hello');
+
+  // User 2 types at same time
+  text2.insert(0, 'World');
+
+  // Sync documents
+  Y.applyUpdate(doc2, Y.encodeStateAsUpdate(doc1));
+  Y.applyUpdate(doc1, Y.encodeStateAsUpdate(doc2));
+
+  // Both should have merged content
+  expect(text1.toString()).toBe('HelloWorld');
+  expect(text2.toString()).toBe('HelloWorld');
+});
+```
+
+### GitHub Integration Tests
+
+```python
+# Test GitHub publishing
+async def test_publish_to_github():
+    # Mock GitHub API
+    with httpx_mock.mock_api():
+        result = await publish_to_github(
+            draft_id="123",
+            user_id="user1",
+            repository="user/blog"
+        )
+        assert result["url"].startswith("https://")
+        assert "_posts/" in result["filename"]
+```
+
+## Success Criteria
+
+- ✅ Real-time collaboration with 10+ users
+- ✅ No data loss or conflicts
+- ✅ Collaborative cursors visible
+- ✅ GitHub OAuth working
+- ✅ Auto-publish to GitHub Pages
+- ✅ Jekyll format correct
+- ✅ Version history functional
+
+## Next Steps
+
+After completing Part 3:
+1. Update progress in `docs/plans/README.md`
+2. Commit: "feat: add real-time collab and GitHub publishing (Part 3)"
+3. Push to branch
+4. Begin Part 4 (Production Deployment)
