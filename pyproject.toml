@@ -3,57 +3,79 @@ name = "blog-creator-agent"
 version = "2.0.0"
 description = "Blog Content Creator Agent - Next.js Migration Project for Collaborative Editing"
 authors = [
-    {name = "Choi Ungbi", email = "wchoi189@gmail.com"}
+    {name = "Woong Choi", email = "wchoi189@gmail.com"}
 ]
 readme = "README.md"
 requires-python = ">=3.10,<3.12"
 dependencies = [
-    "python-dotenv (>=1.1.1,<2.0.0)",
-    "langchain (>=0.3.27,<0.4.0)",
-    "langchain-core (>=0.3.27,<0.4.0)",
-    "langchain-text-splitters (>=0.3.9,<0.4.0)",
-    "langchain-community (>=0.3.27,<0.4.0)",
-    "langchain-openai (>=0.3.31,<0.4.0)",
-    "langchain-upstage (>=0.7.3,<0.8.0)",
-    "langchain-ollama (>=0.3.6,<0.4.0)",
-    "langgraph (>=0.6.5,<0.7.0)",
-    "langchain-chroma (>=0.2.5,<0.3.0)",
-    "chromadb (>=1.0.20,<2.0.0)",
-    "pygithub (>=2.7.0,<3.0.0)",
-    "pymupdf (>=1.26.4,<2.0.0)",
-    "pyyaml (>=6.0.2,<7.0.0)",
-    "unstructured[pdf]",
-    "unstructured[pdf,elements] (>=0.14.5,<0.15.0)",
+    # Backend API
+    "fastapi>=0.104.0,<1.0.0",
+    "uvicorn[standard]>=0.24.0,<1.0.0",
+    "pydantic>=2.5.0,<3.0.0",
+    "pydantic-settings>=2.1.0,<3.0.0",
+    "python-multipart>=0.0.6,<1.0.0",
+    "python-jose[cryptography]>=3.3.0,<4.0.0",
+    "passlib[bcrypt]>=1.7.4,<2.0.0",
+    "python-dotenv>=1.0.0,<2.0.0",
+    # LangChain & AI
+    "langchain>=0.3.27,<0.4.0",
+    "langchain-core>=0.3.27,<0.4.0",
+    "langchain-text-splitters>=0.3.9,<0.4.0",
+    "langchain-community>=0.3.27,<0.4.0",
+    "langchain-openai>=0.3.31,<0.4.0",
+    "langchain-upstage>=0.7.3,<0.8.0",
+    "langchain-ollama>=0.3.6,<0.4.0",
+    "langgraph>=0.6.5,<0.7.0",
+    "langchain-chroma>=0.2.5,<0.3.0",
+    "langchain-tavily>=0.1.1,<0.2.0",
+    "langchain-redis>=0.1.1,<0.2.0",
+    "langchain-huggingface>=0.3.1,<0.4.0",
     "langchain-unstructured",
+    # Vector Store & Storage
+    "chromadb>=1.0.20,<2.0.0",
+    "redis>=5.0.3,<6.0.0",
+    # Document Processing
+    "pymupdf>=1.26.4,<2.0.0",
+    "unstructured[pdf,elements]>=0.14.5,<0.15.0",
     "paddleocr",
     "paddlepaddle",
-    "langchain-huggingface (>=0.3.1,<0.4.0)",
-    "pysqlite3-binary (>=0.5.4,<0.6.0); sys_platform != 'darwin'",
-    "sentence-transformers (>=2.2.2,<3.0.0)",
-    "langchain-tavily (>=0.1.1,<0.2.0)",
-    "langchain-redis (>=0.1.1,<0.2.0)",
-    "redis (>=5.0.3,<6.0.0)",
-    "chainlit (>=2.7.2,<3.0.0)",
-    "pytest (>=8.4.1,<9.0.0)",
-    "transformers (>=4.40.0,<5.0.0)",
-    "torch (>=2.2.0,<3.0.0)",
-    "torchaudio (>=2.2.0,<3.0.0)",
-    "Pillow (>=10.0.0,<11.0.0)",
+    "sentence-transformers>=2.2.2,<3.0.0",
+    "transformers>=4.40.0,<5.0.0",
+    "torch==2.6.0",
+    "torchvision==0.21.0",
+    "torchaudio>=2.2.0,<3.0.0",
+    "torchmetrics==1.2.1",
+    "Pillow>=10.0.0,<11.0.0",
+    # Utilities
+    "pygithub>=2.7.0,<3.0.0",
+    "pyyaml>=6.0.2,<7.0.0",
+    "pysqlite3-binary>=0.5.4,<0.6.0; sys_platform != 'darwin'",
+    # Testing
+    "pytest>=8.4.1,<9.0.0",
+    # Legacy (for src/ compatibility)
+    "chainlit>=2.7.2,<3.0.0",
 ]
 
 [project.optional-dependencies]
 dev = [
-    "ruff (>=0.12.9,<0.13.0)",
-    "pre-commit (>=4.3.0,<5.0.0)",
-    "jupyterlab (>=4.4.6,<5.0.0)",
-    "notebook (>=7.4.5,<8.0.0)",
-    "ipykernel (>=6.30.1,<7.0.0)"
+    "ruff>=0.12.9,<0.13.0",
+    "pre-commit>=4.3.0,<5.0.0",
+    "jupyterlab>=4.4.6,<5.0.0",
+    "notebook>=7.4.5,<8.0.0",
+    "ipykernel>=6.30.1,<7.0.0",
+    "pytest-asyncio>=0.21.0,<1.0.0",
+    "httpx>=0.25.0,<1.0.0",
 ]
 
-[tool.poetry]
-package-mode = false
-packages = [ { include = "src" } ]
-
 [build-system]
-requires = ["poetry-core>=2.0.0,<3.0.0"]
-build-backend = "poetry.core.masonry.api"
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.uv]
+# extra-index-url = ["https://download.pytorch.org/whl/cu121"]
+dev-dependencies = [
+    "ruff>=0.12.9,<0.13.0",
+    "pre-commit>=4.3.0,<5.0.0",
+    "pytest-asyncio>=0.21.0,<1.0.0",
+    "httpx>=0.25.0,<1.0.0",
+]

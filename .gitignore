@@ -70,8 +70,8 @@ target/
 # Jupyter Notebook
 .ipynb_checkpoints
 
-# pyenv
-.python-version
+# pyenv (but keep for uv)
+# .python-version
 
 # celery beat schedule file
 celerybeat-schedule
@@ -119,6 +119,7 @@ Thumbs.db
 log/
 logs/
 poetry.lock
+# uv.lock should be committed (uv best practice)
 data
 README.md
 docs/

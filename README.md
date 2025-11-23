@@ -1,192 +1,292 @@
-# 📝 Blog Content Creator Agent (Refactored: Chainlit UI Applied)
+# 📝 Blog Creator Agent - Collaborative Document Editor
 
-**A LangChain-based automation system that automatically converts various source documents (PDF, audio, images) into high-quality blog posts and publishes them to GitHub Pages.**
+**A modern RAG-powered system that converts documents (PDF, audio, images) into blog posts with real-time collaborative editing capabilities.**
 
-This project is based on the `RAG` (Retrieval-Augmented Generation) pipeline, understands and summarizes the content of user-provided documents to generate blog drafts. It also uses web search tools to enhance content with the latest information and allows real-time modification requests through a fully interactive interface.
+This project is a continuation and remake of the original blog-creator-agent, focused on solving the challenge of implementing live document editing and collaboration features that were not feasible with chat-based UI frameworks.
+
+## 🎯 Project Purpose
+
+The original blog-creator-agent used Streamlit, Chainlit, and LibreChat UI frameworks. While these tools excel at chat interfaces, they were discovered to be **sub-optimal for iterating on document updates**. Chat UIs require users to describe changes conversationally, making it difficult to:
+
+- See and edit content in real-time
+- Collaborate with multiple users simultaneously
+- Make precise edits with visual feedback
+- Maintain document structure and formatting
+
+This project implements a **document-centric collaborative editing solution** using modern web technologies that enable real-time, multi-user document collaboration.
 
 ## ✨ Key Features
 
-  * **RAG-based Content Generation**: Generates accurate and consistent blog drafts based on `PDF, audio, image` document content.
-  * **Dynamic Tool Usage**: Dynamically combines local documents and web information using `document_search` and `tavily_search` tools.
-  * **Configurable Architecture**: Flexibly change LLM, embedding models, and data processing methods through `config.yaml`.
-  * **Interactive Editing**: Chat with the AI agent through Chainlit-based UI to modify and improve content in real-time.
-  * **Automatic Publishing**: Converts completed content to Jekyll format and automatically publishes to GitHub Pages repository.
+* **RAG-based Content Generation**: Generates accurate blog drafts from PDF, audio, and image documents using LangChain and LangGraph
+* **Real-time Collaborative Editing**: Multi-user document editing with conflict-free synchronization (Yjs CRDT)
+* **Rich Text Editor**: Tiptap-based editor with full formatting capabilities
+* **Dynamic Tool Usage**: Combines local documents and web search (Tavily) for enhanced content
+* **Document Processing**: Supports PDF, audio (transcription), and image (vision) processing
+* **Automatic Publishing**: Converts content to Jekyll format and publishes to GitHub Pages
+* **WebSocket Communication**: Real-time bidirectional updates between frontend and backend
 
-## 🎨 Key Features Demo
-
-**🎞 Chainlit Demo Screenshots**
-
-_Below are screen examples showing the Chainlit UI and main features._
-
-<p align="center"><a href="docs/assets/chainlit demo/chainlit_home.png"><img src="docs/assets/chainlit demo/chainlit_home.png" alt="Chainlit home" width="75%" /></a></p>
-
-<p align="center"><em>Chainlit home screen where you can select models and providers.</em></p>
-
-<p align="center"><a href="docs/assets/chainlit demo/chainlit-demo-select-model-modal.png"><img src="docs/assets/chainlit demo/chainlit-demo-select-model-modal.png" alt="Select model modal" width="75%" /></a></p>
-
-<p align="center"><em>Example modal screen for selecting a model.</em></p>
-
-<p align="center"><a href="docs/assets/chainlit demo/chainlit-home-select-provider.png"><img src="docs/assets/chainlit demo/chainlit-home-select-provider.png" alt="Select provider" width="75%" /></a></p>
-
-<p align="center"><em>Chainlit UI screen for selecting a model provider.</em></p>
-
-<p align="center"><a href="docs/assets/chainlit demo/chainlit-blog-generation-demo.png"><img src="docs/assets/chainlit demo/chainlit-blog-generation-demo.png" alt="Blog generation demo" width="75%" /></a></p>
-
-<p align="center"><em>Screen showing the output and options of the blog generation demo.</em></p>
-
-<p align="center"><a href="docs/assets/chainlit demo/test_audio_terminal_output1.png"><img src="docs/assets/chainlit demo/test_audio_terminal_output1.png" alt="test audio terminal output 1" width="80%" /></a></p>
-
-<p align="center"><em>Example of outputting audio file content.</em></p>
-
-<p align="center"><a href="docs/assets/chainlit demo/test_audio_terminal_output2.png"><img src="docs/assets/chainlit demo/test_audio_terminal_output2.png" alt="test audio terminal output 2" width="80%" /></a></p>
-
-<p align="center"><a href="docs/assets/chainlit demo/test_vision_terminal_output.png"><img src="docs/assets/chainlit demo/test_vision_terminal_output.png" alt="test vision terminal output" width="80%" /></a></p>
-
-<p align="center"><em>Example of extracting meaning from a single PDF image page.</em></p>
-
-## 🚀 Quick Start
-
-### **Prerequisites**
-
-  * Python 3.11+
-  * Poetry
-  * Docker
-  * **GitHub Pages Setup Complete**: GitHub Pages repository must be pre-configured for blog publishing.
-
-### Project Flow Diagram
+## 🏗️ Architecture
 
 ```mermaid
 ---
 config:
   theme: 'forest'
 ---
-graph TD
-    subgraph "User Interface (Chainlit)"
-        A[User] -- "Uploads File (Image, Audio, PDF)" --> B(on_message Handler);
-        A -- "Sends Chat Message" --> B;
-        B -- "Streams Response" --> C{Display Draft/Chat};
-        C -- "Action Buttons (Edit, Save)" --> D[on_action Callbacks];
+graph TB
+    subgraph "Frontend (Next.js 14)"
+        A[User Browser] --> B[Next.js App Router];
+        B --> C[Tiptap Editor];
+        C --> D[Yjs CRDT Provider];
+        B --> E[Document Management];
+        B --> F[Authentication UI];
     end
 
-    subgraph "Backend Processing"
-        B -- "File" --> E(ingest_documents);
-        E -- "File Path" --> F{DocumentPreprocessor};
-        F -- ".pdf/.md" --> G[Text Loader];
-        F -- ".png/.jpg" --> H[Vision Processor];
-        F -- ".mp3/.wav" --> I[Audio Processor];
-        
-        G -- "Text" --> J[Split into Chunks];
-        H -- "Image Description (Text)" --> J;
-        I -- "Audio Transcript (Text)" --> J;
-        
-        J -- "Text Chunks" --> K[VectorStore];
-        K -- "Creates" --> L(Retriever);
-        
-        subgraph "Blog Content Agent"
-            M(Agent) -- "Invokes" --> N{LangGraph};
-            N -- "Input" --> O[Router Node];
-            O -- "Decision" --> P["Rewrite (LLM Call)"];
-            O -- "Decision" --> Q["Chat (LLM Call)"];
-            O -- "Decision" --> R["Tool Use"];
-            R -- "Retrieves from" --> L;
-        end
-
-        B -- "Initial generation" --> M;
-        B -- "User Request" --> M;
-
-        P -- "Updated Draft" --> B;
-        Q -- "Chat Response" --> B;
-        R -- "Updated Draft" --> B;
+    subgraph "Backend (FastAPI)"
+        G[FastAPI Server] --> H[Auth Service];
+        G --> I[Document Service];
+        G --> J[Blog Service];
+        G --> K[Session Service];
+        G --> L[WebSocket Handler];
     end
+
+    subgraph "AI Agent (LangGraph)"
+        J --> M[LangGraph Agent];
+        M --> N[Router Node];
+        N --> O[Document Search];
+        N --> P[Web Search];
+        N --> Q[LLM Generation];
+    end
+
+    subgraph "Storage & Processing"
+        I --> R[Vector Store];
+        R --> S[ChromaDB];
+        R --> T[ElasticSearch];
+        I --> U[Document Preprocessor];
+        U --> V[PDF Parser];
+        U --> W[Audio Transcriber];
+        U --> X[Vision Processor];
+    end
+
+    D -.->|WebSocket| L;
+    B -->|REST API| G;
+    Q -->|Streaming| L;
+    L -.->|Real-time Updates| D;
 ```
 
-**Diagram Explanation:**
+**Architecture Highlights:**
+- **Frontend**: Next.js 14 with TypeScript, Tailwind CSS, and Tiptap editor
+- **Backend**: FastAPI with async support, WebSocket, and REST APIs
+- **AI Agent**: LangGraph-based RAG pipeline (reused from original)
+- **Storage**: ChromaDB (vector store), ElasticSearch (optional), Redis (caching)
+- **Collaboration**: Yjs CRDT for conflict-free real-time editing
 
-  * **Ingestion Layer**: Shows the process where user's uploaded documents are converted to text, vectorized through embedding models, and stored in the vector database.
-  * **Generation Layer**: Shows the process where the AI agent uses the vector database and web search tools to generate blog drafts. Modifications and improvements are made through conversation with the user.
-  * **Overall Flow**: Designed to provide an overview of the entire process from user input to content generation, editing, and final publishing to `GitHub Pages`.
+## 🚀 Quick Start
 
-### **Installation and Execution**
+### Prerequisites
 
-1.  **Clone Repository**
-    ```bash
-    git clone https://github.com/AIBootcamp13/upstageailab-langchain-pjt-langchain_8.git
-    cd upstageailab-langchain-pjt-langchain_8
-    ```
-2.  **Install Dependencies**
-    ```bash
-    poetry install
-    ```
-3.  **Set Environment Variables**
-    ```bash
-    cp .env.template .env
-    # Enter OpenAI, Tavily API keys in .env file
-    ```
-4.  **Run Backend Service (Redis)**
-    ```bash
-    # Run Redis for caching using Docker
-    docker run -d --name redis-stack -p 6379:6379 -p 8001:8001 redis/redis-stack:latest
-    ```
-5.  **Run Application**
-    ```bash
-    poetry run chainlit run src/chainlit_app.py -w
-    ```
+* Python 3.11+
+* Node.js 18+
+* [uv](https://github.com/astral-sh/uv) (Python dependency management)
+* Docker (for Redis/ElasticSearch)
 
-For more details, refer to the [Installation Guide](docs/1_INSTALLATION.md).
+### Installation
+
+1. **Clone Repository**
+   ```bash
+   git clone https://github.com/Wchoi189/blog-creator-agent.git
+   cd blog-creator-agent
+   ```
+
+2. **Install uv** (if not already installed)
+   ```bash
+   # macOS/Linux
+   curl -LsSf https://astral.sh/uv/install.sh | sh
+   
+   # Windows (PowerShell)
+   powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
+   ```
+
+3. **Backend Setup**
+   ```bash
+   # Create virtual environment and install dependencies
+   uv sync
+   
+   # Activate virtual environment
+   source .venv/bin/activate  # Linux/macOS
+   # or
+   .venv\Scripts\activate     # Windows
+   
+   # Copy environment file
+   cp .env.example .env
+   # Add your API keys (OpenAI, Tavily, etc.)
+   
+   # Run backend
+   uv run python -m backend.main
+   # or
+   python -m backend.main
+   ```
+   Backend runs on `http://localhost:8000`
+
+3. **Frontend Setup**
+   ```bash
+   cd frontend
+   npm install
+   cp .env.local.example .env.local
+   # Configure API endpoint
+   npm run dev
+   ```
+   Frontend runs on `http://localhost:3000`
+
+4. **Start Redis (Optional)**
+   ```bash
+   docker run -d --name redis-stack -p 6379:6379 redis/redis-stack:latest
+   ```
+
+For detailed setup instructions, see [Installation Guide](docs/1_INSTALLATION.md).
 
 ## 🔨 Tech Stack
 
-  * **Language**: Python 3.11
-  * **Frontend**: Chainlit
-  * **AI/ML**: LangChain, LangGraph, OpenAI, Ollama
-  * **Vector DB**: ChromaDB
-  * **Caching DB**: Redis
-  * **Search**: Tavily API
-  * **Dev Tools**: Poetry, Ruff, pre-commit, Git/GitHub
+### Frontend
+* **Framework**: Next.js 14 (App Router)
+* **Language**: TypeScript
+* **Styling**: Tailwind CSS
+* **Editor**: Tiptap (ProseMirror-based)
+* **Collaboration**: Yjs CRDT
+* **State Management**: Zustand
+* **HTTP Client**: Axios
 
-## 📚 Detailed Documentation (Table of Contents)
+### Backend
+* **Framework**: FastAPI
+* **Language**: Python 3.11+
+* **Dependency Manager**: uv
+* **AI/ML**: LangChain, LangGraph, OpenAI, Ollama
+* **API Docs**: OpenAPI/Swagger (auto-generated)
+* **WebSocket**: Native FastAPI WebSocket support
+* **Authentication**: JWT tokens + API keys
 
-  * [Theme Blog Setup Guide](https://github.com/Wchoi189/blog-creator-agent/blob/main/docs/0_BLOG_SETUP_CHIRPY.md)
-  * [Installation Guide](https://github.com/Wchoi189/blog-creator-agent/blob/main/docs/1_INSTALLATION.md)
-  * [Usage Guide](https://github.com/Wchoi189/blog-creator-agent/blob/main/docs/2_USAGE_GUIDE.md)
-  * [System Architecture](https://github.com/Wchoi189/blog-creator-agent/blob/main/docs/3_ARCHITECTURE.md)
-  * [Configuration and Customization](https://github.com/Wchoi189/blog-creator-agent/blob/main/docs/4_CUSTOMIZATION.md)
-  * [Contributing](https://github.com/Wchoi189/blog-creator-agent/blob/main/docs/5_CONTRIBUTING.md)
-  * [Troubleshooting Guide](https://github.com/Wchoi189/blog-creator-agent/blob/main/docs/6_TROUBLESHOOTING.md)
+### Storage & Infrastructure
+* **Vector DB**: ChromaDB (primary), ElasticSearch (optional)
+* **Caching**: Redis
+* **Search**: Tavily API
+* **Dev Tools**: uv, Ruff, pre-commit
 
 ## 📁 Project Structure
 
 ```
-.
-├── configs/                # Configuration files (config.yaml)
-├── data/                   # Data directory (ChromaDB persistent storage)
-├── docs/                   # Documents and guides
-├── logs/                   # Log storage
-├── notebooks/              # Experimental Jupyter notebooks
-├── prompts/                # Prompt management (prompts.yaml)
-├── public/                 # Chainlit UI custom assets (CSS, JS)
-├── src/                    # Source code
-│   ├── agent.py            # BlogContentAgent class
-│   ├── caching.py          # Redis caching configuration
-│   ├── chainlit_app.py     # Chainlit UI entry point
-│   ├── config.py           # Central configuration logic
-│   ├── document_preprocessor.py # PDF, image, audio processing
-│   ├── graph.py            # LangGraph state machine definition
-│   ├── retriever.py        # RetrieverFactory
-│   ├── vector_store.py     # Vector DB (ChromaDB) wrapper
-│   ├── audio_processor.py  # Audio-to-text conversion logic
-│   ├── vision_processor.py # Image-to-text conversion logic
-│   └── ui/                 # Chainlit UI modules
-│       └── chainlit/       # Callbacks, handlers, settings
-└── ...
+blog-creator-agent/
+├── backend/                 # FastAPI backend
+│   ├── main.py             # Application entry point
+│   ├── api/v1/             # REST API endpoints
+│   │   ├── auth.py         # Authentication
+│   │   ├── documents.py    # Document management
+│   │   ├── blog.py         # Blog generation
+│   │   ├── sessions.py     # Session management
+│   │   └── websocket.py   # WebSocket handler
+│   ├── services/           # Business logic
+│   ├── models/             # Pydantic models
+│   ├── core/               # Security, database utilities
+│   └── agent/              # LangGraph agent (from src/)
+│
+├── frontend/                # Next.js frontend
+│   ├── src/
+│   │   ├── app/            # Pages (App Router)
+│   │   │   ├── (auth)/     # Login, register
+│   │   │   └── (dashboard)/ # Protected pages
+│   │   ├── components/     # React components
+│   │   │   ├── editor/     # Tiptap editor
+│   │   │   └── layout/     # Navbar, Sidebar
+│   │   ├── lib/            # API client, utilities
+│   │   ├── hooks/          # Custom React hooks
+│   │   ├── store/          # Zustand state management
+│   │   └── types/          # TypeScript types
+│   └── package.json
+│
+├── src/                     # Original Chainlit code (preserved)
+│   ├── agent.py            # Original agent logic
+│   ├── chainlit_app.py     # Original Chainlit UI
+│   └── ...
+│
+├── docs/                    # Documentation
+│   ├── plans/              # Implementation roadmap
+│   └── ...
+│
+└── configs/                 # Configuration files
 ```
+
+## 📊 Project Roadmap & Progress
+
+### Current Status: ~70% Complete
+
+| Phase | Status | Progress | Description |
+|-------|--------|----------|-------------|
+| **Part 1: Backend** | ✅ Complete | 100% | FastAPI with 20+ endpoints, WebSocket, authentication |
+| **Part 2: Frontend** | 🔄 In Progress | 85% | Next.js UI, editor, document management |
+| **Part 3: Advanced** | ⏸️ Pending | 0% | Yjs CRDT, GitHub publishing |
+| **Part 4: Deployment** | ⏸️ Pending | 0% | Docker, CI/CD, monitoring |
+
+### Completed Features
+
+✅ **Backend (100%)**
+- FastAPI REST API with 20+ endpoints
+- JWT + API key authentication
+- Document processing (PDF, audio, images)
+- LangGraph agent integration with streaming
+- WebSocket real-time communication
+- Session management
+- Redis + ElasticSearch + ChromaDB integration
+
+✅ **Frontend (85%)**
+- Next.js 14 with TypeScript + Tailwind
+- Authentication (login/register)
+- Dashboard with stats and quick actions
+- Document upload with drag-and-drop
+- Document management table
+- Tiptap rich text editor
+- Settings with API key management
+- Responsive navigation
+- Type-safe API client
+
+### Upcoming Features
+
+🔄 **Part 2 Remaining (15%)**
+- Blog drafts listing page
+- Blog generation flow (select documents → generate)
+- WebSocket integration for real-time status
+- Streaming LLM responses in editor
+
+⏸️ **Part 3: Advanced Features**
+- Yjs CRDT for collaborative editing
+- GitHub OAuth integration
+- Jekyll format conversion
+- Automated GitHub publishing
+
+⏸️ **Part 4: Production Deployment**
+- Docker containers (backend + frontend)
+- Docker Compose setup
+- CI/CD pipeline (GitHub Actions)
+- Monitoring and logging (Prometheus, Grafana)
+
+**Estimated Time Remaining**: ~10-14 hours
+
+For detailed progress tracking, see [docs/plans/README.md](docs/plans/README.md).
+
+## 📚 Documentation
+
+* [Installation Guide](docs/1_INSTALLATION.md) - Detailed setup instructions
+* [Usage Guide](docs/2_USAGE_GUIDE.md) - How to use the application
+* [Architecture](docs/3_ARCHITECTURE.md) - System architecture details
+* [Customization](docs/4_CUSTOMIZATION.md) - Configuration options
+* [Implementation Plans](docs/plans/README.md) - Migration roadmap and progress
+* [Handover Document](HANDOVER.md) - Session handover notes
 
 ## 🤝 Contributing
 
-Want to contribute to this project? Please refer to the [Contributing Guide](docs/5_CONTRIBUTING.md) to help develop the project together. All contributions are welcome!
-
-## **👥 Team Members**
+Contributions are welcome! Please refer to the [Contributing Guide](docs/5_CONTRIBUTING.md) for development standards and workflow.
 
 ## 📄 License
 
 This project is distributed under the MIT License.
+
+---
+
+**Note**: The original Chainlit-based code is preserved in the `src/` directory for reference. The new architecture maintains all original functionality while adding real-time collaboration capabilities.
