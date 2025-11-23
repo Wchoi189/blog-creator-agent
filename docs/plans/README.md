@@ -46,28 +46,21 @@ This directory contains the 4-part implementation roadmap for migrating the Blog
 
 ## 📚 Related Documentation
 
-- [AGENT_ENTRY.md](../../AGENT_ENTRY.md) - Agent navigation guide
-- [AgentQMS Guide](../../AGENTQMS_GUIDE.md) - Framework usage
 - [Migration Assessments](../assessments/) - Technical analysis
-- [AgentQMS AI Handbook](../../../AgentQMS/docs/ai_handbook/) - Protocols and standards
 
 ## 🔧 Development Workflow
 
 1. **Read the relevant implementation plan** for your current task
-2. **Follow AgentQMS protocols** for development standards
-3. **Use AgentQMS tools** for artifact creation and validation
+2. **Follow project protocols** for development standards
+3. **Use project tools** for artifact creation and validation
 4. **Update progress** in this README as work completes
 5. **Validate compliance** before committing changes
 
 ## ✅ Validation Commands
 
 ```bash
-# Validate all artifacts
-cd ../../../AgentQMS/agent_interface
-make validate
-
 # Validate specific plan
-python ../../../AgentQMS/agent_tools/compliance/validate_artifacts.py --file docs/plans/PART_1_FOUNDATION_AND_BACKEND.md
+python -m pytest tests/ --cov=docs/plans --cov-report=html
 ```
 
 ---

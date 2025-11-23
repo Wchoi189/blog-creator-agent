@@ -1,17 +1,12 @@
 [project]
-name = "upstageailab-langchain-pjt-langchain-8"
-version = "1.0.0"
-description = "Blog Content Creator Agent"
+name = "blog-creator-agent"
+version = "2.0.0"
+description = "Blog Content Creator Agent - Next.js Migration Project for Collaborative Editing"
 authors = [
-    {name = "Jo Uiyoung",email = "joyuiyeong@gmail.com"},
-    {name = "Ko Minju",email = "alswn7212@gmail.com"},
-    {name = "Kim Hyoseok",email = "hskimh1982@gmail.com"},
-    {name = "Park Seongjin",email = "psjin2024p@gmail.com"},
-    {name = "Jo Eunbyeol",email = "01028700520eb@gmail.com"},
-    {name = "Choi Ungbi",email = "wchoi189@gmail.com"}
+    {name = "Choi Ungbi", email = "wchoi189@gmail.com"}
 ]
 readme = "README.md"
-requires-python = "3.11.11"
+requires-python = ">=3.10,<3.12"
 dependencies = [
     "python-dotenv (>=1.1.1,<2.0.0)",
     "langchain (>=0.3.27,<0.4.0)",

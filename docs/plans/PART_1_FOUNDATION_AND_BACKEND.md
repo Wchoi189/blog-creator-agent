@@ -134,7 +134,7 @@ You are an autonomous AI agent, my Chief of Staff for implementing **Part 1: Fou
 ### **Active Mitigation Strategies**:
 1. Incremental development with working FastAPI endpoints at each step
 2. Comprehensive testing of each API endpoint before integration
-3. Regular code reviews and validation against AgentQMS standards
+3. Regular code reviews and validation against project standards
 4. Backup of working Chainlit implementation during migration
 
 ### **Fallback Options**:

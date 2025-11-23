@@ -13,7 +13,7 @@ This document provides guidelines for autonomous AI agents working on the Blog C
 - **Collaborative Intelligence**: Multiple agents can work simultaneously on different aspects
 
 ### Decision Framework
-1. **Context Assessment**: Always read relevant implementation plans and AgentQMS protocols
+1. **Context Assessment**: Always read relevant implementation plans and project protocols
 2. **Risk Evaluation**: Assess impact and rollback feasibility before changes
 3. **Validation First**: Test changes before committing
 4. **Documentation Update**: Update progress trackers and implementation plans
@@ -22,7 +22,6 @@ This document provides guidelines for autonomous AI agents working on the Blog C
 
 ### Pre-Execution Checklist
 - [ ] Read current implementation plan status
-- [ ] Check AgentQMS compliance requirements
 - [ ] Verify development environment setup
 - [ ] Review recent changes and potential conflicts
 - [ ] Confirm testing strategy for changes
@@ -39,7 +38,6 @@ This document provides guidelines for autonomous AI agents working on the Blog C
 - [ ] Code follows established patterns
 - [ ] Documentation updated
 - [ ] No breaking changes introduced
-- [ ] AgentQMS validation passes
 
 ## Communication Standards
 
@@ -54,7 +52,7 @@ This document provides guidelines for autonomous AI agents working on the Blog C
 
 ### Issue Escalation
 - **Technical Blockers**: Document in implementation plan, propose solutions
-- **Design Conflicts**: Reference AgentQMS protocols, seek clarification
+- **Design Conflicts**: Reference project protocols, seek clarification
 - **Quality Issues**: Stop execution, request review before proceeding
 
 ## Quality Assurance Protocols
@@ -68,11 +66,6 @@ This document provides guidelines for autonomous AI agents working on the Blog C
 
 ### Validation Commands
 ```bash
-# AgentQMS Validation
-cd AgentQMS/agent_interface
-make validate
-make compliance
-
 # Code Quality
 python -m pytest tests/ --cov=src --cov-report=html
 npm run lint
@@ -103,7 +96,7 @@ python scripts/test_integration.py
 - Each agent focuses on specific implementation parts
 - Regular synchronization of progress
 - Shared understanding of overall architecture
-- Conflict resolution through AgentQMS protocols
+- Conflict resolution through project protocols
 
 ### Knowledge Sharing
 - Document all decisions and rationale
@@ -122,7 +115,7 @@ python scripts/test_integration.py
 
 ### Communication Breakdown
 - Use implementation plans as single source of truth
-- Check AgentQMS validation status
+- Check project validation status
 - Escalate through established channels
 - Maintain operation logs for audit
 
@@ -158,24 +151,12 @@ python scripts/test_integration.py
 
 ---
 
-## AgentQMS Integration
-
-All autonomous agents must comply with AgentQMS protocols:
-
-- **Artifact Management**: All outputs validated and versioned
-- **Quality Standards**: Code reviews and testing requirements
-- **Documentation**: Comprehensive and up-to-date
-- **Traceability**: Full audit trail of decisions and changes
-
 ## Contact and Support
 
-- **Primary Reference**: AgentQMS AI Handbook (`AgentQMS/docs/ai_handbook/`)
 - **Implementation Plans**: `docs/plans/` directory
-- **Quality Validation**: AgentQMS compliance tools
 - **Emergency Contact**: Implementation plan escalation procedures
 
 ---
 
 **Last Updated**: November 2025
 **Version**: 1.0
-**Governing Framework**: AgentQMS Quality Management System
