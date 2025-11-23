@@ -85,7 +85,29 @@ async def internal_error_handler(request, exc):
 
 
 # Import and include routers
-# NOTE: Will be added as we build API endpoints
+from backend.api.v1 import auth, documents, blog, sessions, websocket
+from backend.core.database import db
+
+# Include API routers
+app.include_router(auth.router, prefix="/api/v1")
+app.include_router(documents.router, prefix="/api/v1")
+app.include_router(blog.router, prefix="/api/v1")
+app.include_router(sessions.router, prefix="/api/v1")
+app.include_router(websocket.router)
+
+
+# System status endpoint
+@app.get("/api/v1/status", tags=["Health"])
+async def system_status():
+    """Get system status"""
+    db_health = await db.check_health()
+
+    return {
+        "status": "operational",
+        "version": settings.APP_VERSION,
+        "databases": db_health,
+    }
+
 
 if __name__ == "__main__":
     import uvicorn
