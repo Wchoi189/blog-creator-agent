@@ -2,29 +2,55 @@
 
 from datetime import datetime, timedelta
 from typing import Optional
+import hashlib
+import bcrypt
 from jose import JWTError, jwt
-from passlib.context import CryptContext
 from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 
 from backend.config import settings
 
 
-# Password hashing
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+def _normalize_secret(secret: str) -> bytes:
+    """Pre-hash secrets so bcrypt always receives <=72 bytes."""
+    return hashlib.sha256(secret.encode("utf-8")).digest()
+
+
+def _raw_secret(secret: str) -> bytes:
+    return secret.encode("utf-8")
 
 # HTTP Bearer for JWT
 security = HTTPBearer()
 
 
 def hash_password(password: str) -> str:
-    """Hash a password"""
-    return pwd_context.hash(password)
+    """Hash a password using bcrypt with SHA-256 pre-hashing to avoid 72B limit."""
+    salt = bcrypt.gensalt()
+    digest = _normalize_secret(password)
+    return bcrypt.hashpw(digest, salt).decode("utf-8")
 
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
-    """Verify a password against a hash"""
-    return pwd_context.verify(plain_password, hashed_password)
+    """Verify a password, supporting both SHA-256-prehashed and legacy bcrypt hashes."""
+    hashed_bytes = hashed_password.encode("utf-8")
+
+    digest = _normalize_secret(plain_password)
+    if bcrypt.checkpw(digest, hashed_bytes):
+        return True
+
+    # Legacy fallback for hashes created before SHA-256 pre-hashing.
+    try:
+        raw = _raw_secret(plain_password)
+    except UnicodeEncodeError:
+        return False
+
+    if len(raw) <= 72:
+        try:
+            return bcrypt.checkpw(raw, hashed_bytes)
+        except ValueError:
+            return False
+
+    return False
 
 
 def create_access_token(data: dict, expires_delta: Optional[timedelta] = None) -> str:

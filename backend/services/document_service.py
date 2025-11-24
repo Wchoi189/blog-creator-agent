@@ -7,6 +7,8 @@ from datetime import datetime
 from pathlib import Path
 from typing import List, Optional
 from fastapi import UploadFile
+from langchain_core.documents import Document as LCDocument
+from langchain_text_splitters import RecursiveCharacterTextSplitter
 
 from backend.core.database import db
 from backend.config import settings
@@ -166,24 +168,17 @@ class DocumentService:
             if not doc:
                 raise ValueError("Document not found")
 
-            # Import document preprocessor from existing code
             from src.document_preprocessor import DocumentPreprocessor
-            from src.vector_store import VectorStoreFactory
-            from src.config import DocumentConfig
+            from src.vector_store import VectorStore
 
-            # Initialize preprocessor
-            preprocessor = DocumentPreprocessor()
-
-            # Process document based on type
-            documents = preprocessor.preprocess([doc.file_path])
+            if doc.file_type == DocumentType.MARKDOWN:
+                documents = self._process_markdown(Path(doc.file_path))
+            else:
+                preprocessor = DocumentPreprocessor(Path(doc.file_path))
+                documents = preprocessor.process()
 
             # Create vector store collection for this document
-            vector_store = VectorStoreFactory.create_vector_store(
-                collection_name=f"doc_{doc_id}",
-                persist_directory=settings.CHROMADB_PATH,
-            )
-
-            # Add documents to vector store
+            vector_store = VectorStore()
             vector_store.add_documents(documents)
 
             # Update document status
@@ -206,6 +201,16 @@ class DocumentService:
                 },
             )
             raise
+
+    def _process_markdown(self, path: Path) -> List[Document]:
+        """Simple markdown processor that splits content into chunks."""
+        text = path.read_text(encoding="utf-8")
+        splitter = RecursiveCharacterTextSplitter(
+            chunk_size=settings.CHUNK_SIZE,
+            chunk_overlap=settings.CHUNK_OVERLAP,
+        )
+        base_doc = LCDocument(page_content=text, metadata={"source": str(path)})
+        return splitter.split_documents([base_doc])
 
 
 # Global service instance

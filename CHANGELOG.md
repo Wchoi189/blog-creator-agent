@@ -7,12 +7,13 @@
 - **One line per change** - Use bullet points, avoid paragraphs
 - **Reference extended summaries** - Link to PRs, issues, or detailed docs for full context
 - **Group by type** - Use standard categories: Added, Changed, Fixed, Removed, Security
+- **Datestamps** - Format as `YYYY-MM-DD HH:MM (KST)` using Asia/Seoul time
 - **Version format** - Follow [Semantic Versioning](https://semver.org/): MAJOR.MINOR.PATCH
 - **Date format** - Use YYYY-MM-DD
 
 **Example:**
 ```markdown
-### [2.1.0] - 2025-01-15
+### [2.1.0] - 2025-11-24 23:01 (KST)
 - Added WebSocket support for real-time updates ([#123](https://github.com/...))
 - Fixed authentication token expiration issue ([#124](https://github.com/...))
 - Changed default port from 8000 to 8080
@@ -38,6 +39,9 @@ For detailed migration notes, see [docs/plans/README.md](docs/plans/README.md).
 
 ### Removed
 - Poetry-specific sections from pyproject.toml ([tool.poetry], Poetry build backend)
+
+### Security
+- Updated frontend Next.js/axios/eslint deps to resolve npm audit findings
 
 ---
 

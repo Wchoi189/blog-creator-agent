@@ -65,7 +65,7 @@ export default function GeneratePage() {
     }
   };
 
-  const processedDocs = documents.filter(d => d.status === 'processed');
+  const processedDocs = documents.filter(d => d.status === 'completed');
 
   return (
     <div className="max-w-4xl mx-auto space-y-6">

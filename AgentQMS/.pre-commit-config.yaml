@@ -1,0 +1,18 @@
+repos:
+  - repo: local
+    hooks:
+      - id: agentqms-validate-artifacts
+        name: AgentQMS artifact validation
+        entry: python AgentQMS/agent_tools/compliance/validate_artifacts.py --staged
+        language: system
+        pass_filenames: false
+        stages: [commit]
+      - id: agentqms-validate-docs
+        name: AgentQMS documentation validation
+        entry: >
+          python AgentQMS/agent_tools/documentation/auto_generate_index.py --validate
+        language: system
+        pass_filenames: false
+        stages: [push]
+
+

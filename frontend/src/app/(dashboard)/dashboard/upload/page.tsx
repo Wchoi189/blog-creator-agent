@@ -1,12 +1,13 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { documentsAPI } from '@/lib/api';
 import { Upload, X, FileText, Image, Music } from 'lucide-react';
 
 export default function UploadPage() {
   const router = useRouter();
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [files, setFiles] = useState<File[]>([]);
   const [uploading, setUploading] = useState(false);
   const [dragActive, setDragActive] = useState(false);
@@ -32,6 +33,10 @@ export default function UploadPage() {
     setFiles((prev) => [...prev, ...validFiles]);
   }, []);
 
+  const handleBrowseClick = useCallback(() => {
+    fileInputRef.current?.click();
+  }, []);
+
   const handleFileInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
       const selectedFiles = Array.from(e.target.files);
@@ -39,6 +44,24 @@ export default function UploadPage() {
       setFiles((prev) => [...prev, ...validFiles]);
     }
   };
+
+  const handleDropZoneClick = useCallback(
+    (e: React.MouseEvent) => {
+      e.preventDefault();
+      handleBrowseClick();
+    },
+    [handleBrowseClick],
+  );
+
+  const handleDropZoneKeyDown = useCallback(
+    (e: React.KeyboardEvent) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        handleBrowseClick();
+      }
+    },
+    [handleBrowseClick],
+  );
 
   const validateFile = (file: File): boolean => {
     const allowedTypes = [
@@ -115,6 +138,10 @@ export default function UploadPage() {
 
       {/* Drop Zone */}
       <div
+        role="button"
+        tabIndex={0}
+        onClick={handleDropZoneClick}
+        onKeyDown={handleDropZoneKeyDown}
         onDragEnter={handleDrag}
         onDragLeave={handleDrag}
         onDragOver={handleDrag}
@@ -133,19 +160,21 @@ export default function UploadPage() {
           or click to browse
         </p>
         <input
+          ref={fileInputRef}
           type="file"
           multiple
           onChange={handleFileInput}
           accept=".pdf,.mp3,.wav,.png,.jpg,.jpeg,.md"
-          className="hidden"
+          className="sr-only"
           id="file-input"
         />
-        <label
-          htmlFor="file-input"
+        <button
+          type="button"
+          onClick={handleBrowseClick}
           className="inline-block px-6 py-3 bg-primary-600 text-white rounded-lg hover:bg-primary-700 cursor-pointer transition"
         >
           Browse Files
-        </label>
+        </button>
         <p className="mt-4 text-xs text-gray-500">
           Supported: PDF, MP3, WAV, PNG, JPG, MD (Max 50MB per file)
         </p>
