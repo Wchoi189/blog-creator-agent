@@ -185,12 +185,3 @@ if ! shopt -oq posix; then
   fi
 fi
 
-# === API Keys for Development Environment ===
-# Secrets should be injected at runtime (e.g., via .env or the hosting
-# provider's secret store). Uncomment the exports below and provide your own
-# values locally if needed, but never commit real keys.
-# export UPSTAGE_API_KEY=""
-# export TAVILY_API_KEY=""
-# export OPENAI_API_KEY=""
-# export ELEVENLABS_API_KEY=""
-# export GITHUB_PAT=""
