@@ -160,6 +160,12 @@ mkcd() {
     mkdir -p "$1" && cd "$1"
 }
 
+# === Node.js & npm Global Packages Setup ===
+# Configure npm to use /workspaces for global packages
+export NPM_CONFIG_PREFIX=/workspaces/.npm-global
+# Add npm global bin directory to PATH
+export PATH="/workspaces/.npm-global/bin:$PATH"
+
 # === Final PATH & Environment Setup ===
 # Add local user bin to PATH (if not already added)
 # Note: $HOME/.local/bin is already in PATH from UV setup (line 68)

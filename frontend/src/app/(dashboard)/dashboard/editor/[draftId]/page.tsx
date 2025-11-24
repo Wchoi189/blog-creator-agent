@@ -63,16 +63,34 @@ export default function EditorPage() {
     setShowFeedbackModal(false);
 
     try {
-      const response = await blogAPI.refine(draftId, feedback);
-      // In a real implementation, we'd handle streaming here
-      // For now, just refresh the draft
-      await fetchDraft();
-      setFeedback('');
-      alert('Draft refined successfully!');
+      const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+      const token = localStorage.getItem('access_token');
+      const eventSource = new EventSource(
+        `${API_URL}/api/v1/blog/${draftId}/refine?feedback=${encodeURIComponent(feedback)}&token=${token}`
+      );
+
+      let streamedContent = '';
+
+      eventSource.onmessage = (event) => {
+        const data = JSON.parse(event.data);
+        if (data.type === 'content') {
+          streamedContent += data.content;
+          setContent(streamedContent);
+        } else if (data.type === 'done') {
+          eventSource.close();
+          setRefining(false);
+          setFeedback('');
+        }
+      };
+
+      eventSource.onerror = () => {
+        eventSource.close();
+        setRefining(false);
+        alert('Streaming error occurred');
+      };
     } catch (error) {
       console.error('Failed to refine draft:', error);
       alert('Failed to refine draft');
-    } finally {
       setRefining(false);
     }
   };

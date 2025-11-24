@@ -9,7 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "next": "14.0.4",
+    "next": "14.2.33",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "typescript": "5.3.3",
@@ -19,7 +19,7 @@
     "@tiptap/extension-link": "2.1.13",
     "yjs": "13.6.10",
     "y-websocket": "1.5.0",
-    "axios": "1.6.2",
+    "axios": "1.13.2",
     "swr": "2.2.4",
     "zustand": "4.4.7",
     "tailwindcss": "3.4.0",
@@ -34,7 +34,10 @@
     "@types/node": "20.10.6",
     "@types/react": "18.2.46",
     "@types/react-dom": "18.2.18",
-    "eslint": "8.56.0",
-    "eslint-config-next": "14.0.4"
+    "eslint": "8.57.1",
+    "eslint-config-next": "14.2.33"
+  },
+  "overrides": {
+    "glob": "^11.0.0"
   }
 }

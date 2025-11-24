@@ -2,12 +2,14 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { FileText, Upload, Settings, Home } from 'lucide-react';
+import { FileText, Upload, Settings, Home, FileCheck, Sparkles } from 'lucide-react';
 
 const navItems = [
   { name: 'Dashboard', href: '/dashboard', icon: Home },
   { name: 'Documents', href: '/dashboard/documents', icon: FileText },
   { name: 'Upload', href: '/dashboard/upload', icon: Upload },
+  { name: 'Drafts', href: '/dashboard/drafts', icon: FileCheck },
+  { name: 'Generate', href: '/dashboard/generate', icon: Sparkles },
   { name: 'Settings', href: '/dashboard/settings', icon: Settings },
 ];
 

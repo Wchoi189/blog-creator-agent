@@ -1,8 +1,8 @@
-# 📝 Blog Creator Agent - Collaborative Document Editor
+# 📝 Blog Creator Agent
 
-**A modern RAG-powered system that converts documents (PDF, audio, images) into blog posts with real-time collaborative editing capabilities.**
+**RAG-powered system: documents → blog posts with AI assistance**
 
-This project is a continuation and remake of the original blog-creator-agent, focused on solving the challenge of implementing live document editing and collaboration features that were not feasible with chat-based UI frameworks.
+Migrated from Chainlit to Next.js 14 + FastAPI. Part 2 complete (100%).
 
 ## 🎯 Project Purpose
 
@@ -84,7 +84,7 @@ graph TB
 
 ### Prerequisites
 
-* Python 3.11+
+* Python 3.11+ (used: 3.11.14)
 * Node.js 18+
 * [uv](https://github.com/astral-sh/uv) (Python dependency management)
 * Docker (for Redis/ElasticSearch)

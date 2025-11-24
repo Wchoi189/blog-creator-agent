@@ -6,6 +6,8 @@ ENV DEBIAN_FRONTEND=noninteractive
 ENV TZ=Asia/Seoul
 ENV PYTHONUNBUFFERED=1
 ENV UV_LINK_MODE=copy
+ENV NPM_CONFIG_PREFIX=/workspaces/.npm-global
+ENV PATH="/workspaces/.npm-global/bin:$PATH"
 
 # Install system dependencies and cuDNN for GPU acceleration
 # Note: NVIDIA CUDA base image already includes the CUDA repository
@@ -84,6 +86,11 @@ RUN touch /home/vscode/.ssh/authorized_keys && \
 RUN curl -LsSf https://astral.sh/uv/install.sh | UV_INSTALL_DIR=/opt/uv sh
 ENV PATH="/opt/uv/bin:$PATH"
 
+# Install Node.js (version 20 LTS) as root
+RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - && \
+    apt-get install -y nodejs && \
+    rm -rf /var/lib/apt/lists/*
+
 # Set up project directory
 RUN mkdir -p /workspaces && chown vscode:vscode /workspaces
 
@@ -109,6 +116,13 @@ RUN echo 'alias python="uv run python"' >> ~/.bashrc && \
     echo 'alias python3="uv run python3"' >> ~/.bashrc && \
     echo 'alias pytest="uv run pytest"' >> ~/.bashrc && \
     echo 'alias make="uv run make"' >> ~/.bashrc
+
+# Configure npm to use /workspaces for global packages
+RUN mkdir -p /workspaces/.npm-global && \
+    npm config set prefix /workspaces/.npm-global
+
+# Install global npm packages: Claude Code, Qwen Coder, and repomix
+RUN npm install -g @anthropic-ai/claude-code @qwen-code/qwen-code repomix
 
 # Create startup script that starts SSH as root and keeps container running
 RUN sudo sh -c 'echo "#!/bin/bash\n\
