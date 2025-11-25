@@ -12,19 +12,20 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }) {
   const router = useRouter();
-  const { isAuthenticated, isLoading, fetchCurrentUser } = useAuthStore();
+  const { isAuthenticated, isInitialized, fetchCurrentUser } = useAuthStore();
 
   useEffect(() => {
     fetchCurrentUser();
-  }, [fetchCurrentUser]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
-    if (!isLoading && !isAuthenticated) {
+    if (isInitialized && !isAuthenticated) {
       router.push('/login');
     }
-  }, [isAuthenticated, isLoading, router]);
+  }, [isAuthenticated, isInitialized, router]);
 
-  if (isLoading) {
+  if (!isInitialized) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">

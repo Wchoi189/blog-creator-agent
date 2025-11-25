@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback, useRef } from 'react';
+import { useState, useRef, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { documentsAPI } from '@/lib/api';
 import { Upload, X, FileText, Image, Music } from 'lucide-react';
@@ -33,10 +33,6 @@ export default function UploadPage() {
     setFiles((prev) => [...prev, ...validFiles]);
   }, []);
 
-  const handleBrowseClick = useCallback(() => {
-    fileInputRef.current?.click();
-  }, []);
-
   const handleFileInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
       const selectedFiles = Array.from(e.target.files);
@@ -44,24 +40,6 @@ export default function UploadPage() {
       setFiles((prev) => [...prev, ...validFiles]);
     }
   };
-
-  const handleDropZoneClick = useCallback(
-    (e: React.MouseEvent) => {
-      e.preventDefault();
-      handleBrowseClick();
-    },
-    [handleBrowseClick],
-  );
-
-  const handleDropZoneKeyDown = useCallback(
-    (e: React.KeyboardEvent) => {
-      if (e.key === 'Enter' || e.key === ' ') {
-        e.preventDefault();
-        handleBrowseClick();
-      }
-    },
-    [handleBrowseClick],
-  );
 
   const validateFile = (file: File): boolean => {
     const allowedTypes = [
@@ -138,10 +116,6 @@ export default function UploadPage() {
 
       {/* Drop Zone */}
       <div
-        role="button"
-        tabIndex={0}
-        onClick={handleDropZoneClick}
-        onKeyDown={handleDropZoneKeyDown}
         onDragEnter={handleDrag}
         onDragLeave={handleDrag}
         onDragOver={handleDrag}
@@ -165,16 +139,15 @@ export default function UploadPage() {
           multiple
           onChange={handleFileInput}
           accept=".pdf,.mp3,.wav,.png,.jpg,.jpeg,.md"
-          className="sr-only"
+          className="hidden"
           id="file-input"
         />
-        <button
-          type="button"
-          onClick={handleBrowseClick}
+        <label
+          htmlFor="file-input"
           className="inline-block px-6 py-3 bg-primary-600 text-white rounded-lg hover:bg-primary-700 cursor-pointer transition"
         >
           Browse Files
-        </button>
+        </label>
         <p className="mt-4 text-xs text-gray-500">
           Supported: PDF, MP3, WAV, PNG, JPG, MD (Max 50MB per file)
         </p>

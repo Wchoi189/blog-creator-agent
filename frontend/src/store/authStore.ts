@@ -10,6 +10,7 @@ interface AuthState {
   user: User | null;
   isAuthenticated: boolean;
   isLoading: boolean;
+  isInitialized: boolean;
   error: string | null;
 
   // Actions
@@ -24,6 +25,7 @@ export const useAuthStore = create<AuthState>((set) => ({
   user: null,
   isAuthenticated: false,
   isLoading: false,
+  isInitialized: true,
   error: null,
 
   login: async (email, password) => {
@@ -42,11 +44,13 @@ export const useAuthStore = create<AuthState>((set) => ({
         user: userResponse.data,
         isAuthenticated: true,
         isLoading: false,
+        isInitialized: true,
       });
     } catch (error: any) {
       set({
         error: error.response?.data?.detail || 'Login failed',
         isLoading: false,
+        isInitialized: true,
       });
       throw error;
     }
@@ -57,12 +61,13 @@ export const useAuthStore = create<AuthState>((set) => ({
     try {
       await authAPI.register({ email, password, full_name: fullName });
 
-      // Auto-login after registration
+      // Auto-login after registration (login will set isInitialized)
       await useAuthStore.getState().login(email, password);
     } catch (error: any) {
       set({
         error: error.response?.data?.detail || 'Registration failed',
         isLoading: false,
+        isInitialized: true,
       });
       throw error;
     }
@@ -71,13 +76,13 @@ export const useAuthStore = create<AuthState>((set) => ({
   logout: () => {
     localStorage.removeItem('access_token');
     localStorage.removeItem('refresh_token');
-    set({ user: null, isAuthenticated: false });
+    set({ user: null, isAuthenticated: false, isInitialized: true });
   },
 
   fetchCurrentUser: async () => {
     const token = localStorage.getItem('access_token');
     if (!token) {
-      set({ isAuthenticated: false });
+      set({ isAuthenticated: false, isLoading: false, isInitialized: true });
       return;
     }
 
@@ -88,12 +93,14 @@ export const useAuthStore = create<AuthState>((set) => ({
         user: response.data,
         isAuthenticated: true,
         isLoading: false,
+        isInitialized: true,
       });
     } catch (error) {
       set({
         user: null,
         isAuthenticated: false,
         isLoading: false,
+        isInitialized: true,
       });
       localStorage.removeItem('access_token');
       localStorage.removeItem('refresh_token');

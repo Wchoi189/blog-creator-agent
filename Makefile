@@ -8,6 +8,7 @@ backend:
 frontend:
 	cd frontend && npm run dev
 
+s: stack
 stack:
 	$(MAKE) -j2 backend frontend
 
@@ -17,6 +18,7 @@ stop-backend:
 stop-frontend:
 	-pkill -f "next dev -p 3002" || true
 
+ss: stack-stop
 stack-stop: stop-backend stop-frontend
 
 stack-restart: stack-stop
