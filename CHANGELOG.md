@@ -42,6 +42,21 @@ For detailed migration notes, see [docs/plans/README.md](docs/plans/README.md).
 
 ### Security
 - Updated frontend Next.js/axios/eslint deps to resolve npm audit findings
+- **[2025-11-26]** Comprehensive security audit completed ([Audit Report](docs/audit/AUDIT_REPORT_2025-11-26.md))
+- **[2025-11-26]** Resolved 21 Python dependency vulnerabilities
+  - certifi: 2023.11.17 → 2025.11.12
+  - configobj: 5.0.8 → 5.0.9
+  - cryptography: 41.0.7 → 46.0.3
+  - idna: 3.6 → 3.11
+  - jinja2: 3.1.2 → 3.1.6
+  - pip: 24.0 → 25.3
+  - requests: 2.31.0 → 2.32.5
+  - setuptools: 68.1.2 → 80.9.0
+  - twisted: 24.3.0 → 25.5.0
+  - urllib3: 2.0.7 → 2.5.0
+- **[2025-11-26]** Added SECURITY.md with security policy and best practices
+- **[2025-11-26]** Verified 0 vulnerabilities in frontend dependencies (npm audit)
+- **[2025-11-26]** Verified 0 vulnerabilities in backend dependencies (pip-audit)
 
 ---
 
