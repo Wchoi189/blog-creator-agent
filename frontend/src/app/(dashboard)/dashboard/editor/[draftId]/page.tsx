@@ -7,6 +7,8 @@ import { BlogDraft } from '@/types/api';
 import TiptapEditor from '@/components/editor/TiptapEditor';
 import { Save, Download, ArrowLeft, Sparkles } from 'lucide-react';
 
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8002';
+
 export default function EditorPage() {
   const params = useParams();
   const router = useRouter();
@@ -63,8 +65,6 @@ export default function EditorPage() {
     setShowFeedbackModal(false);
 
     try {
-      const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8002';
-      
       // Use fetch with streaming instead of EventSource for better auth support
       const response = await fetch(`${API_URL}/api/v1/blog/${draftId}/refine`, {
         method: 'POST',

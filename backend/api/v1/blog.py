@@ -1,6 +1,7 @@
 """Blog generation API endpoints"""
 
 import json
+import logging
 from fastapi import APIRouter, Depends, HTTPException, status, Query
 from fastapi.responses import StreamingResponse
 from typing import List, Optional
@@ -14,6 +15,8 @@ from backend.models.blog import (
 )
 from backend.services.blog_service import blog_service
 from backend.core.security import get_current_user_id
+
+logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/blog", tags=["Blog"])
 
@@ -45,7 +48,7 @@ async def _generate_content_background(draft_id: str, instructions: Optional[str
         async for _ in blog_service.generate_content(draft_id, instructions):
             pass  # Consume the generator to completion
     except Exception as e:
-        print(f"Error generating content for draft {draft_id}: {e}")
+        logger.error(f"Error generating content for draft {draft_id}: {e}")
 
 
 @router.post("/{draft_id}/generate-content")

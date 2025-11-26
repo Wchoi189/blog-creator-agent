@@ -4,6 +4,8 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { FileText, Sparkles } from 'lucide-react'
 
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8002'
+
 interface Document {
   id: string
   filename: string
@@ -38,7 +40,6 @@ export default function GenerateClient({ documents }: GenerateClientProps) {
     }
 
     setLoading(true)
-    const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8002'
     
     try {
       // Create session first
