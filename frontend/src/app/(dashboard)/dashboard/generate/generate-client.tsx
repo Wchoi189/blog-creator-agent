@@ -38,22 +38,29 @@ export default function GenerateClient({ documents }: GenerateClientProps) {
     }
 
     setLoading(true)
+    const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8002'
+    
     try {
-      // Create session first (client-side API call for now)
-      const sessionRes = await fetch('/api/v1/sessions', {
+      // Create session first
+      const sessionRes = await fetch(`${API_URL}/api/v1/sessions`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include', // Send cookies for auth
         body: JSON.stringify({ name: `Blog: ${title || 'Untitled'}` }),
       })
       
-      if (!sessionRes.ok) throw new Error('Failed to create session')
+      if (!sessionRes.ok) {
+        const errorText = await sessionRes.text()
+        throw new Error(`Failed to create session: ${errorText}`)
+      }
       const sessionData = await sessionRes.json()
       const session_id = sessionData.id
 
       // Generate blog draft
-      const res = await fetch(`/api/v1/blog/generate?session_id=${session_id}`, {
+      const res = await fetch(`${API_URL}/api/v1/blog/generate?session_id=${session_id}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include', // Send cookies for auth
         body: JSON.stringify({
           document_ids: selectedDocs,
           title: title || undefined,
@@ -61,13 +68,16 @@ export default function GenerateClient({ documents }: GenerateClientProps) {
         }),
       })
 
-      if (!res.ok) throw new Error('Failed to generate blog')
+      if (!res.ok) {
+        const errorText = await res.text()
+        throw new Error(`Failed to generate blog: ${errorText}`)
+      }
       const data = await res.json()
 
       router.push(`/dashboard/editor/${data.id}`)
     } catch (error) {
       console.error('Failed to generate blog:', error)
-      alert('Failed to generate blog')
+      alert(error instanceof Error ? error.message : 'Failed to generate blog')
     } finally {
       setLoading(false)
     }

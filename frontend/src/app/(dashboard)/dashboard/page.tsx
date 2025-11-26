@@ -24,9 +24,12 @@ export default async function DashboardPage() {
       sessionsServerAPI.list(),
     ])
 
+    // Handle both array and object response formats for drafts
+    const draftsArray = Array.isArray(draftsData) ? draftsData : (draftsData as { drafts: any[] }).drafts || []
+
     const stats = {
       documents: docsData.documents?.length || 0,
-      drafts: draftsData.drafts?.length || draftsData.length || 0,
+      drafts: draftsArray.length,
       sessions: sessionsData.sessions?.length || 0,
     }
 
@@ -37,5 +40,3 @@ export default async function DashboardPage() {
     return <DashboardClient user={user} stats={{ documents: 0, drafts: 0, sessions: 0 }} />
   }
 }
-
-

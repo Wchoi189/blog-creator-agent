@@ -128,7 +128,7 @@ class BlogService:
         draft_id: str,
         instructions: Optional[str] = None,
     ) -> AsyncIterator[str]:
-        """Generate blog content using LangGraph agent (streaming)"""
+        """Generate blog content using OpenAI (streaming)"""
         draft = await self.get_draft(draft_id)
         if not draft:
             raise ValueError("Draft not found")
@@ -137,45 +137,49 @@ class BlogService:
         self.redis.hset(f"draft:{draft_id}", "status", BlogStatus.GENERATING.value)
 
         try:
-            # Import agent from existing code
-            from src.agent import BlogContentAgent
-            from src.retriever import RetrieverFactory
-            from src.vector_store import VectorStoreFactory
-
-            # Create retrievers for each document
-            retrievers = []
+            import openai
+            from backend.config import settings
+            
+            # Configure OpenAI
+            client = openai.AsyncOpenAI(api_key=settings.OPENAI_API_KEY)
+            
+            # Build the prompt
+            prompt = instructions or f"Write a comprehensive blog post titled '{draft.title}'"
+            
+            # If we have document context from Redis, include it
+            doc_context = ""
             for doc_id in draft.document_ids:
-                vector_store = VectorStoreFactory.create_vector_store(
-                    collection_name=f"doc_{doc_id}",
-                    persist_directory=settings.CHROMADB_PATH,
-                )
-                retriever = vector_store.as_retriever(search_kwargs={"k": settings.TOP_K_RESULTS})
-                retrievers.append(retriever)
-
-            # Combine retrievers (use first for now, can merge later)
-            retriever = retrievers[0] if retrievers else None
-
-            if not retriever:
-                raise ValueError("No documents available for generation")
-
-            # Create agent
-            agent = BlogContentAgent(
-                retriever=retriever,
-                documents=[],  # Documents already in vector store
-                llm_provider=settings.DEFAULT_LLM_PROVIDER,
-                llm_model=settings.DEFAULT_LLM_MODEL,
-                agent_profile="draft",
-            )
-
-            # Generate content with streaming
-            session_id = draft.session_id
-            prompt = instructions or f"Generate a blog post titled '{draft.title}'"
-
-            # Stream response
+                doc_data = self.redis.hgetall(f"document:{doc_id}")
+                if doc_data and doc_data.get("extracted_text"):
+                    doc_context += f"\n\n--- Document: {doc_data.get('filename', doc_id)} ---\n"
+                    # Limit context to avoid token limits
+                    doc_context += doc_data.get("extracted_text", "")[:4000]
+            
+            system_prompt = """You are a professional blog writer. Create engaging, well-structured blog content.
+Use markdown formatting with proper headings, paragraphs, and bullet points where appropriate.
+Make the content informative, engaging, and easy to read."""
+            
+            if doc_context:
+                system_prompt += f"\n\nUse the following document content as reference:\n{doc_context}"
+            
+            # Stream response from OpenAI
             full_content = ""
-            async for chunk in agent.stream_response(session_id, prompt):
-                full_content += chunk
-                yield chunk
+            stream = await client.chat.completions.create(
+                model=settings.DEFAULT_LLM_MODEL or "gpt-4-turbo-preview",
+                messages=[
+                    {"role": "system", "content": system_prompt},
+                    {"role": "user", "content": prompt}
+                ],
+                stream=True,
+                max_tokens=4000,
+                temperature=0.7,
+            )
+            
+            async for chunk in stream:
+                if chunk.choices and chunk.choices[0].delta.content:
+                    content = chunk.choices[0].delta.content
+                    full_content += content
+                    yield content
 
             # Update draft with generated content
             await self.update_draft(
@@ -201,9 +205,64 @@ class BlogService:
         if not draft:
             raise ValueError("Draft not found")
 
-        # Similar to generate_content but with refinement prompt
-        async for chunk in self.generate_content(draft_id, feedback):
-            yield chunk
+        # Update status
+        self.redis.hset(f"draft:{draft_id}", "status", BlogStatus.GENERATING.value)
+
+        try:
+            import openai
+            from backend.config import settings
+            
+            # Configure OpenAI
+            client = openai.AsyncOpenAI(api_key=settings.OPENAI_API_KEY)
+            
+            # Build the refinement prompt with current content
+            system_prompt = """You are a professional blog editor. Your task is to refine and improve blog content based on feedback.
+Maintain the overall structure and topic while incorporating the requested changes.
+Output the complete revised blog post in markdown format."""
+            
+            user_prompt = f"""Here is the current blog post:
+
+{draft.content}
+
+---
+
+Please refine this blog post based on the following feedback:
+{feedback}
+
+Provide the complete revised blog post:"""
+            
+            # Stream response from OpenAI
+            full_content = ""
+            stream = await client.chat.completions.create(
+                model=settings.DEFAULT_LLM_MODEL or "gpt-4-turbo-preview",
+                messages=[
+                    {"role": "system", "content": system_prompt},
+                    {"role": "user", "content": user_prompt}
+                ],
+                stream=True,
+                max_tokens=4000,
+                temperature=0.7,
+            )
+            
+            async for chunk in stream:
+                if chunk.choices and chunk.choices[0].delta.content:
+                    content = chunk.choices[0].delta.content
+                    full_content += content
+                    yield content
+
+            # Update draft with refined content
+            await self.update_draft(
+                draft_id,
+                BlogDraftUpdate(content=full_content),
+            )
+
+            # Update status
+            self.redis.hset(f"draft:{draft_id}", "status", BlogStatus.COMPLETED.value)
+
+        except Exception as e:
+            # Mark as failed
+            self.redis.hset(f"draft:{draft_id}", "status", BlogStatus.FAILED.value)
+            raise
 
     async def list_drafts(self, user_id: str) -> List[BlogDraft]:
         """List user's drafts"""

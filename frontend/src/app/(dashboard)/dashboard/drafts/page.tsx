@@ -15,7 +15,8 @@ export default async function DraftsPage() {
   // Fetch drafts from server-side using httpOnly cookies
   const data = await blogServerAPI.list()
   
-  return <DraftsClient drafts={data.drafts || data || []} />
+  // Handle both array and object response formats
+  const drafts = Array.isArray(data) ? data : (data as { drafts: any[] }).drafts || []
+  
+  return <DraftsClient drafts={drafts} />
 }
-
-

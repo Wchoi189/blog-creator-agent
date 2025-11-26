@@ -63,34 +63,43 @@ export default function EditorPage() {
     setShowFeedbackModal(false);
 
     try {
-      const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
-      const token = localStorage.getItem('access_token');
-      const eventSource = new EventSource(
-        `${API_URL}/api/v1/blog/${draftId}/refine?feedback=${encodeURIComponent(feedback)}&token=${token}`
-      );
+      const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8002';
+      
+      // Use fetch with streaming instead of EventSource for better auth support
+      const response = await fetch(`${API_URL}/api/v1/blog/${draftId}/refine`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include', // Send cookies for auth
+        body: JSON.stringify({ feedback }),
+      });
 
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${await response.text()}`);
+      }
+
+      // Read streaming response
+      const reader = response.body?.getReader();
+      if (!reader) {
+        throw new Error('No response body');
+      }
+
+      const decoder = new TextDecoder();
       let streamedContent = '';
 
-      eventSource.onmessage = (event) => {
-        const data = JSON.parse(event.data);
-        if (data.type === 'content') {
-          streamedContent += data.content;
-          setContent(streamedContent);
-        } else if (data.type === 'done') {
-          eventSource.close();
-          setRefining(false);
-          setFeedback('');
-        }
-      };
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        
+        const chunk = decoder.decode(value, { stream: true });
+        streamedContent += chunk;
+        setContent(streamedContent);
+      }
 
-      eventSource.onerror = () => {
-        eventSource.close();
-        setRefining(false);
-        alert('Streaming error occurred');
-      };
+      setRefining(false);
+      setFeedback('');
     } catch (error) {
       console.error('Failed to refine draft:', error);
-      alert('Failed to refine draft');
+      alert(error instanceof Error ? error.message : 'Failed to refine draft');
       setRefining(false);
     }
   };
