@@ -87,9 +87,15 @@ export default function UploadPage() {
       setTimeout(() => {
         router.push('/dashboard/documents');
       }, 1000);
-    } catch (error) {
+    } catch (error: any) {
       console.error('Upload failed:', error);
-      alert('Upload failed. Please try again.');
+      if (error.response) {
+        console.error('Error status:', error.response.status);
+        console.error('Error data:', error.response.data);
+        alert(`Upload failed: ${error.response.data?.detail || error.message}`);
+      } else {
+        alert(`Upload failed: ${error.message}`);
+      }
     } finally {
       setUploading(false);
     }

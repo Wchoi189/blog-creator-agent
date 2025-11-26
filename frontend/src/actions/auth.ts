@@ -27,8 +27,19 @@ export async function login(prevState: FormState, formData: FormData): Promise<F
     const { access_token, refresh_token } = await response.json()
     
     const cookieStore = await cookies()
+    // HttpOnly cookie for server-side API calls
     cookieStore.set('access_token', access_token, {
       httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      maxAge: 60 * 60 * 24 * 7, // 7 days
+      path: '/',
+    })
+    
+    // Client-accessible cookie for client-side API calls
+    // Note: This is less secure than httpOnly but necessary for client components
+    cookieStore.set('client_token', access_token, {
+      httpOnly: false, // Accessible by JavaScript
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',
       maxAge: 60 * 60 * 24 * 7, // 7 days
@@ -76,6 +87,7 @@ export async function register(prevState: FormState, formData: FormData): Promis
 export async function logout() {
   const cookieStore = await cookies()
   cookieStore.delete('access_token')
+  cookieStore.delete('client_token')
   cookieStore.delete('refresh_token')
   redirect('/login')
 }
@@ -83,4 +95,31 @@ export async function logout() {
 export async function getAccessToken() {
   const cookieStore = await cookies()
   return cookieStore.get('access_token')?.value
+}
+
+export async function getCurrentUser() {
+  const accessToken = await getAccessToken()
+  
+  if (!accessToken) {
+    return { user: null }
+  }
+  
+  try {
+    const response = await fetch(`${API_URL}/api/v1/auth/me`, {
+      headers: {
+        'Authorization': `Bearer ${accessToken}`,
+        'Content-Type': 'application/json',
+      },
+    })
+    
+    if (!response.ok) {
+      return { user: null }
+    }
+    
+    const user = await response.json()
+    return { user }
+  } catch (error) {
+    console.error('Failed to fetch current user:', error)
+    return { user: null }
+  }
 }

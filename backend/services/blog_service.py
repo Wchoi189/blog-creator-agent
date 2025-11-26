@@ -128,7 +128,7 @@ class BlogService:
         draft_id: str,
         instructions: Optional[str] = None,
     ) -> AsyncIterator[str]:
-        """Generate blog content using LangGraph agent (streaming)"""
+        """Generate blog content using LLM (streaming)"""
         draft = await self.get_draft(draft_id)
         if not draft:
             raise ValueError("Draft not found")
@@ -137,45 +137,37 @@ class BlogService:
         self.redis.hset(f"draft:{draft_id}", "status", BlogStatus.GENERATING.value)
 
         try:
-            # Import agent from existing code
-            from src.agent import BlogContentAgent
-            from src.retriever import RetrieverFactory
-            from src.vector_store import VectorStoreFactory
-
-            # Create retrievers for each document
-            retrievers = []
-            for doc_id in draft.document_ids:
-                vector_store = VectorStoreFactory.create_vector_store(
-                    collection_name=f"doc_{doc_id}",
-                    persist_directory=settings.CHROMADB_PATH,
-                )
-                retriever = vector_store.as_retriever(search_kwargs={"k": settings.TOP_K_RESULTS})
-                retrievers.append(retriever)
-
-            # Combine retrievers (use first for now, can merge later)
-            retriever = retrievers[0] if retrievers else None
-
-            if not retriever:
-                raise ValueError("No documents available for generation")
-
-            # Create agent
-            agent = BlogContentAgent(
-                retriever=retriever,
-                documents=[],  # Documents already in vector store
-                llm_provider=settings.DEFAULT_LLM_PROVIDER,
-                llm_model=settings.DEFAULT_LLM_MODEL,
-                agent_profile="draft",
+            from langchain_openai import ChatOpenAI
+            from langchain_core.messages import HumanMessage, SystemMessage
+            
+            # Initialize LLM with streaming
+            llm = ChatOpenAI(
+                model=settings.DEFAULT_LLM_MODEL,
+                temperature=0.7,
+                streaming=True,
+                api_key=settings.OPENAI_API_KEY,
             )
-
-            # Generate content with streaming
-            session_id = draft.session_id
-            prompt = instructions or f"Generate a blog post titled '{draft.title}'"
-
+            
+            # Build prompt
+            system_prompt = """You are an expert blog content writer. Generate well-structured, 
+engaging blog content based on the user's instructions. Use markdown formatting with proper 
+headings, paragraphs, and bullet points where appropriate."""
+            
+            user_prompt = instructions or f"Generate a blog post titled '{draft.title}'"
+            if draft.content:
+                user_prompt = f"Current content:\n{draft.content}\n\nInstructions: {user_prompt}"
+            
+            messages = [
+                SystemMessage(content=system_prompt),
+                HumanMessage(content=user_prompt),
+            ]
+            
             # Stream response
             full_content = ""
-            async for chunk in agent.stream_response(session_id, prompt):
-                full_content += chunk
-                yield chunk
+            async for chunk in llm.astream(messages):
+                if chunk.content:
+                    full_content += chunk.content
+                    yield chunk.content
 
             # Update draft with generated content
             await self.update_draft(
@@ -201,9 +193,59 @@ class BlogService:
         if not draft:
             raise ValueError("Draft not found")
 
-        # Similar to generate_content but with refinement prompt
-        async for chunk in self.generate_content(draft_id, feedback):
-            yield chunk
+        # Update status
+        self.redis.hset(f"draft:{draft_id}", "status", BlogStatus.GENERATING.value)
+
+        try:
+            from langchain_openai import ChatOpenAI
+            from langchain_core.messages import HumanMessage, SystemMessage
+            
+            # Initialize LLM with streaming
+            llm = ChatOpenAI(
+                model=settings.DEFAULT_LLM_MODEL,
+                temperature=0.7,
+                streaming=True,
+                api_key=settings.OPENAI_API_KEY,
+            )
+            
+            # Build refinement prompt
+            system_prompt = """You are an expert blog editor. Your task is to refine and improve 
+the provided blog content based on the user's feedback. Maintain the overall structure while 
+making the requested improvements. Output the complete refined content in markdown format."""
+            
+            user_prompt = f"""Current blog content:
+{draft.content}
+
+User feedback/instructions:
+{feedback}
+
+Please provide the complete refined blog content based on the feedback above."""
+            
+            messages = [
+                SystemMessage(content=system_prompt),
+                HumanMessage(content=user_prompt),
+            ]
+            
+            # Stream response
+            full_content = ""
+            async for chunk in llm.astream(messages):
+                if chunk.content:
+                    full_content += chunk.content
+                    yield chunk.content
+
+            # Update draft with refined content
+            await self.update_draft(
+                draft_id,
+                BlogDraftUpdate(content=full_content),
+            )
+
+            # Update status
+            self.redis.hset(f"draft:{draft_id}", "status", BlogStatus.COMPLETED.value)
+
+        except Exception as e:
+            # Mark as failed
+            self.redis.hset(f"draft:{draft_id}", "status", BlogStatus.FAILED.value)
+            raise
 
     async def list_drafts(self, user_id: str) -> List[BlogDraft]:
         """List user's drafts"""

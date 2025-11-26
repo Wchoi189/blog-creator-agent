@@ -4,7 +4,7 @@ from datetime import datetime, timedelta
 from typing import Optional
 import hashlib
 import bcrypt
-from jose import JWTError, jwt
+from jose import JWTError, jwt  # type: ignore
 from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 
@@ -96,8 +96,8 @@ async def get_current_user_id(
     token = credentials.credentials
     payload = decode_token(token)
 
-    user_id: str = payload.get("sub")
-    token_type: str = payload.get("type")
+    user_id: Optional[str] = payload.get("sub")
+    token_type: Optional[str] = payload.get("type")
 
     if user_id is None:
         raise HTTPException(
@@ -106,7 +106,7 @@ async def get_current_user_id(
             headers={"WWW-Authenticate": "Bearer"},
         )
 
-    if token_type != "access":
+    if token_type is None or token_type != "access":
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Invalid token type",

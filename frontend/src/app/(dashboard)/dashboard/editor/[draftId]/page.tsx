@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { blogAPI } from '@/lib/api';
+import { blogAPI, getClientToken } from '@/lib/api';
 import { BlogDraft } from '@/types/api';
 import TiptapEditor from '@/components/editor/TiptapEditor';
 import { Save, Download, ArrowLeft, Sparkles } from 'lucide-react';
@@ -22,23 +22,23 @@ export default function EditorPage() {
   const [showFeedbackModal, setShowFeedbackModal] = useState(false);
 
   useEffect(() => {
+    const fetchDraft = async () => {
+      try {
+        const response = await blogAPI.get(draftId);
+        const draftData = response.data;
+        setDraft(draftData);
+        setContent(draftData.content);
+        setTitle(draftData.title);
+      } catch (error) {
+        console.error('Failed to fetch draft:', error);
+        alert('Failed to load draft');
+      } finally {
+        setLoading(false);
+      }
+    };
+
     fetchDraft();
   }, [draftId]);
-
-  const fetchDraft = async () => {
-    try {
-      const response = await blogAPI.get(draftId);
-      const draftData = response.data;
-      setDraft(draftData);
-      setContent(draftData.content);
-      setTitle(draftData.title);
-    } catch (error) {
-      console.error('Failed to fetch draft:', error);
-      alert('Failed to load draft');
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const handleSave = async () => {
     setSaving(true);
@@ -54,40 +54,79 @@ export default function EditorPage() {
   };
 
   const handleRefine = async () => {
+    console.log('handleRefine called, feedback:', feedback);
+    
     if (!feedback.trim()) {
       alert('Please provide feedback for refinement');
       return;
     }
 
+    // Prevent double-submission
+    if (refining) {
+      console.log('Already refining, returning');
+      return;
+    }
+
     setRefining(true);
     setShowFeedbackModal(false);
+    console.log('Starting refine...');
 
     try {
       const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
-      const token = localStorage.getItem('access_token');
-      const eventSource = new EventSource(
-        `${API_URL}/api/v1/blog/${draftId}/refine?feedback=${encodeURIComponent(feedback)}&token=${token}`
-      );
+      console.log('API_URL:', API_URL, 'draftId:', draftId);
+      
+      // Get token from cookie using shared helper
+      const token = getClientToken();
+      console.log('Token present:', !!token);
+      
+      if (!token) {
+        throw new Error('No authentication token found');
+      }
+      
+      console.log('Making fetch request...');
+      const response = await fetch(`${API_URL}/api/v1/blog/${draftId}/refine`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify({ feedback }),
+      });
 
+      console.log('Response status:', response.status, response.ok);
+      
+      if (!response.ok) {
+        throw new Error('Failed to refine draft');
+      }
+
+      const reader = response.body?.getReader();
+      const decoder = new TextDecoder();
       let streamedContent = '';
 
-      eventSource.onmessage = (event) => {
-        const data = JSON.parse(event.data);
-        if (data.type === 'content') {
-          streamedContent += data.content;
-          setContent(streamedContent);
-        } else if (data.type === 'done') {
-          eventSource.close();
-          setRefining(false);
-          setFeedback('');
-        }
-      };
+      if (reader) {
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
 
-      eventSource.onerror = () => {
-        eventSource.close();
-        setRefining(false);
-        alert('Streaming error occurred');
-      };
+          const chunk = decoder.decode(value, { stream: true });
+          const lines = chunk.split('\n\n');
+          
+          for (const line of lines) {
+            if (line.startsWith('data: ')) {
+              const data = line.slice(6);
+              if (data && !data.startsWith('Error:')) {
+                streamedContent += data;
+                setContent(streamedContent);
+              } else if (data.startsWith('Error:')) {
+                alert(data);
+              }
+            }
+          }
+        }
+      }
+
+      setRefining(false);
+      setFeedback('');
     } catch (error) {
       console.error('Failed to refine draft:', error);
       alert('Failed to refine draft');
@@ -158,7 +197,7 @@ export default function EditorPage() {
           </button>
           <button
             onClick={handleExport}
-            className="flex items-center space-x-2 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition"
+            className="flex items-center space-x-2 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition"
           >
             <Download className="w-4 h-4" />
             <span>Export</span>
@@ -180,7 +219,7 @@ export default function EditorPage() {
           type="text"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
-          className="w-full text-3xl font-bold border-none focus:outline-none focus:ring-0 px-0"
+          className="w-full text-3xl font-bold text-gray-900 border-none focus:outline-none focus:ring-0 px-0 placeholder:text-gray-400"
           placeholder="Blog Post Title"
         />
       </div>
@@ -194,7 +233,7 @@ export default function EditorPage() {
           <div className="bg-white rounded-lg p-6 max-w-lg w-full mx-4">
             <h3 className="text-xl font-semibold mb-4">Refine with AI</h3>
             <p className="text-gray-600 mb-4">
-              Provide feedback on how you'd like to improve the draft:
+              Provide feedback on how you&apos;d like to improve the draft:
             </p>
             <textarea
               value={feedback}

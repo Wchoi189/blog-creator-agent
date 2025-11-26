@@ -6,6 +6,23 @@ import axios, { AxiosInstance, AxiosError } from 'axios';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 
+// Helper to get client token from cookie
+export function getClientToken(): string | null {
+  if (typeof window === 'undefined') return null;
+  
+  // Split cookies and find client_token
+  const cookies = document.cookie.split(';').map(c => c.trim());
+  const clientTokenCookie = cookies.find(c => c.startsWith('client_token='));
+  
+  if (!clientTokenCookie) {
+    return null;
+  }
+  
+  // Use substring instead of split to handle = characters in JWT
+  const token = clientTokenCookie.substring('client_token='.length);
+  return token;
+}
+
 // Create axios instance
 const api: AxiosInstance = axios.create({
   baseURL: API_URL,
@@ -15,14 +32,12 @@ const api: AxiosInstance = axios.create({
   },
 });
 
-// Request interceptor - add JWT token
+// Request interceptor - add JWT token from cookie
 api.interceptors.request.use(
   (config) => {
-    if (typeof window !== 'undefined') {
-      const token = localStorage.getItem('access_token');
-      if (token) {
-        config.headers.Authorization = `Bearer ${token}`;
-      }
+    const token = getClientToken();
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
     }
     return config;
   },
@@ -34,10 +49,8 @@ api.interceptors.response.use(
   (response) => response,
   (error: AxiosError) => {
     if (error.response?.status === 401) {
-      // Clear token and redirect to login
+      // Redirect to login (cookies will be cleared by logout action)
       if (typeof window !== 'undefined') {
-        localStorage.removeItem('access_token');
-        localStorage.removeItem('refresh_token');
         window.location.href = '/login';
       }
     }
@@ -72,7 +85,7 @@ export const documentsAPI = {
     const formData = new FormData();
     formData.append('file', file);
     return api.post('/api/v1/documents/upload', formData, {
-      headers: { 'Content-Type': 'multipart/form-data' },
+      headers: { 'Content-Type': undefined },
     });
   },
 

@@ -35,19 +35,18 @@ class Settings(BaseSettings):
         default="your-secret-key-change-this-in-production"
     )
     ALGORITHM: str = "HS256"
-    ACCESS_TOKEN_EXPIRE_MINUTES: int = 15
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24  # 24 hours for development
     REFRESH_TOKEN_EXPIRE_DAYS: int = 7
 
     # Database URLs
     REDIS_URL: str = "redis://localhost:6379"
-    ELASTICSEARCH_URL: str = "http://localhost:9200"
-    CHROMADB_PATH: str = "./data/chromadb"
+    ELASTICSEARCH_URL: str = ""  # Optional
 
     # LLM Configuration
     OPENAI_API_KEY: str = ""
     TAVILY_API_KEY: str = ""
     DEFAULT_LLM_PROVIDER: str = "openai"
-    DEFAULT_LLM_MODEL: str = "gpt-4-turbo-preview"
+    DEFAULT_LLM_MODEL: str = "gpt-4o-mini"
 
     # Upload Configuration
     MAX_UPLOAD_SIZE: int = 50 * 1024 * 1024  # 50MB

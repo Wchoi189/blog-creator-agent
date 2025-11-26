@@ -182,7 +182,7 @@ export default function SettingsPage() {
             {createdKey && (
               <div className="mt-4 p-4 bg-green-50 border border-green-200 rounded-lg">
                 <p className="text-sm font-medium text-green-800 mb-2">
-                  API Key Created! Copy it now - it won't be shown again:
+                  API Key Created! Copy it now - it won&apos;t be shown again:
                 </p>
                 <code className="block p-2 bg-white border border-green-300 rounded text-sm break-all">
                   {createdKey}

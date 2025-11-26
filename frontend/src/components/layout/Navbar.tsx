@@ -1,13 +1,23 @@
 'use client';
 
 import Link from 'next/link';
-import { useAuthStore } from '@/store/authStore';
-import { Menu, User, LogOut } from 'lucide-react';
+import { User, LogOut } from 'lucide-react';
 import { useState } from 'react';
+import { logout } from '@/actions/auth';
+import { useRouter } from 'next/navigation';
 
-export default function Navbar() {
-  const { user, logout } = useAuthStore();
+interface NavbarProps {
+  user?: any;
+}
+
+export default function Navbar({ user }: NavbarProps) {
   const [showUserMenu, setShowUserMenu] = useState(false);
+  const router = useRouter();
+
+  const handleLogout = async () => {
+    await logout();
+    router.push('/login');
+  };
 
   return (
     <nav className="bg-white shadow-sm border-b border-gray-200 fixed w-full z-10">
@@ -43,10 +53,7 @@ export default function Navbar() {
                   <p className="text-xs text-gray-500">{user?.email}</p>
                 </div>
                 <button
-                  onClick={() => {
-                    logout();
-                    setShowUserMenu(false);
-                  }}
+                  onClick={handleLogout}
                   className="w-full px-4 py-2 text-left text-sm text-red-600 hover:bg-red-50 flex items-center space-x-2"
                 >
                   <LogOut className="w-4 h-4" />
