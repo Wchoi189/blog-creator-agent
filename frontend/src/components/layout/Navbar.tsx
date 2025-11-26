@@ -54,17 +54,17 @@ export default function Navbar({ user }: NavbarProps) {
                 <User className="w-5 h-5 text-primary-600" aria-hidden="true" />
               </div>
               <span className="text-sm font-medium text-gray-700">
-                {user.full_name || user.email}
+                {user?.full_name || user?.email || 'User'}
               </span>
             </button>
 
             {showUserMenu && (
               <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-50">
                 <div className="px-4 py-2 border-b border-gray-100">
-                  {user.full_name && (
+                  {user?.full_name && (
                     <p className="text-sm font-medium text-gray-900">{user.full_name}</p>
                   )}
-                  <p className="text-xs text-gray-500">{user.email}</p>
+                  <p className="text-xs text-gray-500">{user?.email || 'Unknown'}</p>
                 </div>
                 <button
                   onClick={() => {

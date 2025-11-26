@@ -20,6 +20,7 @@ export default async function DashboardLayout({
   // Middleware should catch this, but this is a safeguard
   if (!user) {
     redirect('/login')
+    return // Explicit return for clarity (redirect throws internally)
   }
   
   return (
