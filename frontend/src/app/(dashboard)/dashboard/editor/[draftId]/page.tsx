@@ -194,7 +194,7 @@ export default function EditorPage() {
           <div className="bg-white rounded-lg p-6 max-w-lg w-full mx-4">
             <h3 className="text-xl font-semibold mb-4">Refine with AI</h3>
             <p className="text-gray-600 mb-4">
-              Provide feedback on how you'd like to improve the draft:
+              Provide feedback on how you&apos;d like to improve the draft:
             </p>
             <textarea
               value={feedback}
