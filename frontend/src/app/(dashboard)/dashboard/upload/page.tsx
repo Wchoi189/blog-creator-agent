@@ -1,10 +1,15 @@
-'use client';
+'use client'
 
-import { useState, useRef, useCallback } from 'react';
-import { useRouter } from 'next/navigation';
-import { documentsAPI } from '@/lib/api';
-import { Upload, X, FileText, Image, Music } from 'lucide-react';
+import { useState, useRef, useCallback } from 'react'
+import { useRouter } from 'next/navigation'
+import { uploadDocument } from '@/actions/documents'
+import { Upload, X, FileText, Image, Music } from 'lucide-react'
 
+/**
+ * Upload Page - Client Component
+ * Highly interactive page for file uploads, drag-and-drop
+ * Converted to use Server Actions for uploads
+ */
 export default function UploadPage() {
   const router = useRouter();
   const fileInputRef = useRef<HTMLInputElement | null>(null);
@@ -70,23 +75,30 @@ export default function UploadPage() {
   };
 
   const handleUpload = async () => {
-    if (files.length === 0) return;
+    if (files.length === 0) return
 
-    setUploading(true);
+    setUploading(true)
 
     try {
       for (const file of files) {
-        setUploadProgress((prev) => ({ ...prev, [file.name]: 0 }));
+        setUploadProgress((prev) => ({ ...prev, [file.name]: 0 }))
 
-        await documentsAPI.upload(file);
+        // Use Server Action for upload
+        const formData = new FormData()
+        formData.append('file', file)
+        const result = await uploadDocument(formData)
+        
+        if (result.error) {
+          throw new Error(result.error)
+        }
 
-        setUploadProgress((prev) => ({ ...prev, [file.name]: 100 }));
+        setUploadProgress((prev) => ({ ...prev, [file.name]: 100 }))
       }
 
       // Redirect to documents page
       setTimeout(() => {
-        router.push('/dashboard/documents');
-      }, 1000);
+        router.push('/dashboard/documents')
+      }, 1000)
     } catch (error) {
       console.error('Upload failed:', error);
       alert('Upload failed. Please try again.');
