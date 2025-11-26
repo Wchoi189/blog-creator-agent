@@ -1,48 +1,30 @@
-'use client';
+import { redirect } from 'next/navigation'
+import { getCurrentUser } from '@/actions/auth'
+import Navbar from '@/components/layout/Navbar'
+import Sidebar from '@/components/layout/Sidebar'
 
-import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { useAuthStore } from '@/store/authStore';
-import Navbar from '@/components/layout/Navbar';
-import Sidebar from '@/components/layout/Sidebar';
-
-export default function DashboardLayout({
+/**
+ * Dashboard Layout - Server Component
+ * Fetches user from httpOnly cookies server-side
+ * Middleware should already redirect unauthenticated users, but we double-check here
+ */
+export default async function DashboardLayout({
   children,
 }: {
-  children: React.ReactNode;
+  children: React.ReactNode
 }) {
-  const router = useRouter();
-  const { isAuthenticated, isInitialized, fetchCurrentUser } = useAuthStore();
-
-  useEffect(() => {
-    fetchCurrentUser();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  useEffect(() => {
-    if (isInitialized && !isAuthenticated) {
-      router.push('/login');
-    }
-  }, [isAuthenticated, isInitialized, router]);
-
-  if (!isInitialized) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading...</p>
-        </div>
-      </div>
-    );
+  // Get user from httpOnly cookies (server-side)
+  const { user } = await getCurrentUser()
+  
+  // If no user, redirect to login
+  // Middleware should catch this, but this is a safeguard
+  if (!user) {
+    redirect('/login')
   }
-
-  if (!isAuthenticated) {
-    return null;
-  }
-
+  
   return (
     <div className="min-h-screen bg-gray-50">
-      <Navbar />
+      <Navbar user={user} />
       <div className="flex">
         <Sidebar />
         <main className="flex-1 p-6 ml-64 mt-16">
@@ -50,5 +32,5 @@ export default function DashboardLayout({
         </main>
       </div>
     </div>
-  );
+  )
 }

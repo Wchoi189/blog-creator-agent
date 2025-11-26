@@ -84,3 +84,37 @@ export async function getAccessToken() {
   const cookieStore = await cookies()
   return cookieStore.get('access_token')?.value
 }
+
+/**
+ * Get current user from httpOnly cookies
+ * Used by Server Components to fetch user info
+ */
+export async function getCurrentUser() {
+  const cookieStore = await cookies()
+  const token = cookieStore.get('access_token')
+  
+  if (!token) {
+    return { user: null }
+  }
+  
+  try {
+    const response = await fetch(`${API_URL}/api/v1/auth/me`, {
+      headers: { 
+        'Authorization': `Bearer ${token.value}`,
+        'Content-Type': 'application/json'
+      },
+      cache: 'no-store',
+    })
+    
+    if (!response.ok) {
+      // Token might be expired or invalid
+      return { user: null }
+    }
+    
+    const user = await response.json()
+    return { user }
+  } catch (error) {
+    console.error('Error fetching current user:', error)
+    return { user: null }
+  }
+}
