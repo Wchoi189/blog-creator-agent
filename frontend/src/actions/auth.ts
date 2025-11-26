@@ -5,7 +5,11 @@ import { redirect } from 'next/navigation'
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8002'
 
-export async function login(formData: FormData) {
+type FormState = {
+  error?: string
+}
+
+export async function login(prevState: FormState, formData: FormData): Promise<FormState> {
   const email = formData.get('email') as string
   const password = formData.get('password') as string
   
@@ -45,7 +49,7 @@ export async function login(formData: FormData) {
   redirect('/dashboard')
 }
 
-export async function register(formData: FormData) {
+export async function register(prevState: FormState, formData: FormData): Promise<FormState> {
   const email = formData.get('email') as string
   const password = formData.get('password') as string
   const fullName = formData.get('fullName') as string
@@ -63,7 +67,7 @@ export async function register(formData: FormData) {
     }
     
     // Auto-login after registration
-    return login(formData)
+    return login(prevState, formData)
   } catch (error) {
     return { error: 'Registration failed' }
   }
