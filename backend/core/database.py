@@ -3,9 +3,7 @@
 import asyncio
 from typing import Optional
 from redis import Redis
-from elasticsearch import Elasticsearch, AsyncElasticsearch
-import chromadb
-from chromadb.config import Settings as ChromaSettings
+from elasticsearch import AsyncElasticsearch
 
 from backend.config import settings
 
@@ -16,7 +14,6 @@ class DatabaseManager:
     def __init__(self):
         self._redis: Optional[Redis] = None
         self._elasticsearch: Optional[AsyncElasticsearch] = None
-        self._chromadb: Optional[chromadb.Client] = None
 
     @property
     def redis(self) -> Redis:
@@ -39,21 +36,8 @@ class DatabaseManager:
                 )
             except Exception as e:
                 print(f"⚠️  ElasticSearch unavailable: {e}")
-                print("📦 Falling back to ChromaDB only")
                 return None
         return self._elasticsearch
-
-    @property
-    def chromadb(self) -> chromadb.Client:
-        """Get ChromaDB client"""
-        if self._chromadb is None:
-            self._chromadb = chromadb.Client(
-                ChromaSettings(
-                    persist_directory=settings.CHROMADB_PATH,
-                    anonymized_telemetry=False,
-                )
-            )
-        return self._chromadb
 
     async def check_health(self) -> dict:
         """Check health of all database connections"""
@@ -75,13 +59,6 @@ class DatabaseManager:
                 health["elasticsearch"] = f"unhealthy: {str(e)}"
         else:
             health["elasticsearch"] = "not configured"
-
-        # ChromaDB
-        try:
-            self.chromadb.heartbeat()
-            health["chromadb"] = "healthy"
-        except Exception as e:
-            health["chromadb"] = f"unhealthy: {str(e)}"
 
         return health
 

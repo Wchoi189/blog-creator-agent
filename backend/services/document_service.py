@@ -7,8 +7,6 @@ from datetime import datetime
 from pathlib import Path
 from typing import List, Optional
 from fastapi import UploadFile
-from langchain_core.documents import Document as LCDocument
-from langchain_text_splitters import RecursiveCharacterTextSplitter
 
 from backend.core.database import db
 from backend.config import settings
@@ -25,7 +23,6 @@ class DocumentService:
 
     def __init__(self):
         self.redis = db.redis
-        self.chromadb = db.chromadb
         self.upload_dir = Path(settings.UPLOAD_DIR)
         self.upload_dir.mkdir(parents=True, exist_ok=True)
 
@@ -145,13 +142,6 @@ class DocumentService:
             except Exception:
                 pass  # File might already be deleted
 
-            # Delete from ChromaDB collection
-            try:
-                collection = self.chromadb.get_collection(f"doc_{doc_id}")
-                self.chromadb.delete_collection(collection.name)
-            except Exception:
-                pass  # Collection might not exist
-
         # Delete from Redis
         self.redis.delete(f"document:{doc_id}")
         self.redis.srem(f"user:{user_id}:documents", doc_id)
@@ -159,7 +149,7 @@ class DocumentService:
         return True
 
     async def process_document(self, doc_id: str):
-        """Process document (extract text, chunk, vectorize)"""
+        """Process document (extract text and store in Redis)"""
         # Update status
         self.redis.hset(f"document:{doc_id}", "status", ProcessingStatus.PROCESSING.value)
 
@@ -168,26 +158,36 @@ class DocumentService:
             if not doc:
                 raise ValueError("Document not found")
 
-            from src.document_preprocessor import DocumentPreprocessor
-            from src.vector_store import VectorStore
-
+            # Extract text based on document type
+            extracted_text = ""
+            
             if doc.file_type == DocumentType.MARKDOWN:
-                documents = self._process_markdown(Path(doc.file_path))
-            else:
-                preprocessor = DocumentPreprocessor(Path(doc.file_path))
-                documents = preprocessor.process()
+                extracted_text = Path(doc.file_path).read_text(encoding="utf-8")
+            elif doc.file_type == DocumentType.PDF:
+                try:
+                    import pypdf
+                    with open(doc.file_path, 'rb') as f:
+                        reader = pypdf.PdfReader(f)
+                        for page in reader.pages:
+                            extracted_text += page.extract_text() + "\n\n"
+                except ImportError:
+                    # Fall back to basic file reading if pypdf not available
+                    extracted_text = f"[PDF content from {doc.filename} - pypdf not installed]"
+            elif doc.file_type == DocumentType.IMAGE:
+                # For images, store a placeholder - OCR would require additional setup
+                extracted_text = f"[Image content from {doc.filename}]"
+            elif doc.file_type == DocumentType.AUDIO:
+                # For audio, store a placeholder - transcription would require additional setup
+                extracted_text = f"[Audio content from {doc.filename}]"
 
-            # Create vector store collection for this document
-            vector_store = VectorStore()
-            vector_store.add_documents(documents)
-
-            # Update document status
+            # Store extracted text in Redis (for use in blog generation)
             self.redis.hset(
                 f"document:{doc_id}",
                 mapping={
                     "status": ProcessingStatus.COMPLETED.value,
                     "processed_at": datetime.utcnow().isoformat(),
-                    "chunk_count": str(len(documents)),
+                    "chunk_count": str(len(extracted_text.split('\n\n'))),
+                    "extracted_text": extracted_text[:50000],  # Limit to 50KB per doc
                 },
             )
 
@@ -201,16 +201,6 @@ class DocumentService:
                 },
             )
             raise
-
-    def _process_markdown(self, path: Path) -> List[Document]:
-        """Simple markdown processor that splits content into chunks."""
-        text = path.read_text(encoding="utf-8")
-        splitter = RecursiveCharacterTextSplitter(
-            chunk_size=settings.CHUNK_SIZE,
-            chunk_overlap=settings.CHUNK_OVERLAP,
-        )
-        base_doc = LCDocument(page_content=text, metadata={"source": str(path)})
-        return splitter.split_documents([base_doc])
 
 
 # Global service instance
