@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { blogAPI } from '@/lib/api';
+import { blogAPI, getClientToken } from '@/lib/api';
 import { BlogDraft } from '@/types/api';
 import TiptapEditor from '@/components/editor/TiptapEditor';
 import { Save, Download, ArrowLeft, Sparkles } from 'lucide-react';
@@ -24,23 +24,23 @@ export default function EditorPage() {
   const [showFeedbackModal, setShowFeedbackModal] = useState(false);
 
   useEffect(() => {
+    const fetchDraft = async () => {
+      try {
+        const response = await blogAPI.get(draftId);
+        const draftData = response.data;
+        setDraft(draftData);
+        setContent(draftData.content);
+        setTitle(draftData.title);
+      } catch (error) {
+        console.error('Failed to fetch draft:', error);
+        alert('Failed to load draft');
+      } finally {
+        setLoading(false);
+      }
+    };
+
     fetchDraft();
   }, [draftId]);
-
-  const fetchDraft = async () => {
-    try {
-      const response = await blogAPI.get(draftId);
-      const draftData = response.data;
-      setDraft(draftData);
-      setContent(draftData.content);
-      setTitle(draftData.title);
-    } catch (error) {
-      console.error('Failed to fetch draft:', error);
-      alert('Failed to load draft');
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const handleSave = async () => {
     setSaving(true);
@@ -56,13 +56,22 @@ export default function EditorPage() {
   };
 
   const handleRefine = async () => {
+    console.log('handleRefine called, feedback:', feedback);
+    
     if (!feedback.trim()) {
       alert('Please provide feedback for refinement');
       return;
     }
 
+    // Prevent double-submission
+    if (refining) {
+      console.log('Already refining, returning');
+      return;
+    }
+
     setRefining(true);
     setShowFeedbackModal(false);
+    console.log('Starting refine...');
 
     try {
       // Use fetch with streaming instead of EventSource for better auth support
@@ -167,7 +176,7 @@ export default function EditorPage() {
           </button>
           <button
             onClick={handleExport}
-            className="flex items-center space-x-2 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition"
+            className="flex items-center space-x-2 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition"
           >
             <Download className="w-4 h-4" />
             <span>Export</span>
@@ -189,7 +198,7 @@ export default function EditorPage() {
           type="text"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
-          className="w-full text-3xl font-bold border-none focus:outline-none focus:ring-0 px-0"
+          className="w-full text-3xl font-bold text-gray-900 border-none focus:outline-none focus:ring-0 px-0 placeholder:text-gray-400"
           placeholder="Blog Post Title"
         />
       </div>

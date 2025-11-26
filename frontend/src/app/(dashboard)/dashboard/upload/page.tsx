@@ -101,7 +101,13 @@ export default function UploadPage() {
       }, 1000)
     } catch (error) {
       console.error('Upload failed:', error);
-      alert('Upload failed. Please try again.');
+      if (error.response) {
+        console.error('Error status:', error.response.status);
+        console.error('Error data:', error.response.data);
+        alert(`Upload failed: ${error.response.data?.detail || error.message}`);
+      } else {
+        alert(`Upload failed: ${error.message}`);
+      }
     } finally {
       setUploading(false);
     }

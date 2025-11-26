@@ -27,8 +27,19 @@ export async function login(prevState: FormState, formData: FormData): Promise<F
     const { access_token, refresh_token } = await response.json()
     
     const cookieStore = await cookies()
+    // HttpOnly cookie for server-side API calls
     cookieStore.set('access_token', access_token, {
       httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      maxAge: 60 * 60 * 24 * 7, // 7 days
+      path: '/',
+    })
+    
+    // Client-accessible cookie for client-side API calls
+    // Note: This is less secure than httpOnly but necessary for client components
+    cookieStore.set('client_token', access_token, {
+      httpOnly: false, // Accessible by JavaScript
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',
       maxAge: 60 * 60 * 24 * 7, // 7 days
@@ -76,6 +87,7 @@ export async function register(prevState: FormState, formData: FormData): Promis
 export async function logout() {
   const cookieStore = await cookies()
   cookieStore.delete('access_token')
+  cookieStore.delete('client_token')
   cookieStore.delete('refresh_token')
   redirect('/login')
 }

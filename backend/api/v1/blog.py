@@ -92,11 +92,11 @@ async def refine_blog(
     async def refine_stream():
         try:
             async for chunk in blog_service.refine_content(draft_id, request.feedback):
-                yield chunk
+                yield f"data: {chunk}\n\n"
         except Exception as e:
-            yield f"\n\nError: {str(e)}"
+            yield f"data: Error: {str(e)}\n\n"
 
-    return StreamingResponse(refine_stream(), media_type="text/plain")
+    return StreamingResponse(refine_stream(), media_type="text/event-stream")
 
 
 @router.get("/{draft_id}/refine")

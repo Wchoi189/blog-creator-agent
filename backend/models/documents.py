@@ -12,6 +12,7 @@ class DocumentType(str, Enum):
     AUDIO = "audio"
     IMAGE = "image"
     MARKDOWN = "markdown"
+    TEXT = "text"
 
 
 class ProcessingStatus(str, Enum):
