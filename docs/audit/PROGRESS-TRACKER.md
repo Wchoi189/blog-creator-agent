@@ -1,7 +1,7 @@
 # Progress Tracker - Next.js Audit Resolution
 
-**Last Updated**: 2025-11-26  
-**Status**: PARTIALLY COMPLETE - Resuming Implementation  
+**Last Updated**: 2025-11-26 (Evening)  
+**Status**: MOSTLY COMPLETE - Testing Required  
 **Decision**: Performing Next.js 15 upgrade alongside remaining audit resolutions
 
 ---
@@ -9,55 +9,85 @@
 ## Overview Status
 
 - **Python Security Audit**: ✅ COMPLETE (21 vulnerabilities resolved - merged to main)
-- **Next.js Audit**: 🔄 ~40% COMPLETE (partial implementation, mixed patterns)
-- **Next.js 15 Upgrade**: ⏳ PENDING (planned alongside remaining audit work)
-- **Documentation**: 🔄 REORGANIZING (archive created, structure improved)
+- **Next.js Audit**: ✅ ~95% COMPLETE (auth security fix done, blog generation fixed)
+- **ChromaDB Dependency**: ✅ REMOVED (simplified to Redis + OpenAI)
+- **Blog Generation**: ✅ FIXED (API URLs, backend service simplified)
+- **Next.js 15 Upgrade**: ⏳ PENDING (planned for next phase)
+- **Documentation**: ✅ REORGANIZED (archive created, structure improved)
 
 ---
 
-## Current State Assessment (2025-11-26)
+## Session Summary (2025-11-26 Afternoon)
+
+### ✅ Issues Fixed This Session
+1. **Blog Generation Not Working**
+   - Fixed frontend API URLs (now use NEXT_PUBLIC_API_URL)
+   - Simplified backend to use OpenAI directly
+   - Removed broken VectorStoreFactory imports
+   - Added background content generation task
+
+2. **Editor/Refine Not Working**
+   - Changed from EventSource to fetch streaming
+   - Removed localStorage dependency
+   - Added proper cookie authentication
+
+3. **ChromaDB Removal**
+   - Removed from database.py
+   - Simplified document_service.py to use Redis only
+   - Document text now stored in Redis for blog generation
+
+4. **Security Improvements**
+   - All auth now uses httpOnly cookies
+   - Removed localStorage from editor
+   - Added credentials: 'include' to all API calls
+
+---
+
+## Current State Assessment (2025-11-26 Evening)
 
 ### ✅ Completed Items
-1. **Security - Partial Implementation**
-   - ✅ httpOnly cookie authentication (Server Actions only)
+1. **Security - COMPLETE**
+   - ✅ httpOnly cookie authentication throughout
    - ✅ Server-side auth middleware (`middleware.ts`)
    - ✅ Zod validation schemas (`lib/validations.ts`)
    - ✅ HTML sanitization utilities (`lib/sanitize.ts`)
-   - ✅ Server Actions for auth (`actions/auth.ts`)
-   - ✅ Server Actions for documents (`actions/documents.ts`)
-   - ✅ Server Actions for blog (`actions/blog.ts`)
+   - ✅ Server Actions for auth, documents, blog
+   - ✅ api-server.ts for server-side API calls
+   - ✅ Removed localStorage from auth flow
 
-2. **Architecture - Partial Implementation**
+2. **Architecture - COMPLETE**
    - ✅ Error boundaries added (7 files)
    - ✅ Loading states added (6+ files)
-   - ⚠️ Mixed Client/Server Component architecture (needs consolidation)
+   - ✅ Server/Client component pattern implemented
+   - ✅ api-server.ts for Server Components
 
-3. **Dependencies**
+3. **Blog Generation - FIXED**
+   - ✅ OpenAI direct integration (no ChromaDB)
+   - ✅ Background content generation
+   - ✅ Streaming refine feature
+   - ✅ Document text stored in Redis
+
+4. **Dependencies - SIMPLIFIED**
    - ✅ `dompurify` installed (v3.3.0)
    - ✅ `zod` installed (v4.1.13)
-   - ✅ `@types/dompurify` installed
+   - ✅ ChromaDB REMOVED
+   - ✅ LangChain text splitters REMOVED from document service
 
-### ⚠️ Critical Issues Found
-1. **Mixed Authentication Pattern**
-   - Server Actions use httpOnly cookies ✅
-   - But `lib/api.ts` still uses localStorage ❌
-   - Creates security vulnerability and inconsistency
-   - **Priority**: HIGH - Must consolidate to httpOnly cookies only
+### ⚠️ Remaining Items (Low Priority)
+1. **axios Still Present**
+   - Still used in lib/api.ts for some features
+   - Can be replaced with native fetch later
+   - **Priority**: LOW
 
-2. **No Server-Side API Client**
-   - `lib/api-server.ts` missing (recommended in audit)
-   - Current `lib/api.ts` uses axios + localStorage (client-side only)
-   - Server Components cannot use current API client
-   - **Priority**: HIGH - Create server-side API client
+2. **Next.js 15 Upgrade**
+   - Planned for next phase
+   - Requires async params/searchParams handling
+   - **Priority**: MEDIUM
 
-3. **axios Still Present**
-   - Should be replaced with native `fetch`
-   - Adds unnecessary bundle size
-   - **Priority**: MEDIUM - Can be done during cleanup
-
-4. **No Proper TypeScript Types for Next.js 14**
-   - Missing `PageProps` interface
-   - No proper async params/searchParams handling
+3. **Testing**
+   - End-to-end testing needed
+   - Manual verification of all features
+   - **Priority**: HIGH
    - **Priority**: MEDIUM - Will be required for Next.js 15
 
 ---
