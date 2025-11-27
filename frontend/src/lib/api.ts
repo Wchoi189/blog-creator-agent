@@ -27,6 +27,32 @@ const api: AxiosInstance = axios.create({
   withCredentials: true, // Important: Send cookies with requests
 });
 
+function getClientToken(): string | undefined {
+  if (typeof document === 'undefined') {
+    return undefined;
+  }
+
+  const match = document.cookie
+    .split(';')
+    .map((cookie) => cookie.trim())
+    .find((cookie) => cookie.startsWith('client_token='));
+
+  if (!match) {
+    return undefined;
+  }
+
+  return decodeURIComponent(match.split('=')[1]);
+}
+
+api.interceptors.request.use((config) => {
+  const token = getClientToken();
+  if (token) {
+    config.headers = config.headers ?? {};
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+});
+
 // Response interceptor - handle errors
 api.interceptors.response.use(
   (response) => response,

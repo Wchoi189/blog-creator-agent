@@ -5,6 +5,7 @@ from datetime import datetime
 from typing import Optional, List, AsyncIterator
 from backend.core.database import db
 from backend.config import settings
+from backend.services.document_service import document_service
 from backend.models.blog import (
     BlogDraft,
     BlogStatus,
@@ -19,6 +20,7 @@ class BlogService:
 
     def __init__(self):
         self.redis = db.redis
+        self.max_context_chars = 8000
 
     async def create_draft(
         self,
@@ -139,26 +141,19 @@ class BlogService:
         try:
             import openai
             from backend.config import settings
-            
+
             # Configure OpenAI
             client = openai.AsyncOpenAI(api_key=settings.OPENAI_API_KEY)
-            
+
             # Build the prompt
             prompt = instructions or f"Write a comprehensive blog post titled '{draft.title}'"
-            
-            # If we have document context from Redis, include it
-            doc_context = ""
-            for doc_id in draft.document_ids:
-                doc_data = self.redis.hgetall(f"document:{doc_id}")
-                if doc_data and doc_data.get("extracted_text"):
-                    doc_context += f"\n\n--- Document: {doc_data.get('filename', doc_id)} ---\n"
-                    # Limit context to avoid token limits
-                    doc_context += doc_data.get("extracted_text", "")[:4000]
-            
+
+            doc_context = await self._collect_document_context(draft, instructions)
+
             system_prompt = """You are a professional blog writer. Create engaging, well-structured blog content.
 Use markdown formatting with proper headings, paragraphs, and bullet points where appropriate.
 Make the content informative, engaging, and easy to read."""
-            
+
             if doc_context:
                 system_prompt += f"\n\nUse the following document content as reference:\n{doc_context}"
             
@@ -294,6 +289,47 @@ Provide the complete revised blog post:"""
         self.redis.srem(f"user:{user_id}:drafts", draft_id)
 
         return True
+
+    async def _collect_document_context(
+        self,
+        draft: BlogDraft,
+        instructions: Optional[str],
+    ) -> str:
+        """Gather top document chunks using ElasticSearch (with Redis fallback)."""
+
+        if not draft.document_ids:
+            return ""
+
+        query = instructions or draft.title or "blog content"
+        results = await document_service.search_document_chunks(
+            user_id=draft.user_id,
+            query=query,
+            document_ids=draft.document_ids,
+            top_k=settings.TOP_K_RESULTS,
+        )
+
+        if results:
+            context_blocks: List[str] = []
+            for result in results:
+                snippet = result.content.strip()[:1500]
+                if not snippet:
+                    continue
+                context_blocks.append(
+                    f"--- Document: {result.document_name} (score: {result.score:.2f}) ---\n{snippet}"
+                )
+            if context_blocks:
+                joined = "\n\n".join(context_blocks)
+                return joined[: self.max_context_chars]
+
+        # Fallback to previously stored extracted text
+        context = ""
+        for doc_id in draft.document_ids:
+            doc_data = self.redis.hgetall(f"document:{doc_id}")
+            if doc_data and doc_data.get("extracted_text"):
+                context += f"\n\n--- Document: {doc_data.get('filename', doc_id)} ---\n"
+                context += doc_data.get("extracted_text", "")[:2000]
+
+        return context[: self.max_context_chars]
 
 
 # Global service instance

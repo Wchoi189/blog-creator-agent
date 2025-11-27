@@ -94,6 +94,13 @@ RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - && \
 # Set up project directory
 RUN mkdir -p /workspaces && chown vscode:vscode /workspaces
 
+# Seed directory for npm globals installed at build time
+RUN sudo mkdir -p /opt/npm-global && sudo chown vscode:vscode /opt/npm-global
+
+# Expose persisted npm globals to every login shell (interactive and non-interactive)
+COPY docker/profile.d/npm-globals.sh /etc/profile.d/npm-globals.sh
+RUN chmod 644 /etc/profile.d/npm-globals.sh
+
 USER vscode
 WORKDIR /workspaces
 
@@ -117,15 +124,16 @@ RUN echo 'alias python="uv run python"' >> ~/.bashrc && \
     echo 'alias pytest="uv run pytest"' >> ~/.bashrc && \
     echo 'alias make="uv run make"' >> ~/.bashrc
 
-# Configure npm to use /workspaces for global packages
-RUN mkdir -p /workspaces/.npm-global && \
-    npm config set prefix /workspaces/.npm-global
+# Install global npm packages into the seed directory (not overridden by volume mounts)
+RUN NPM_CONFIG_PREFIX=/opt/npm-global npm install -g @anthropic-ai/claude-code @qwen-code/qwen-code repomix
 
-# Install global npm packages: Claude Code, Qwen Coder, and repomix
-RUN npm install -g @anthropic-ai/claude-code @qwen-code/qwen-code repomix
+# Copy npm seed script that syncs the build-time globals into the mounted workspace directory
+COPY docker/scripts/seed-npm-globals.sh /usr/local/bin/seed-npm-globals.sh
+RUN sudo chmod +x /usr/local/bin/seed-npm-globals.sh
 
-# Create startup script that starts SSH as root and keeps container running
+# Create startup script that seeds npm globals, starts SSH as root, and keeps container running
 RUN sudo sh -c 'echo "#!/bin/bash\n\
+/usr/local/bin/seed-npm-globals.sh\n\
 sudo /usr/sbin/sshd -D & \n\
 sleep infinity" > /usr/local/bin/start.sh' && \
     sudo chmod +x /usr/local/bin/start.sh

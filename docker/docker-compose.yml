@@ -9,13 +9,15 @@ services:
     container_name: blog-creator-dev
     hostname: blog-creator-dev
     volumes:
-      - ..:/workspaces:cached
+      - ../..:/workspaces:cached
       - /tmp/.X11-unix:/tmp/.X11-unix:rw
       - ~/.ssh:/home/vscode/.ssh
     working_dir: /workspaces
+    env_file:
+      - ../.env
     environment:
-      - DISPLAY=${DISPLAY}
-      - UV_LINK_MODE=copy
+      DISPLAY: ${DISPLAY}
+      UV_LINK_MODE: copy
     ports:
       - "8002:8002"   # Backend FastAPI
       - "3002:3002"   # Frontend Next.js
@@ -76,6 +78,7 @@ services:
       - elasticsearch
     profiles:
       - dev
+
 
 volumes:
   redis-data:

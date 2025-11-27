@@ -6,12 +6,13 @@ from backend.models.auth import (
     UserLogin,
     User,
     Token,
+    TokenRefreshRequest,
     APIKeyCreate,
     APIKey,
     APIKeyInfo,
 )
 from backend.services.auth_service import auth_service
-from backend.core.security import get_current_user_id
+from backend.core.security import get_current_user_id, decode_token
 
 router = APIRouter(prefix="/auth", tags=["Authentication"])
 
@@ -41,6 +42,30 @@ async def login(credentials: UserLogin):
 
     tokens = await auth_service.create_tokens(user.id)
     return tokens
+
+
+@router.post("/refresh", response_model=Token)
+async def refresh_tokens(payload: TokenRefreshRequest):
+    """Refresh access token using a refresh token"""
+    token_payload = decode_token(payload.refresh_token)
+
+    token_type = token_payload.get("type")
+    user_id = token_payload.get("sub")
+
+    if token_type != "refresh" or not user_id:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid refresh token",
+        )
+
+    user = await auth_service.get_user_by_id(user_id)
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="User not found",
+        )
+
+    return await auth_service.create_tokens(user_id)
 
 
 @router.get("/me", response_model=User)
