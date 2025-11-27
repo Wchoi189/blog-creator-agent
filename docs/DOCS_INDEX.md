@@ -3,13 +3,13 @@
 ## 📌 Start Here
 
 **New to this project?** Start with:
-1. **[README.md](README.md)** - Project overview
-2. **[docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)** - System design
-3. **[docs/STACK.md](docs/STACK.md)** - Technology stack
+1. **[README.md](../README.md)** - Project overview
+2. **[ARCHITECTURE.md](ARCHITECTURE.md)** - System design
+3. **[STACK.md](STACK.md)** - Technology stack
 
 **Continuing development?** Start with:
-1. **[HANDOVER.md](HANDOVER.md)** - Current status & progress
-2. **[SESSION_READY_2025-11-26.md](SESSION_READY_2025-11-26.md)** - Latest session briefing
+1. **[Session Handover](../docs/artifacts/completed_plans/completion_summaries/session_notes/2025-11-28_1200_SESSION_handover-document.md)** - Current status & progress
+2. **[Latest Session Briefing](../docs/artifacts/completed_plans/completion_summaries/session_notes/2025-11-26/SESSION_READY_2025-11-26.md)** - Latest session briefing
 3. **[TESTING_GUIDE.md](TESTING_GUIDE.md)** - How to test
 
 ---

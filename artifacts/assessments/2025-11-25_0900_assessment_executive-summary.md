@@ -1,9 +1,19 @@
+---
+title: "Next.js Codebase Audit - Executive Summary"
+date: "2025-11-25 09:00 (KST)"
+type: "assessment"
+category: "code_quality"
+status: "completed"
+version: "1.0"
+tags: ["nextjs", "audit", "code_quality", "security"]
+---
+
 # Next.js Codebase Audit - Executive Summary
 
-**Project:** Blog Creator Agent  
-**Audit Date:** November 25, 2025  
-**Auditor:** Senior Next.js Developer & Code Auditor  
-**Next.js Version:** 14.2.33  
+**Project:** Blog Creator Agent
+**Audit Date:** November 25, 2025
+**Auditor:** Senior Next.js Developer & Code Auditor
+**Next.js Version:** 14.2.33
 **React Version:** 18.2.0
 
 ---

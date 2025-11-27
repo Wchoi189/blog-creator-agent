@@ -48,6 +48,9 @@ coverage.xml
 
 # Translations
 *.mo
+
+# Qwen Coder configurations
+.qwen/
 *.pot
 
 # Django stuff:

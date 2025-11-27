@@ -1,4 +1,12 @@
-# Architecture & Structure Audit
+---
+title: "Architecture & Structure Audit"
+date: "2025-11-25 09:01 (KST)"
+type: "assessment"
+category: "architecture"
+status: "completed"
+version: "1.0"
+tags: ["nextjs", "architecture", "structure", "code_quality"]
+---
 
 **Audit Date:** 2025-11-25  
 **Next.js Version:** 14.2.33  
