@@ -1,0 +1,42 @@
+[
+  {
+    "timestamp": "2025-11-28T01:08:36.575467",
+    "compliance_rate": 100.0,
+    "invalid_files": 0,
+    "violation_counts": {
+      "naming": 0,
+      "directory": 0,
+      "frontmatter": 0
+    }
+  },
+  {
+    "timestamp": "2025-11-28T01:18:34.707513",
+    "compliance_rate": 100.0,
+    "invalid_files": 0,
+    "violation_counts": {
+      "naming": 0,
+      "directory": 0,
+      "frontmatter": 0
+    }
+  },
+  {
+    "timestamp": "2025-11-28T01:29:26.747431",
+    "compliance_rate": 18.181818181818183,
+    "invalid_files": 27,
+    "violation_counts": {
+      "naming": 27,
+      "directory": 2,
+      "frontmatter": 27
+    }
+  },
+  {
+    "timestamp": "2025-11-28T01:29:35.119594",
+    "compliance_rate": 18.181818181818183,
+    "invalid_files": 27,
+    "violation_counts": {
+      "naming": 27,
+      "directory": 2,
+      "frontmatter": 27
+    }
+  }
+]
