@@ -24,22 +24,44 @@ export default function EditorPage() {
   const [showFeedbackModal, setShowFeedbackModal] = useState(false);
 
   useEffect(() => {
+    let pollInterval: NodeJS.Timeout | null = null;
+
     const fetchDraft = async () => {
       try {
         const response = await blogAPI.get(draftId);
         const draftData = response.data;
         setDraft(draftData);
-        setContent(draftData.content);
         setTitle(draftData.title);
+
+        // If content is ready, set it and stop polling
+        if (draftData.content && draftData.status !== 'generating') {
+          setContent(draftData.content);
+          setLoading(false);
+          if (pollInterval) clearInterval(pollInterval);
+        } else if (draftData.status === 'generating' || draftData.status === 'draft') {
+          // Content still generating - keep polling
+          if (!pollInterval) {
+            pollInterval = setInterval(fetchDraft, 2000); // Poll every 2s
+          }
+        } else {
+          // Failed or other status
+          setContent(draftData.content || '');
+          setLoading(false);
+          if (pollInterval) clearInterval(pollInterval);
+        }
       } catch (error) {
         console.error('Failed to fetch draft:', error);
         alert('Failed to load draft');
-      } finally {
         setLoading(false);
+        if (pollInterval) clearInterval(pollInterval);
       }
     };
 
     fetchDraft();
+
+    return () => {
+      if (pollInterval) clearInterval(pollInterval);
+    };
   }, [draftId]);
 
   const handleSave = async () => {
@@ -137,8 +159,11 @@ export default function EditorPage() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-64">
+      <div className="flex flex-col items-center justify-center h-64 space-y-4">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
+        {draft?.status === 'generating' && (
+          <p className="text-gray-600">Generating blog content with AI...</p>
+        )}
       </div>
     );
   }

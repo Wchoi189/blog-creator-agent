@@ -14,7 +14,7 @@ ai_context: project status and next steps
 ## Status
 
 ### ✅ Part 1: Backend (100%)
-FastAPI backend with 20+ REST endpoints, WebSocket, JWT auth, document processing, LangGraph agent, Redis/ChromaDB/Elastic integration.
+FastAPI backend with 20+ REST endpoints, WebSocket, JWT auth, document processing, LangGraph agent, Redis/Elasticsearch integration.
 
 **Files**: `backend/main.py`, `backend/api/v1/`, `backend/agent/`
 
@@ -272,15 +272,14 @@ make ss  # or: make stack-stop
 ## Architecture
 
 ```
-Next.js (3002) → FastAPI (8002) → [Redis, ChromaDB, Elastic] → LangGraph → LLM
+Next.js (3002) → FastAPI (8002) → [Redis, Elasticsearch] → LangGraph → LLM
 ```
 
 ## Services Required
 
 **Must be running for full functionality**:
 1. **Redis** (port 6379) - User auth, sessions, caching
-2. **Elasticsearch** (port 9200) - Document search (optional for basic testing)
-3. **ChromaDB** - Vector embeddings (embedded, auto-starts)
+2. **Elasticsearch** (port 9200) - Document search with Nori Korean tokenizer
 
 ## Run
 

@@ -6,9 +6,9 @@ owner: platform-team
 ---
 
 **Progress Tracker**  
-- Last Completed: Cherry-picked `c3cda8a` with `-X ours`, keeping feature-branch backend/blog/document services while importing auth TTL + dashboard/dependency cleanup; standardized `.env` (shared stack) vs `.env.local` (API keys) so Docker services and devcontainer read the correct Redis/Elasticsearch hosts; earlier, restored `copilot/update-progress-tracker` via `git rebase --abort`.  
-- In Progress: Verify merged backend/frontend files and port any straggling snippets (e.g., auth helpers, generate/settings tweaks) before running regression tests.  
-- Next: End-to-end verification of dashboard flows (generate/settings) and dependency trimming once cherry-picks land.
+- Last Completed: Updated docs (README, HANDOVER, SECURITY) to remove ChromaDB/Chainlit references; removed legacy `public/custom.js` and `public/custom.css` Chainlit files; installed Nori Korean tokenizer in Elasticsearch.  
+- In Progress: Run tests, then merge PR #4.  
+- Next: Next.js 15 upgrade.
 
 ## Goals
 - ✅ Keep legacy Chainlit UI & ChromaDB fully removed (match `main` commit `c3cda8a`).
@@ -17,37 +17,36 @@ owner: platform-team
 - ✅ Resolve remaining dashboard 403/401 errors and runtime exceptions.
 
 ## High-Level Workstream Checklist
-- [ ] **Branch Realignment**  
+- [x] **Branch Realignment**  
   - [x] Abort current rebase (`git rebase --abort`) to restore the clean feature branch state.  
   - [x] Cherry-pick targeted commits from `main` (auth/session TTL, generate page styling, dependency removals) instead of rebasing wholesale.  
     - Completed target list (from `git cherry` vs `origin/main`):  
       1. `c3cda8a` – Applied with `git cherry-pick -X ours c3cda8a`; imported auth TTL bump, dashboard styling, dependency cleanup, doc/archive moves while preserving backend service implementations.  
   - [x] Ensure `docs/archive/` structure and other new files survive each cherry-pick (snapshot with `git status` before/after).
-- [ ] **Merge Conflict Resolution**  
-  - [ ] `backend/core/database.py`: retain Redis/SQL-only path, remove `chromadb` imports, keep any new helper utilities.  
-  - [ ] `backend/services/blog_service.py` & `document_service.py`: keep OpenAI streaming logic, delete `VectorStoreFactory` remnants, confirm Redis usage aligns with `main`.  
-  - [ ] Frontend dashboard pages (`frontend/src/app/(dashboard)/...`): reconcile server-component auth guard changes with layout tweaks from `main`.  
-  - [ ] Auth utilities (`frontend/src/actions/auth.ts`, `frontend/src/lib/api.ts`, `navbar`): ensure 24h session TTL logic surfaces a:wqnd `api-server.ts` stays the single fetch wrapper.  
-  - [ ] Docs (`deprecated_chainlit.md`, `deprecated_project_plan.md`): keep only archived copies under `docs/archive/deprecated/` to avoid resurrecting deletions.
-- [ ] **Authentication Fixes**  
+- [x] **Merge Conflict Resolution**  
+  - [x] `backend/core/database.py`: retain Redis/SQL-only path, remove `chromadb` imports, keep any new helper utilities.  
+  - [x] `backend/services/blog_service.py` & `document_service.py`: keep OpenAI streaming logic, delete `VectorStoreFactory` remnants, confirm Redis usage aligns with `main`.  
+  - [x] Frontend dashboard pages (`frontend/src/app/(dashboard)/...`): reconcile server-component auth guard changes with layout tweaks from `main`.  
+  - [x] Auth utilities (`frontend/src/actions/auth.ts`, `frontend/src/lib/api.ts`, `navbar`): ensure 24h session TTL logic surfaces and `api-server.ts` stays the single fetch wrapper.  
+  - [x] Docs (`deprecated_chainlit.md`, `deprecated_project_plan.md`): keep only archived copies under `docs/archive/deprecated/` to avoid resurrecting deletions.
+- [x] **Authentication Fixes**  
   - [x] Re-enable refresh-token flow (backend `/api/v1/auth/refresh` + middleware-managed cookie rotation) to stop dashboard 401 loops without violating Next.js cookie rules.  
-  - [ ] Confirm `SESSION_EXPIRE_SECONDS` (likely in `backend/config.py` or `models/sessions.py`) equals `86400`.  
-  - [ ] Verify `/api/v1/sessions` POST accepts dashboard origin; add CSRF protections if missing but allow cookie auth.  
-  - [ ] Update `GeneratePage` server component to refresh/validate tokens before calling downstream APIs.  
-  - [ ] Ensure `/dashboard/settings` data loaders use consistent `cache: 'no-store'` or `revalidate` to avoid conflicting hints (see `src/lib/api-server.ts`).
-- [ ] **Dependency & Config Cleanup**  
-  - [ ] Remove Chainlit/Chroma-related deps (`chromadb`, `chainlit`, `langchain`, `duckdb`, `sentence-transformers`, etc.) from `pyproject.toml`.  
-  - [ ] Regenerate lockfile (`poetry lock --no-update` or `poetry update --lock`).  
-  - [ ] Update docs (`README.md`, `docs/ARCHITECTURE.md`) to state Redis + OpenAI only.  
-  - [ ] Delete remaining scripts/tests referencing Chainlit (`scripts/smoke_chainlit_ui.py`, `tests/test_chainlit_*`) or repurpose them.
+  - [x] Confirm `SESSION_EXPIRE_SECONDS` (24h in `backend/config.py`).  
+  - [x] Verify `/api/v1/sessions` POST accepts dashboard origin.  
+  - [x] Update `GeneratePage` to use axios client with auth interceptor.  
+  - [x] Ensure `/dashboard/settings` uses axios client with Authorization header.
+- [x] **Dependency & Config Cleanup**  
+  - [x] `pyproject.toml` already clean (no Chainlit/Chroma deps).  
+  - [x] Update docs (`README.md`, `HANDOVER.md`, `SECURITY.md`) to state Redis + Elasticsearch only.  
+  - [x] Delete remaining Chainlit files (`public/custom.js`, `public/custom.css`).
 - [ ] **Testing & Verification**  
   - [ ] Run backend unit tests: `make test-backend` (or `pytest backend/tests`).  
   - [ ] Run frontend lint/test: `pnpm lint && pnpm test`.  
-  - [ ] Manual QA:  
-    - [ ] Login/logout cycle verifies httpOnly cookies persist for 24h.  
-    - [ ] `/dashboard/generate` blog creation works without 403; streaming output renders.  
-    - [ ] `/dashboard/settings` no longer throws runtime errors; API key list accessible (200).  
-    - [ ] Document upload + blog regeneration still works with Redis-only backend.
+  - [x] Manual QA:  
+    - [x] Login/logout cycle verifies httpOnly cookies persist for 24h.  
+    - [x] `/dashboard/generate` blog creation works without 403; streaming output renders.  
+    - [x] `/dashboard/settings` no longer throws runtime errors; API key list accessible (200).  
+    - [x] Document upload + blog regeneration still works with Redis backend.
 
 ## Detailed Action Plan
 1. **Prep & Safety Nets**  
