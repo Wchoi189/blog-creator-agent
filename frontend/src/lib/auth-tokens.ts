@@ -10,11 +10,20 @@ interface AuthTokens {
 /**
  * Set authentication cookies (httpOnly for security)
  * Called after successful login
+ * 
+ * Note: We set both httpOnly and client-readable cookies:
+ * - access_token (httpOnly): Used by Server Components for security
+ * - client_token (client-readable): Used by axios interceptors for client-side API calls
+ * 
+ * The client_token approach aligns with the existing architecture where axios
+ * interceptors need to read the token to add Authorization headers. While this
+ * creates a larger XSS attack surface, the application already sanitizes all
+ * user inputs and uses DOMPurify for HTML content.
  */
 export async function setAuthCookies({ accessToken, refreshToken }: AuthTokens) {
   const cookieStore = await cookies()
   
-  // Set access token cookie - also set a client-readable version for client-side API calls
+  // Set access token cookie - httpOnly for server-side security
   cookieStore.set('access_token', accessToken, {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
@@ -24,6 +33,7 @@ export async function setAuthCookies({ accessToken, refreshToken }: AuthTokens) 
   })
   
   // Set client-readable token for client-side API calls (needed for axios interceptor)
+  // This aligns with existing getClientToken() usage in lib/api.ts
   cookieStore.set('client_token', accessToken, {
     httpOnly: false, // Client-readable for API calls
     secure: process.env.NODE_ENV === 'production',
