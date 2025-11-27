@@ -74,10 +74,14 @@ export default function EditorPage() {
     console.log('Starting refine...');
 
     try {
-      // Use fetch with streaming instead of EventSource for better auth support
+      // Use fetch with streaming, adding Authorization header for auth
+      const token = getClientToken();
       const response = await fetch(`${API_URL}/api/v1/blog/${draftId}/refine`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token ? { 'Authorization': `Bearer ${token}` } : {}),
+        },
         credentials: 'include', // Send cookies for auth
         body: JSON.stringify({ feedback }),
       });

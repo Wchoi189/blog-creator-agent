@@ -4,6 +4,7 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { FileText, Trash2, Edit, Plus } from 'lucide-react'
 import { useRouter } from 'next/navigation'
+import { blogAPI } from '@/lib/api'
 
 interface Draft {
   id: string
@@ -30,14 +31,8 @@ export default function DraftsClient({ drafts }: DraftsClientProps) {
     
     setDeletingId(id)
     try {
-      // Use Server Action import when available
-      const response = await fetch(`/api/v1/blog/${id}`, {
-        method: 'DELETE',
-      })
-      
-      if (!response.ok) {
-        throw new Error('Failed to delete')
-      }
+      // Use axios API (handles auth automatically)
+      await blogAPI.delete(id)
       
       router.refresh()
     } catch (error) {

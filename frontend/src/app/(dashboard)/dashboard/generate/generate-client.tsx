@@ -3,8 +3,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { FileText, Sparkles } from 'lucide-react'
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8002'
+import { sessionsAPI, blogAPI } from '@/lib/api'
 
 interface Document {
   id: string
@@ -42,40 +41,19 @@ export default function GenerateClient({ documents }: GenerateClientProps) {
     setLoading(true)
     
     try {
-      // Create session first
-      const sessionRes = await fetch(`${API_URL}/api/v1/sessions`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include', // Send cookies for auth
-        body: JSON.stringify({ name: `Blog: ${title || 'Untitled'}` }),
-      })
-      
-      if (!sessionRes.ok) {
-        const errorText = await sessionRes.text()
-        throw new Error(`Failed to create session: ${errorText}`)
-      }
-      const sessionData = await sessionRes.json()
-      const session_id = sessionData.id
+      // Create session first using axios API (handles auth automatically)
+      const sessionRes = await sessionsAPI.create({ name: `Blog: ${title || 'Untitled'}` })
+      const session_id = sessionRes.data.id
 
-      // Generate blog draft
-      const res = await fetch(`${API_URL}/api/v1/blog/generate?session_id=${session_id}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include', // Send cookies for auth
-        body: JSON.stringify({
-          document_ids: selectedDocs,
-          title: title || undefined,
-          instructions: instructions || undefined,
-        }),
+      // Generate blog draft using axios API
+      const res = await blogAPI.generate({
+        document_ids: selectedDocs,
+        title: title || undefined,
+        instructions: instructions || undefined,
+        session_id,
       })
 
-      if (!res.ok) {
-        const errorText = await res.text()
-        throw new Error(`Failed to generate blog: ${errorText}`)
-      }
-      const data = await res.json()
-
-      router.push(`/dashboard/editor/${data.id}`)
+      router.push(`/dashboard/editor/${res.data.id}`)
     } catch (error) {
       console.error('Failed to generate blog:', error)
       alert(error instanceof Error ? error.message : 'Failed to generate blog')

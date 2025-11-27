@@ -1,15 +1,39 @@
 ---
 doc_type: api
-updated: 2025-11-24-1830
+updated: 2025-11-27
 status: current
 ai_context: backend endpoints reference
 ---
 
 # API Endpoints
 
-**Base**: `http://localhost:8000`
+**Base**: `http://localhost:8002`
 
-## Auth
+## Authentication
+
+All protected endpoints require a JWT token via the `Authorization` header:
+
+```
+Authorization: Bearer <access_token>
+```
+
+**Important:** The backend does NOT read tokens from cookies. Even with `credentials: 'include'`, you must explicitly set the `Authorization` header.
+
+### Client-Side Authentication
+
+- Use the axios client from `@/lib/api` which automatically attaches the token via interceptor
+- For streaming/special cases, use `authorizedFetch` or manually add the header
+- The token is available via `getClientToken()` which reads from the `client_token` cookie
+
+### Token Flow
+
+1. User logs in via `/api/v1/auth/login`
+2. Backend sets both `access_token` (httpOnly) and `client_token` (accessible) cookies
+3. Client-side code reads `client_token` and includes it as `Authorization: Bearer` header
+4. Axios interceptor in `api.ts` handles this automatically
+5. Raw `fetch` calls must manually add the header using `getClientToken()`
+
+## Auth Endpoints
 - `POST /api/v1/auth/register` - Create user
 - `POST /api/v1/auth/login` - Get JWT token
 - `GET /api/v1/auth/me` - Current user
@@ -43,6 +67,4 @@ ai_context: backend endpoints reference
 - `GET /api/v1/sessions/{id}/chat-history` - Message history
 
 ## WebSocket
-- `ws://localhost:8000/ws?token={jwt}` - Real-time updates
-
-**Auth**: Bearer token in `Authorization` header
+- `ws://localhost:8002/ws?token={jwt}` - Real-time updates

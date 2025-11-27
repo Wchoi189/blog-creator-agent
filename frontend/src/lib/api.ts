@@ -15,7 +15,7 @@
 
 import axios, { AxiosInstance, AxiosError } from 'axios';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8002';
 
 // Create axios instance with credentials to send cookies
 const api: AxiosInstance = axios.create({
@@ -27,7 +27,10 @@ const api: AxiosInstance = axios.create({
   withCredentials: true, // Important: Send cookies with requests
 });
 
-function getClientToken(): string | undefined {
+/**
+ * Get the client token from cookies (for client-side use)
+ */
+export function getClientToken(): string | undefined {
   if (typeof document === 'undefined') {
     return undefined;
   }
@@ -42,6 +45,28 @@ function getClientToken(): string | undefined {
   }
 
   return decodeURIComponent(match.split('=')[1]);
+}
+
+/**
+ * Fetch wrapper that automatically adds Authorization header
+ * Use for streaming endpoints or cases where axios doesn't work
+ */
+export async function authorizedFetch(
+  url: string,
+  options: RequestInit = {}
+): Promise<Response> {
+  const token = getClientToken();
+  const headers = new Headers(options.headers);
+  
+  if (token && !headers.has('Authorization')) {
+    headers.set('Authorization', `Bearer ${token}`);
+  }
+  
+  return fetch(url, {
+    ...options,
+    headers,
+    credentials: 'include',
+  });
 }
 
 api.interceptors.request.use((config) => {
