@@ -1,8 +1,37 @@
 # Progress Tracker - Next.js Audit Resolution
 
-**Last Updated**: 2025-11-26 (Evening)  
-**Status**: MOSTLY COMPLETE - Testing Required  
+**Last Updated**: 2025-11-27 (Morning)  
+**Status**: BRANCH SYNC REQUIRED - See Branch Status Below  
 **Decision**: Performing Next.js 15 upgrade alongside remaining audit resolutions
+
+---
+
+## ⚠️ BRANCH STATUS - ACTION REQUIRED
+
+**Current Branch**: `copilot/update-progress-tracker`  
+**Based On**: Commit `e62c7d3` (merge of work-on-audit-resolutions)  
+**Main Branch**: Has 1 newer commit `c3cda8a` "Cleaned up legacy Chainlit UI module"
+
+### Merge Conflicts Detected
+The following files have conflicts between this PR branch and main:
+- `backend/core/database.py`
+- `backend/services/blog_service.py`
+- `backend/services/document_service.py`
+- `frontend/src/actions/auth.ts`
+- `frontend/src/app/(dashboard)/dashboard/dashboard-client.tsx`
+- `frontend/src/app/(dashboard)/dashboard/editor/[draftId]/page.tsx`
+- `frontend/src/app/(dashboard)/dashboard/page.tsx`
+- `frontend/src/app/(dashboard)/dashboard/settings/page.tsx`
+- `frontend/src/app/(dashboard)/dashboard/upload/page.tsx`
+- `frontend/src/app/(dashboard)/layout.tsx`
+- `frontend/src/components/layout/Navbar.tsx`
+- `frontend/src/lib/api.ts`
+- Plus rename/delete conflicts for deprecated files
+
+### Options to Resolve
+1. **Rebase via GitHub** - Update PR to use current main as base
+2. **Manual Merge** - User resolves conflicts locally and pushes
+3. **Fresh Branch** - Create new branch from main, re-apply changes
 
 ---
 
@@ -12,6 +41,7 @@
 - **Next.js Audit**: ✅ ~95% COMPLETE (auth security fix done, blog generation fixed)
 - **ChromaDB Dependency**: ✅ REMOVED (simplified to Redis + OpenAI)
 - **Blog Generation**: ✅ FIXED (API URLs, backend service simplified)
+- **Chainlit Cleanup**: ✅ DONE BY USER (on main - commit c3cda8a)
 - **Next.js 15 Upgrade**: ⏳ PENDING (planned for next phase)
 - **Documentation**: ✅ REORGANIZED (archive created, structure improved)
 
