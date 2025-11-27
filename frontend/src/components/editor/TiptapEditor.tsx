@@ -43,6 +43,7 @@ export default function TiptapEditor({
     ],
     content,
     editable,
+    immediatelyRender: false, // Disable SSR rendering for client-only component
     onUpdate: ({ editor }) => {
       onChange(editor.getHTML());
     },
