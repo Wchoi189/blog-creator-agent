@@ -5,6 +5,7 @@ from datetime import datetime
 from typing import Optional, List, AsyncIterator
 from backend.core.database import db
 from backend.config import settings
+from backend.services.document_service import document_service
 from backend.models.blog import (
     BlogDraft,
     BlogStatus,
@@ -19,6 +20,7 @@ class BlogService:
 
     def __init__(self):
         self.redis = db.redis
+        self.max_context_chars = 8000
 
     async def create_draft(
         self,
@@ -128,7 +130,7 @@ class BlogService:
         draft_id: str,
         instructions: Optional[str] = None,
     ) -> AsyncIterator[str]:
-        """Generate blog content using LLM (streaming)"""
+        """Generate blog content using OpenAI (streaming)"""
         draft = await self.get_draft(draft_id)
         if not draft:
             raise ValueError("Draft not found")
@@ -137,37 +139,42 @@ class BlogService:
         self.redis.hset(f"draft:{draft_id}", "status", BlogStatus.GENERATING.value)
 
         try:
-            from langchain_openai import ChatOpenAI
-            from langchain_core.messages import HumanMessage, SystemMessage
+            import openai
+            from backend.config import settings
+
+            # Configure OpenAI
+            client = openai.AsyncOpenAI(api_key=settings.OPENAI_API_KEY)
+
+            # Build the prompt
+            prompt = instructions or f"Write a comprehensive blog post titled '{draft.title}'"
+
+            doc_context = await self._collect_document_context(draft, instructions)
+
+            system_prompt = """You are a professional blog writer. Create engaging, well-structured blog content.
+Use markdown formatting with proper headings, paragraphs, and bullet points where appropriate.
+Make the content informative, engaging, and easy to read."""
+
+            if doc_context:
+                system_prompt += f"\n\nUse the following document content as reference:\n{doc_context}"
             
-            # Initialize LLM with streaming
-            llm = ChatOpenAI(
-                model=settings.DEFAULT_LLM_MODEL,
+            # Stream response from OpenAI
+            full_content = ""
+            stream = await client.chat.completions.create(
+                model=settings.DEFAULT_LLM_MODEL or "gpt-4-turbo-preview",
+                messages=[
+                    {"role": "system", "content": system_prompt},
+                    {"role": "user", "content": prompt}
+                ],
+                stream=True,
+                max_tokens=4000,
                 temperature=0.7,
-                streaming=True,
-                api_key=settings.OPENAI_API_KEY,
             )
             
-            # Build prompt
-            system_prompt = """You are an expert blog content writer. Generate well-structured, 
-engaging blog content based on the user's instructions. Use markdown formatting with proper 
-headings, paragraphs, and bullet points where appropriate."""
-            
-            user_prompt = instructions or f"Generate a blog post titled '{draft.title}'"
-            if draft.content:
-                user_prompt = f"Current content:\n{draft.content}\n\nInstructions: {user_prompt}"
-            
-            messages = [
-                SystemMessage(content=system_prompt),
-                HumanMessage(content=user_prompt),
-            ]
-            
-            # Stream response
-            full_content = ""
-            async for chunk in llm.astream(messages):
-                if chunk.content:
-                    full_content += chunk.content
-                    yield chunk.content
+            async for chunk in stream:
+                if chunk.choices and chunk.choices[0].delta.content:
+                    content = chunk.choices[0].delta.content
+                    full_content += content
+                    yield content
 
             # Update draft with generated content
             await self.update_draft(
@@ -197,41 +204,46 @@ headings, paragraphs, and bullet points where appropriate."""
         self.redis.hset(f"draft:{draft_id}", "status", BlogStatus.GENERATING.value)
 
         try:
-            from langchain_openai import ChatOpenAI
-            from langchain_core.messages import HumanMessage, SystemMessage
+            import openai
+            from backend.config import settings
             
-            # Initialize LLM with streaming
-            llm = ChatOpenAI(
-                model=settings.DEFAULT_LLM_MODEL,
-                temperature=0.7,
-                streaming=True,
-                api_key=settings.OPENAI_API_KEY,
-            )
+            # Configure OpenAI
+            client = openai.AsyncOpenAI(api_key=settings.OPENAI_API_KEY)
             
-            # Build refinement prompt
-            system_prompt = """You are an expert blog editor. Your task is to refine and improve 
-the provided blog content based on the user's feedback. Maintain the overall structure while 
-making the requested improvements. Output the complete refined content in markdown format."""
+            # Build the refinement prompt with current content
+            system_prompt = """You are a professional blog editor. Your task is to refine and improve blog content based on feedback.
+Maintain the overall structure and topic while incorporating the requested changes.
+Output the complete revised blog post in markdown format."""
             
-            user_prompt = f"""Current blog content:
+            user_prompt = f"""Here is the current blog post:
+
 {draft.content}
 
-User feedback/instructions:
+---
+
+Please refine this blog post based on the following feedback:
 {feedback}
 
-Please provide the complete refined blog content based on the feedback above."""
+Provide the complete revised blog post:"""
             
-            messages = [
-                SystemMessage(content=system_prompt),
-                HumanMessage(content=user_prompt),
-            ]
-            
-            # Stream response
+            # Stream response from OpenAI
             full_content = ""
-            async for chunk in llm.astream(messages):
-                if chunk.content:
-                    full_content += chunk.content
-                    yield chunk.content
+            stream = await client.chat.completions.create(
+                model=settings.DEFAULT_LLM_MODEL or "gpt-4-turbo-preview",
+                messages=[
+                    {"role": "system", "content": system_prompt},
+                    {"role": "user", "content": user_prompt}
+                ],
+                stream=True,
+                max_tokens=4000,
+                temperature=0.7,
+            )
+            
+            async for chunk in stream:
+                if chunk.choices and chunk.choices[0].delta.content:
+                    content = chunk.choices[0].delta.content
+                    full_content += content
+                    yield content
 
             # Update draft with refined content
             await self.update_draft(
@@ -277,6 +289,47 @@ Please provide the complete refined blog content based on the feedback above."""
         self.redis.srem(f"user:{user_id}:drafts", draft_id)
 
         return True
+
+    async def _collect_document_context(
+        self,
+        draft: BlogDraft,
+        instructions: Optional[str],
+    ) -> str:
+        """Gather top document chunks using ElasticSearch (with Redis fallback)."""
+
+        if not draft.document_ids:
+            return ""
+
+        query = instructions or draft.title or "blog content"
+        results = await document_service.search_document_chunks(
+            user_id=draft.user_id,
+            query=query,
+            document_ids=draft.document_ids,
+            top_k=settings.TOP_K_RESULTS,
+        )
+
+        if results:
+            context_blocks: List[str] = []
+            for result in results:
+                snippet = result.content.strip()[:1500]
+                if not snippet:
+                    continue
+                context_blocks.append(
+                    f"--- Document: {result.document_name} (score: {result.score:.2f}) ---\n{snippet}"
+                )
+            if context_blocks:
+                joined = "\n\n".join(context_blocks)
+                return joined[: self.max_context_chars]
+
+        # Fallback to previously stored extracted text
+        context = ""
+        for doc_id in draft.document_ids:
+            doc_data = self.redis.hgetall(f"document:{doc_id}")
+            if doc_data and doc_data.get("extracted_text"):
+                context += f"\n\n--- Document: {doc_data.get('filename', doc_id)} ---\n"
+                context += doc_data.get("extracted_text", "")[:2000]
+
+        return context[: self.max_context_chars]
 
 
 # Global service instance

@@ -1,15 +1,25 @@
 """Configuration management for Blog Creator API"""
 
+from pathlib import Path
 from typing import List
 from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
+# Resolve paths
+_BACKEND_DIR = Path(__file__).resolve().parent
+_PROJECT_ROOT = _BACKEND_DIR.parent
+
 
 class Settings(BaseSettings):
-    """Application settings loaded from environment variables"""
+    """Application settings loaded from environment variables
+    
+    Load order (later files override earlier):
+    1. Root .env - shared stack config (REDIS_URL, ELASTICSEARCH_URL)
+    2. backend/.env - API keys and backend-specific overrides
+    """
 
     model_config = SettingsConfigDict(
-        env_file=".env",
+        env_file=(str(_PROJECT_ROOT / ".env"), str(_BACKEND_DIR / ".env")),
         env_file_encoding="utf-8",
         case_sensitive=False,
         extra="ignore"

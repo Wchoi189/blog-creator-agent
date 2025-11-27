@@ -46,6 +46,11 @@ class TokenPayload(BaseModel):
     exp: datetime
 
 
+class TokenRefreshRequest(BaseModel):
+    """Refresh token request"""
+    refresh_token: str = Field(..., description="Refresh token JWT")
+
+
 class APIKeyCreate(BaseModel):
     """API key creation model"""
     name: str = Field(..., description="Friendly name for the API key")

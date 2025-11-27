@@ -1,4 +1,4 @@
-"""Database connections and utilities - Clean implementation without ChromaDB"""
+"""Database connections and utilities"""
 
 import asyncio
 from typing import Optional
@@ -11,7 +11,7 @@ from backend.config import settings
 class DatabaseManager:
     """Manages database connections"""
 
-    def __init__(self) -> None:
+    def __init__(self):
         self._redis: Optional[Redis] = None
         self._elasticsearch: Optional[AsyncElasticsearch] = None
 

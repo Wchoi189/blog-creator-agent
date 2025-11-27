@@ -1,18 +1,28 @@
-import Navbar from '@/components/layout/Navbar';
-import Sidebar from '@/components/layout/Sidebar';
-import { getCurrentUser } from '@/actions/auth';
+import { redirect } from 'next/navigation'
+import { getCurrentUser } from '@/actions/auth'
+import Navbar from '@/components/layout/Navbar'
+import Sidebar from '@/components/layout/Sidebar'
 
 /**
  * Dashboard Layout - Server Component
- * Authentication is handled by middleware
+ * Fetches user from httpOnly cookies server-side
+ * Middleware should already redirect unauthenticated users, but we double-check here
  */
 export default async function DashboardLayout({
   children,
 }: {
-  children: React.ReactNode;
+  children: React.ReactNode
 }) {
-  const { user } = await getCurrentUser();
-
+  // Get user from httpOnly cookies (server-side)
+  const { user } = await getCurrentUser()
+  
+  // If no user, redirect to login
+  // Middleware should catch this, but this is a safeguard
+  if (!user) {
+    redirect('/login')
+    return // Explicit return for clarity (redirect throws internally)
+  }
+  
   return (
     <div className="min-h-screen bg-gray-50">
       <Navbar user={user} />
@@ -23,5 +33,5 @@ export default async function DashboardLayout({
         </main>
       </div>
     </div>
-  );
+  )
 }

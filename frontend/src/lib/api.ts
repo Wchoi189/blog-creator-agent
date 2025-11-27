@@ -1,55 +1,90 @@
 /**
- * API client for backend communication
+ * API client for backend communication (Client-side)
+ * 
+ * WARNING: This file is being phased out in favor of:
+ * - Server Actions for mutations
+ * - api-server.ts for Server Component data fetching
+ * 
+ * Only keep this for:
+ * 1. Editor page (complex client-side operations)
+ * 2. Settings page (API key management)
+ * 
+ * Authentication: Relies on httpOnly cookies sent automatically by browser
+ * NO localStorage usage for tokens
  */
 
 import axios, { AxiosInstance, AxiosError } from 'axios';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8002';
 
-// Helper to get client token from cookie
-export function getClientToken(): string | null {
-  if (typeof window === 'undefined') return null;
-  
-  // Split cookies and find client_token
-  const cookies = document.cookie.split(';').map(c => c.trim());
-  const clientTokenCookie = cookies.find(c => c.startsWith('client_token='));
-  
-  if (!clientTokenCookie) {
-    return null;
-  }
-  
-  // Use substring instead of split to handle = characters in JWT
-  const token = clientTokenCookie.substring('client_token='.length);
-  return token;
-}
-
-// Create axios instance
+// Create axios instance with credentials to send cookies
 const api: AxiosInstance = axios.create({
   baseURL: API_URL,
   timeout: 30000,
   headers: {
     'Content-Type': 'application/json',
   },
+  withCredentials: true, // Important: Send cookies with requests
 });
 
-// Request interceptor - add JWT token from cookie
-api.interceptors.request.use(
-  (config) => {
-    const token = getClientToken();
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
-    return config;
-  },
-  (error) => Promise.reject(error)
-);
+/**
+ * Get the client token from cookies (for client-side use)
+ */
+export function getClientToken(): string | undefined {
+  if (typeof document === 'undefined') {
+    return undefined;
+  }
+
+  const match = document.cookie
+    .split(';')
+    .map((cookie) => cookie.trim())
+    .find((cookie) => cookie.startsWith('client_token='));
+
+  if (!match) {
+    return undefined;
+  }
+
+  return decodeURIComponent(match.split('=')[1]);
+}
+
+/**
+ * Fetch wrapper that automatically adds Authorization header
+ * Use for streaming endpoints or cases where axios doesn't work
+ */
+export async function authorizedFetch(
+  url: string,
+  options: RequestInit = {}
+): Promise<Response> {
+  const token = getClientToken();
+  const headers = new Headers(options.headers);
+  
+  if (token && !headers.has('Authorization')) {
+    headers.set('Authorization', `Bearer ${token}`);
+  }
+  
+  return fetch(url, {
+    ...options,
+    headers,
+    credentials: 'include',
+  });
+}
+
+api.interceptors.request.use((config) => {
+  const token = getClientToken();
+  if (token) {
+    config.headers = config.headers ?? {};
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+});
 
 // Response interceptor - handle errors
 api.interceptors.response.use(
   (response) => response,
   (error: AxiosError) => {
     if (error.response?.status === 401) {
-      // Redirect to login (cookies will be cleared by logout action)
+      // Redirect to login on auth error
+      // Cookies will be cleared by the server or middleware
       if (typeof window !== 'undefined') {
         window.location.href = '/login';
       }

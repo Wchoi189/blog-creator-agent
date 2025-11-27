@@ -2,11 +2,11 @@
 
 **RAG-powered system: documents → blog posts with AI assistance**
 
-Migrated from Chainlit to Next.js 14 + FastAPI. Part 2 complete (100%).
+Next.js 14 + FastAPI with Redis and Elasticsearch.
 
 ## 🎯 Project Purpose
 
-The original blog-creator-agent used Streamlit, Chainlit, and LibreChat UI frameworks. While these tools excel at chat interfaces, they were discovered to be **sub-optimal for iterating on document updates**. Chat UIs require users to describe changes conversationally, making it difficult to:
+This project implements a **document-centric collaborative editing solution** using modern web technologies. Chat-based UIs are sub-optimal for iterating on document updates because they require users to describe changes conversationally, making it difficult to:
 
 - See and edit content in real-time
 - Collaborate with multiple users simultaneously
@@ -58,9 +58,8 @@ graph TB
     end
 
     subgraph "Storage & Processing"
-        I --> R[Vector Store];
-        R --> S[ChromaDB];
-        R --> T[ElasticSearch];
+        I --> R[Redis Cache];
+        I --> T[ElasticSearch];
         I --> U[Document Preprocessor];
         U --> V[PDF Parser];
         U --> W[Audio Transcriber];
@@ -76,8 +75,8 @@ graph TB
 **Architecture Highlights:**
 - **Frontend**: Next.js 14 with TypeScript, Tailwind CSS, and Tiptap editor
 - **Backend**: FastAPI with async support, WebSocket, and REST APIs
-- **AI Agent**: LangGraph-based RAG pipeline (reused from original)
-- **Storage**: ChromaDB (vector store), ElasticSearch (optional), Redis (caching)
+- **AI Agent**: LangGraph-based RAG pipeline with OpenAI
+- **Storage**: Redis (sessions/cache), Elasticsearch (document search with Nori Korean tokenizer)
 - **Collaboration**: Yjs CRDT for conflict-free real-time editing
 
 ## 🚀 Quick Start
@@ -165,9 +164,9 @@ For detailed setup instructions, see [Installation Guide](docs/1_INSTALLATION.md
 * **Authentication**: JWT tokens + API keys
 
 ### Storage & Infrastructure
-* **Vector DB**: ChromaDB (primary), ElasticSearch (optional)
-* **Caching**: Redis
-* **Search**: Tavily API
+* **Sessions/Cache**: Redis
+* **Document Search**: Elasticsearch (with Nori Korean tokenizer)
+* **Web Search**: Tavily API
 * **Dev Tools**: uv, Ruff, pre-commit
 
 ## 📁 Project Structure
@@ -201,11 +200,6 @@ blog-creator-agent/
 │   │   └── types/          # TypeScript types
 │   └── package.json
 │
-├── src/                     # Original Chainlit code (preserved)
-│   ├── agent.py            # Original agent logic
-│   ├── chainlit_app.py     # Original Chainlit UI
-│   └── ...
-│
 ├── docs/                    # Documentation
 │   ├── plans/              # Implementation roadmap
 │   └── ...
@@ -233,7 +227,7 @@ blog-creator-agent/
 - LangGraph agent integration with streaming
 - WebSocket real-time communication
 - Session management
-- Redis + ElasticSearch + ChromaDB integration
+- Redis + Elasticsearch integration
 
 ✅ **Frontend (85%)**
 - Next.js 14 with TypeScript + Tailwind
@@ -286,7 +280,3 @@ Contributions are welcome! Please refer to the [Contributing Guide](docs/5_CONTR
 ## 📄 License
 
 This project is distributed under the MIT License.
-
----
-
-**Note**: The original Chainlit-based code is preserved in the `src/` directory for reference. The new architecture maintains all original functionality while adding real-time collaboration capabilities.

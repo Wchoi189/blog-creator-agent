@@ -185,3 +185,7 @@ if ! shopt -oq posix; then
   fi
 fi
 
+# Add Git to PATH if it exists
+if [ -n "$GITHUB_PAT" ]; then
+    export PATH="$GITHUB_PAT:$PATH"
+fi

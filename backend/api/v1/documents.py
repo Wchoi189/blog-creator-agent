@@ -1,7 +1,12 @@
 """Document API endpoints"""
 
 from fastapi import APIRouter, Depends, HTTPException, status, UploadFile, File, BackgroundTasks
-from backend.models.documents import Document, DocumentList, DocumentSearch, SearchResponse
+from backend.models.documents import (
+    Document,
+    DocumentList,
+    DocumentSearch,
+    SearchResponse,
+)
 from backend.services.document_service import document_service
 from backend.core.security import get_current_user_id
 
@@ -107,6 +112,11 @@ async def search_documents(
     user_id: str = Depends(get_current_user_id),
 ):
     """Search documents using RAG"""
-    # TODO: Implement search logic with vector store
-    # For now, return empty results
-    return SearchResponse(results=[], total=0)
+    results = await document_service.search_document_chunks(
+        user_id=user_id,
+        query=search_request.query,
+        document_ids=search_request.document_ids,
+        top_k=search_request.top_k,
+    )
+
+    return SearchResponse(results=results, total=len(results))

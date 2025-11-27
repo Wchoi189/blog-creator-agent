@@ -7,6 +7,8 @@ import { BlogDraft } from '@/types/api';
 import TiptapEditor from '@/components/editor/TiptapEditor';
 import { Save, Download, ArrowLeft, Sparkles } from 'lucide-react';
 
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8002';
+
 export default function EditorPage() {
   const params = useParams();
   const router = useRouter();
@@ -22,22 +24,44 @@ export default function EditorPage() {
   const [showFeedbackModal, setShowFeedbackModal] = useState(false);
 
   useEffect(() => {
+    let pollInterval: NodeJS.Timeout | null = null;
+
     const fetchDraft = async () => {
       try {
         const response = await blogAPI.get(draftId);
         const draftData = response.data;
         setDraft(draftData);
-        setContent(draftData.content);
         setTitle(draftData.title);
+
+        // If content is ready, set it and stop polling
+        if (draftData.content && draftData.status !== 'generating') {
+          setContent(draftData.content);
+          setLoading(false);
+          if (pollInterval) clearInterval(pollInterval);
+        } else if (draftData.status === 'generating' || draftData.status === 'draft') {
+          // Content still generating - keep polling
+          if (!pollInterval) {
+            pollInterval = setInterval(fetchDraft, 2000); // Poll every 2s
+          }
+        } else {
+          // Failed or other status
+          setContent(draftData.content || '');
+          setLoading(false);
+          if (pollInterval) clearInterval(pollInterval);
+        }
       } catch (error) {
         console.error('Failed to fetch draft:', error);
         alert('Failed to load draft');
-      } finally {
         setLoading(false);
+        if (pollInterval) clearInterval(pollInterval);
       }
     };
 
     fetchDraft();
+
+    return () => {
+      if (pollInterval) clearInterval(pollInterval);
+    };
   }, [draftId]);
 
   const handleSave = async () => {
@@ -72,64 +96,45 @@ export default function EditorPage() {
     console.log('Starting refine...');
 
     try {
-      const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
-      console.log('API_URL:', API_URL, 'draftId:', draftId);
-      
-      // Get token from cookie using shared helper
+      // Use fetch with streaming, adding Authorization header for auth
       const token = getClientToken();
-      console.log('Token present:', !!token);
-      
-      if (!token) {
-        throw new Error('No authentication token found');
-      }
-      
-      console.log('Making fetch request...');
       const response = await fetch(`${API_URL}/api/v1/blog/${draftId}/refine`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
+          ...(token ? { 'Authorization': `Bearer ${token}` } : {}),
         },
+        credentials: 'include', // Send cookies for auth
         body: JSON.stringify({ feedback }),
       });
 
-      console.log('Response status:', response.status, response.ok);
-      
       if (!response.ok) {
-        throw new Error('Failed to refine draft');
+        throw new Error(`HTTP ${response.status}: ${await response.text()}`);
       }
 
+      // Read streaming response
       const reader = response.body?.getReader();
+      if (!reader) {
+        throw new Error('No response body');
+      }
+
       const decoder = new TextDecoder();
       let streamedContent = '';
 
-      if (reader) {
-        while (true) {
-          const { done, value } = await reader.read();
-          if (done) break;
-
-          const chunk = decoder.decode(value, { stream: true });
-          const lines = chunk.split('\n\n');
-          
-          for (const line of lines) {
-            if (line.startsWith('data: ')) {
-              const data = line.slice(6);
-              if (data && !data.startsWith('Error:')) {
-                streamedContent += data;
-                setContent(streamedContent);
-              } else if (data.startsWith('Error:')) {
-                alert(data);
-              }
-            }
-          }
-        }
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        
+        const chunk = decoder.decode(value, { stream: true });
+        streamedContent += chunk;
+        setContent(streamedContent);
       }
 
       setRefining(false);
       setFeedback('');
     } catch (error) {
       console.error('Failed to refine draft:', error);
-      alert('Failed to refine draft');
+      alert(error instanceof Error ? error.message : 'Failed to refine draft');
       setRefining(false);
     }
   };
@@ -154,8 +159,11 @@ export default function EditorPage() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-64">
+      <div className="flex flex-col items-center justify-center h-64 space-y-4">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
+        {draft?.status === 'generating' && (
+          <p className="text-gray-600">Generating blog content with AI...</p>
+        )}
       </div>
     );
   }

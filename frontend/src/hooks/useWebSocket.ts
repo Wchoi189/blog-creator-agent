@@ -11,15 +11,16 @@ interface UseWebSocketOptions {
   reconnect?: boolean;
 }
 
-export function useWebSocket(url: string, options: UseWebSocketOptions = {}) {
+export function useWebSocket(url: string, options: UseWebSocketOptions & { token?: string } = {}) {
   const [connected, setConnected] = useState(false);
   const wsRef = useRef<WebSocket | null>(null);
   const reconnectTimeoutRef = useRef<NodeJS.Timeout>();
 
   useEffect(() => {
     const connect = () => {
-      const token = localStorage.getItem('access_token');
-      const wsUrl = `${url}${token ? `?token=${token}` : ''}`;
+      // Token should be passed as option, not from localStorage
+      // If no token provided, connection will fail with 401
+      const wsUrl = `${url}${options.token ? `?token=${options.token}` : ''}`;
 
       const ws = new WebSocket(wsUrl);
       wsRef.current = ws;

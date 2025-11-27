@@ -60,7 +60,7 @@ export default function DashboardClient({ user, stats }: DashboardClientProps) {
 
           <Link
             href="/dashboard/documents"
-            className="flex items-center space-x-3 p-4 border-2 border-dashed border-gray-300 rounded-lg hover:border-primary-500 hover:bg-primary-50 transition focus:outline-none focus:ring-primary-500"
+            className="flex items-center space-x-3 p-4 border-2 border-dashed border-gray-300 rounded-lg hover:border-primary-500 hover:bg-primary-50 transition focus:outline-none focus:ring-2 focus:ring-primary-500"
           >
             <FileText className="w-8 h-8 text-primary-600" aria-hidden="true" />
             <div>

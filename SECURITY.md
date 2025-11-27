@@ -134,8 +134,8 @@ pip install --upgrade <package-name>
 - UUID-based file paths (prevents path traversal)
 
 ### Infrastructure
-- Redis for session management
-- ChromaDB for vector storage
+- Redis for session management and caching
+- Elasticsearch for document search
 - NoSQL databases (no SQL injection risk)
 - CORS protection
 

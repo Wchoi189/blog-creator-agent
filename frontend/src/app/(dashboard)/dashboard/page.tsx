@@ -15,7 +15,7 @@ export const metadata: Metadata = {
 export default async function DashboardPage() {
   // Fetch user from httpOnly cookies
   const { user } = await getCurrentUser()
-
+  
   // Fetch stats in parallel
   try {
     const [docsData, draftsData, sessionsData] = await Promise.all([
@@ -24,9 +24,12 @@ export default async function DashboardPage() {
       sessionsServerAPI.list(),
     ])
 
+    // Handle both array and object response formats for drafts
+    const draftsArray = Array.isArray(draftsData) ? draftsData : (draftsData as { drafts: any[] }).drafts || []
+
     const stats = {
       documents: docsData.documents?.length || 0,
-      drafts: draftsData.drafts?.length || draftsData.length || 0,
+      drafts: draftsArray.length,
       sessions: sessionsData.sessions?.length || 0,
     }
 
