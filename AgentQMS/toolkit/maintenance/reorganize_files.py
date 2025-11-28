@@ -184,8 +184,20 @@ class FileReorganizer:
         """Analyze if file is in correct directory and suggest move if needed"""
         filename = file_path.name
 
-        # Skip INDEX.md files
+        # Skip INDEX.md and registry files
         if filename == "INDEX.md":
+            return None
+        
+        # Skip common registry/index files that shouldn't be moved
+        skip_patterns = [
+            "MASTER_INDEX.md",
+            "REGISTRY.md", 
+            "README.md",
+            "_index.md",
+            "index.md"
+        ]
+        if any(filename.upper() == pattern.upper() for pattern in skip_patterns):
+            print(f"ℹ️  Skipping registry/index file: {filename}")
             return None
 
         # Determine expected directory from filename prefix
@@ -357,8 +369,36 @@ class FileReorganizer:
         else:
             return None
 
+    def validate_operations(self, operations: dict[str, MoveOperation]) -> tuple[bool, list[str]]:
+        """Validate all operations before execution
+        
+        Returns:
+            tuple: (all_valid, list_of_issues)
+        """
+        issues = []
+        target_paths = set()
+        
+        for old_path, operation in operations.items():
+            new_path = operation.new_path
+            
+            # Check for duplicate target paths (two files trying to move to same location)
+            if new_path in target_paths:
+                issues.append(f"Conflict: Multiple files trying to move to {new_path}")
+            else:
+                target_paths.add(new_path)
+            
+            # Check if target already exists
+            if Path(new_path).exists():
+                issues.append(f"Target exists: {new_path}")
+            
+            # Check if source file still exists
+            if not Path(old_path).exists():
+                issues.append(f"Source missing: {old_path}")
+        
+        return len(issues) == 0, issues
+
     def reorganize_directory(
-        self, directory: Path, dry_run: bool = False, limit: int | None = None
+        self, directory: Path, dry_run: bool = False, limit: int | None = None, validate: bool = True
     ) -> dict[str, MoveOperation]:
         """Reorganize all files in a directory"""
         results = {}
@@ -376,6 +416,16 @@ class FileReorganizer:
                         print(f"✋ Reached file limit ({limit}). Stopping.")
                         break
 
+        # Validate operations before returning
+        if validate and results and not dry_run:
+            valid, issues = self.validate_operations(results)
+            if not valid:
+                print("\n⚠️  Validation issues detected:")
+                for issue in issues:
+                    print(f"   • {issue}")
+                print("\nℹ️  No changes will be made. Use --dry-run to preview.")
+                return {}
+        
         return results
 
     def generate_reorganization_report(self, results: dict[str, MoveOperation]) -> str:

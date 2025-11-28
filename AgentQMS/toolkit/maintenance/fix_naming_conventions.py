@@ -114,19 +114,27 @@ class NamingConventionFixer:
         operations = []
         filename = file_path.name
 
-        # Skip INDEX.md files
-        if filename == "INDEX.md":
+        # Skip INDEX.md and registry files
+        skip_patterns = [
+            "INDEX.md",
+            "MASTER_INDEX.md",
+            "REGISTRY.md",
+            "README.md"
+        ]
+        if any(filename.upper() == pattern.upper() for pattern in skip_patterns):
             return operations
 
         # Check timestamp format
-        if not re.match(r"^\d{4}-\d{2}-\d{2}_\d{4}_", filename):
+        timestamp_match = re.match(r"^(\d{4}-\d{2}-\d{2}_\d{4}_)", filename)
+        if not timestamp_match:
             operation = self._fix_timestamp_issue(file_path, filename)
             if operation:
                 operations.append(operation)
 
-        # Check type prefix
+        # Check type prefix (after timestamp if present)
+        prefix_part = filename[len(timestamp_match.group(1)):] if timestamp_match else filename
         has_valid_prefix = any(
-            filename.startswith(prefix) for prefix in self.valid_prefixes
+            prefix_part.startswith(prefix) for prefix in self.valid_prefixes
         )
         if not has_valid_prefix:
             operation = self._fix_type_prefix_issue(file_path, filename)
@@ -387,8 +395,36 @@ class NamingConventionFixer:
 
         return operations
 
+    def validate_operations(self, operations: dict[str, list[RenameOperation]]) -> tuple[bool, list[str]]:
+        """Validate all operations before execution
+        
+        Returns:
+            tuple: (all_valid, list_of_issues)
+        """
+        issues = []
+        final_paths = {}
+        
+        for old_path, ops in operations.items():
+            # Trace through sequential operations to find final path
+            current_path = old_path
+            for op in ops:
+                current_path = op.new_path
+            
+            # Check for duplicate final paths
+            if current_path in final_paths:
+                issues.append(f"Conflict: {old_path} and {final_paths[current_path]} both rename to {current_path}")
+            else:
+                final_paths[current_path] = old_path
+            
+            # Check if any intermediate target exists
+            for op in ops:
+                if Path(op.new_path).exists() and op.new_path != op.old_path:
+                    issues.append(f"Target exists: {op.new_path}")
+        
+        return len(issues) == 0, issues
+
     def fix_directory(
-        self, directory: Path, dry_run: bool = False, limit: int | None = None
+        self, directory: Path, dry_run: bool = False, limit: int | None = None, validate: bool = True
     ) -> dict[str, list[RenameOperation]]:
         """Fix naming issues for all files in a directory"""
         results = {}
@@ -406,6 +442,16 @@ class NamingConventionFixer:
                         print(f"✋ Reached file limit ({limit}). Stopping.")
                         break
 
+        # Validate operations before returning
+        if validate and results and not dry_run:
+            valid, issues = self.validate_operations(results)
+            if not valid:
+                print("\n⚠️  Validation issues detected:")
+                for issue in issues:
+                    print(f"   • {issue}")
+                print("\nℹ️  No changes will be made. Use --dry-run to preview.")
+                return {}
+        
         return results
 
     def generate_fix_report(self, results: dict[str, list[RenameOperation]]) -> str:
