@@ -2,10 +2,20 @@
 
 import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
+import dynamic from 'next/dynamic';
 import { blogAPI, getClientToken } from '@/lib/api';
 import { BlogDraft } from '@/types/api';
-import TiptapEditor from '@/components/editor/TiptapEditor';
 import { Save, Download, ArrowLeft, Sparkles } from 'lucide-react';
+
+// Dynamic import TipTap editor to reduce initial bundle size
+const TiptapEditor = dynamic(() => import('@/components/editor/TiptapEditor'), {
+  loading: () => (
+    <div className="border border-gray-300 rounded-lg overflow-hidden bg-white min-h-[400px] flex items-center justify-center">
+      <div className="animate-pulse text-gray-400">Loading editor...</div>
+    </div>
+  ),
+  ssr: false, // TipTap is client-only
+});
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8002';
 

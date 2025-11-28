@@ -101,12 +101,13 @@ export default function UploadPage() {
       }, 1000)
     } catch (error) {
       console.error('Upload failed:', error);
-      if (error.response) {
-        console.error('Error status:', error.response.status);
-        console.error('Error data:', error.response.data);
-        alert(`Upload failed: ${error.response.data?.detail || error.message}`);
+      const err = error as { response?: { status?: number; data?: { detail?: string } }; message?: string };
+      if (err.response) {
+        console.error('Error status:', err.response.status);
+        console.error('Error data:', err.response.data);
+        alert(`Upload failed: ${err.response.data?.detail || err.message || 'Unknown error'}`);
       } else {
-        alert(`Upload failed: ${error.message}`);
+        alert(`Upload failed: ${err.message || 'Unknown error'}`);
       }
     } finally {
       setUploading(false);
