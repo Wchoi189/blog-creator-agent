@@ -211,6 +211,12 @@ class FileReorganizer:
             # No prefix found, try to determine from content
             expected_dir, confidence = self._determine_directory_from_content(file_path)
             if expected_dir and confidence >= 0.85:  # Only move if confidence is high enough
+                # Check if already in correct directory
+                current_dir = str(file_path.parent.relative_to(self.artifacts_root))
+                if current_dir == expected_dir:
+                    print(f"✅ {file_path.relative_to(self.artifacts_root)} is already in correct directory")
+                    return None
+                    
                 return MoveOperation(
                     old_path=str(file_path),
                     new_path=str(self.artifacts_root / expected_dir / filename),
@@ -358,7 +364,7 @@ class FileReorganizer:
         operation = self.analyze_file_placement(file_path)
 
         if not operation:
-            print(f"✅ {file_path} is already in correct directory")
+            # Message already printed by analyze_file_placement
             return None
 
         print(f"🔧 Found misplaced file: {file_path}")
