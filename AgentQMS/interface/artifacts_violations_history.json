@@ -118,5 +118,95 @@
       "directory": 2,
       "frontmatter": 26
     }
+  },
+  {
+    "timestamp": "2025-11-28T19:16:16.094527",
+    "compliance_rate": 17.142857142857142,
+    "invalid_files": 29,
+    "violation_counts": {
+      "naming": 28,
+      "directory": 2,
+      "frontmatter": 26
+    }
+  },
+  {
+    "timestamp": "2025-11-28T19:21:59.570937",
+    "compliance_rate": 40.0,
+    "invalid_files": 30,
+    "violation_counts": {
+      "naming": 29,
+      "directory": 2,
+      "frontmatter": 27
+    }
+  },
+  {
+    "timestamp": "2025-11-28T19:30:29.195091",
+    "compliance_rate": 40.0,
+    "invalid_files": 30,
+    "violation_counts": {
+      "naming": 29,
+      "directory": 2,
+      "frontmatter": 26
+    }
+  },
+  {
+    "timestamp": "2025-11-28T19:43:20.214576",
+    "compliance_rate": 42.0,
+    "invalid_files": 29,
+    "violation_counts": {
+      "naming": 28,
+      "directory": 2,
+      "frontmatter": 25
+    }
+  },
+  {
+    "timestamp": "2025-11-28T19:48:53.251416",
+    "compliance_rate": 43.13725490196079,
+    "invalid_files": 29,
+    "violation_counts": {
+      "naming": 28,
+      "directory": 2,
+      "frontmatter": 25
+    }
+  },
+  {
+    "timestamp": "2025-11-28T19:53:04.406828",
+    "compliance_rate": 43.13725490196079,
+    "invalid_files": 29,
+    "violation_counts": {
+      "naming": 28,
+      "directory": 2,
+      "frontmatter": 25
+    }
+  },
+  {
+    "timestamp": "2025-11-28T19:54:41.904640",
+    "compliance_rate": 43.13725490196079,
+    "invalid_files": 29,
+    "violation_counts": {
+      "naming": 28,
+      "directory": 2,
+      "frontmatter": 24
+    }
+  },
+  {
+    "timestamp": "2025-11-28T19:55:32.857173",
+    "compliance_rate": 43.13725490196079,
+    "invalid_files": 29,
+    "violation_counts": {
+      "naming": 28,
+      "directory": 2,
+      "frontmatter": 23
+    }
+  },
+  {
+    "timestamp": "2025-11-28T19:56:37.318644",
+    "compliance_rate": 50.98039215686274,
+    "invalid_files": 25,
+    "violation_counts": {
+      "naming": 24,
+      "directory": 2,
+      "frontmatter": 23
+    }
   }
 ]

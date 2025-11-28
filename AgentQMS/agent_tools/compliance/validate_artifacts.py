@@ -101,6 +101,7 @@ class ArtifactValidator:
         "architecture",
         "evaluation",
         "compliance",
+        "code_quality",
         "reference",
         "planning",
         "research",
@@ -120,11 +121,15 @@ class ArtifactValidator:
         if artifacts_root is None:
             from AgentQMS.agent_tools.utils.paths import get_artifacts_dir
 
-            root = get_artifacts_dir()
+            self.artifacts_root = get_artifacts_dir()
         else:
-            root = artifacts_root
+            artifacts_root_path = Path(artifacts_root)
+            if artifacts_root_path.is_absolute():
+                self.artifacts_root = artifacts_root_path
+            else:
+                from AgentQMS.agent_tools.utils.paths import get_project_root
+                self.artifacts_root = get_project_root() / artifacts_root_path
 
-        self.artifacts_root = Path(root)
         self.violations = []
 
         # Start with builtin values
@@ -362,6 +367,10 @@ class ArtifactValidator:
 
     def validate_single_file(self, file_path: Path) -> dict:
         """Validate a single artifact file."""
+        # Resolve relative paths to absolute
+        if not file_path.is_absolute():
+            file_path = file_path.resolve()
+            
         result = {"file": str(file_path), "valid": True, "errors": []}
 
         # Skip INDEX.md files
@@ -615,7 +624,7 @@ def main():
     )
     parser.add_argument(
         "--artifacts-root",
-        default="artifacts",
+        default=None,
         help="Root directory for artifacts",
     )
     parser.add_argument(

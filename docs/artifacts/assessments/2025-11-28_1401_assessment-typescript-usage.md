@@ -1,6 +1,16 @@
+---
+title: "TypeScript Usage Audit"
+date: "2025-11-28 14:01 (KST)"
+type: "assessment"
+category: "code_quality"
+status: "completed"
+version: "1.0"
+tags: ["typescript", "type-safety", "nextjs", "code-quality"]
+---
+
 # TypeScript Usage Audit
 
-**Audit Date:** 2025-11-25  
+**Audit Date:** 2025-11-25
 **TypeScript Version:** 5.3.3
 
 ---

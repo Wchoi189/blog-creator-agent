@@ -581,12 +581,12 @@ Another example here
 *This template follows the project's standardized format for reusable templates.*""",
             },
             "bug_report": {
-                "filename_pattern": "BUG_YYYY-MM-DD_HHMM_NNN_{name}.md",
+                "filename_pattern": "YYYY-MM-DD_HHMM_BUG_NNN_{name}.md",
                 "directory": "bug_reports/",
                 "frontmatter": {
                     "type": "bug_report",
                     "category": "troubleshooting",
-                    "status": "open",
+                    "status": "active",
                     "severity": "medium",
                     "version": "1.0",
                     "tags": ["bug", "issue", "troubleshooting"],

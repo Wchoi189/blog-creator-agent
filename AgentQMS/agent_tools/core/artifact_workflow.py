@@ -172,7 +172,8 @@ class ArtifactWorkflow:
                 [
                     sys.executable,
                     str(
-                        Path(__file__).parent.parent
+                        Path(__file__).parent.parent.parent
+                        / "toolkit"
                         / "documentation"
                         / "update_artifact_indexes.py"
                     ),

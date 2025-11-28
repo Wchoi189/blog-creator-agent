@@ -28,6 +28,8 @@ For detailed migration notes, see [docs/plans/README.md](docs/plans/README.md).
 ### Added
 - CHANGELOG.md template with concise entry guidelines
 - Migration guide from Poetry to uv (docs/MIGRATION_TO_UV.md)
+- @qwen syntax for AI agent chat integration with Qwen Coder
+- Command interpreter script (.qwen/qwen-chat.sh) for conversational AI workflows
 - FastAPI and backend dependencies to pyproject.toml
 - .python-version file for uv compatibility
 

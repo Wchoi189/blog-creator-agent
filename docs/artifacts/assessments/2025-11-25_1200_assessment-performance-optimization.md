@@ -1,6 +1,15 @@
+---
+title: "Performance Optimization Assessment"
+date: 2025-11-25 12:00 (KST)
+type: assessment
+category: code_quality
+status: completed
+version: 1.0
+---
+
 # Performance Optimization Audit
 
-**Audit Date:** 2025-11-25  
+**Audit Date:** 2025-11-25 12:00 (KST)
 **Next.js Version:** 14.2.33
 
 ---

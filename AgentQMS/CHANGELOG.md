@@ -1,26 +1,18 @@
 # AgentQMS Framework Bug Fixes - AI Implementation Guide
 
-## Qwen CLI Integration Bugs
-
-### Bug: Checkpointing Git Detection Failure
-**File**: `.qwen/settings.json`
-**Issue**: Qwen CLI failed with "Checkpointing is enabled, but Git is not installed"
-**Fix**: Set `"general": {"checkpointing": {"enabled": false}}`
-**Implementation**: Add checkpointing disabled setting to prevent Git dependency issues
-
-### Bug: Approval Mode Syntax Error
-**File**: `.qwen/run.sh`
-**Issue**: `--yolo` flag conflicted with `--approval-mode yolo`
-**Fix**: Use `--approval-mode yolo` consistently in all scripts
-**Implementation**: Update Qwen command syntax to use correct approval mode flags
-
-### Bug: Memory Leak - Abort Signal Listeners
-**File**: Qwen CLI operations
-**Issue**: MaxListenersExceededWarning (11 abort listeners > 10 max)
-**Fix**: Avoid running multiple simultaneous Qwen processes
-**Implementation**: Add process management to prevent concurrent Qwen instances
+## Changelog Format Guidelines
+- **Format**: `[YYYY-MM-DD HH:MM] - Brief description (max 80 chars)`
+- **Placement**: Add new entries at the very top, below this guidelines section
+- **Conciseness**: Keep entries ultra-concise - focus on what changed, not why
+- **Categories**: Group related changes under appropriate section headers
 
 ## Validation System Bugs
+
+### [2025-11-28 19:25] - Added 'code_quality' category to artifact validation
+**File**: `AgentQMS/agent_tools/compliance/validate_artifacts.py`, `AgentQMS/toolkit/compliance/validate_artifacts.py`
+**Issue**: 'code_quality' category not recognized by validators
+**Fix**: Added "code_quality" to _BUILTIN_CATEGORIES and valid_categories lists
+**Implementation**: Distinguish code quality assessments from development/compliance categories
 
 ### Bug: Incorrect Naming Regex Pattern
 **File**: `.qwen/manual_validate.sh`
@@ -45,6 +37,26 @@
 **Issue**: Bug report template lacked clear distinction between required initial fields and optional resolution fields
 **Enhancement**: Added severity field to frontmatter, HTML comments to distinguish REQUIRED vs OPTIONAL sections, clarified Priority vs Severity
 **Implementation**: Updated bug_report template with clear section indicators and frontmatter severity field
+
+## Qwen CLI Integration Bugs
+
+### Bug: Checkpointing Git Detection Failure
+**File**: `.qwen/settings.json`
+**Issue**: Qwen CLI failed with "Checkpointing is enabled, but Git is not installed"
+**Fix**: Set `"general": {"checkpointing": {"enabled": false}}`
+**Implementation**: Add checkpointing disabled setting to prevent Git dependency issues
+
+### Bug: Approval Mode Syntax Error
+**File**: `.qwen/run.sh`
+**Issue**: `--yolo` flag conflicted with `--approval-mode yolo`
+**Fix**: Use `--approval-mode yolo` consistently in all scripts
+**Implementation**: Update Qwen command syntax to use correct approval mode flags
+
+### Bug: Memory Leak - Abort Signal Listeners
+**File**: Qwen CLI operations
+**Issue**: MaxListenersExceededWarning (11 abort listeners > 10 max)
+**Fix**: Avoid running multiple simultaneous Qwen processes
+**Implementation**: Add process management to prevent concurrent Qwen instances
 
 ## Documentation Structure Bugs
 

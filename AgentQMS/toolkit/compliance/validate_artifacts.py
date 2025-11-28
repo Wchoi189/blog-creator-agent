@@ -110,6 +110,7 @@ class ArtifactValidator:
             "architecture",
             "evaluation",
             "compliance",
+            "code_quality",
             "reference",
             "planning",
             "research",
