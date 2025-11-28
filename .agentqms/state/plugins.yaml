@@ -1,5 +1,5 @@
 metadata:
-  generated_at: '2025-11-28T17:54:05.826857+00:00'
+  generated_at: '2025-11-28T17:55:40.837126+00:00'
   generator: AgentQMS PluginLoader
   schema_version: '1.0'
 discovery_paths:
@@ -44,7 +44,7 @@ resolved:
       scope: project
       metadata:
         filename_pattern: '{date}_audit-{name}.md'
-        directory: audits/
+        directory: ../../artifacts/audits/
         frontmatter:
           type: audit
           category: compliance
