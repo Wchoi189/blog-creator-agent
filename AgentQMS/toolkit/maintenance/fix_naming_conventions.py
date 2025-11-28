@@ -43,7 +43,7 @@ class NamingConventionFixer:
 
         # Define valid prefixes and their expected directories
         self.valid_prefixes = {
-            "IMPLEMENTATION_PLAN_": "implementation_plans/",
+            "implementation_plan_": "implementation_plans/",
             "assessment-": "assessments/",
             "design-": "design_documents/",
             "research-": "research/",
@@ -388,16 +388,23 @@ class NamingConventionFixer:
         return operations
 
     def fix_directory(
-        self, directory: Path, dry_run: bool = False
+        self, directory: Path, dry_run: bool = False, limit: int | None = None
     ) -> dict[str, list[RenameOperation]]:
         """Fix naming issues for all files in a directory"""
         results = {}
+        files_processed = 0
 
         for file_path in directory.rglob("*.md"):
             if file_path.is_file():
                 operations = self.fix_file(file_path, dry_run)
                 if operations:
                     results[str(file_path)] = operations
+                    files_processed += 1
+                    
+                    # Check limit
+                    if limit is not None and files_processed >= limit:
+                        print(f"✋ Reached file limit ({limit}). Stopping.")
+                        break
 
         return results
 
@@ -448,6 +455,11 @@ def main():
         default="docs/artifacts",
         help="Root directory for artifacts",
     )
+    parser.add_argument(
+        "--limit",
+        type=int,
+        help="Maximum number of files to process",
+    )
 
     args = parser.parse_args()
 
@@ -459,7 +471,7 @@ def main():
         results = {str(file_path): operations} if operations else {}
     else:
         directory = Path(args.directory)
-        results = fixer.fix_directory(directory, dry_run=args.dry_run)
+        results = fixer.fix_directory(directory, dry_run=args.dry_run, limit=args.limit)
 
     # Generate report
     report = fixer.generate_fix_report(results)

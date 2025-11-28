@@ -2,11 +2,37 @@
 # Automated Compliance Fix Script
 # Master script that runs all automated fix operations
 
+# Default values
+ARTIFACTS_ROOT="docs/artifacts"
+MAX_FILES=""
+DRY_RUN=false
+
+# Parse command-line arguments
+while [[ $# -gt 0 ]]; do
+    case $1 in
+        --max-files)
+            MAX_FILES="$2"
+            shift 2
+            ;;
+        --dry-run)
+            DRY_RUN=true
+            shift
+            ;;
+        --directory)
+            ARTIFACTS_ROOT="$2"
+            shift 2
+            ;;
+        *)
+            ARTIFACTS_ROOT="$1"
+            shift
+            ;;
+    esac
+done
+
 echo "🔧 Starting automated compliance fixes..."
 
 # Set script directory
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-ARTIFACTS_ROOT="${1:-docs/artifacts}"
 
 # Colors for output
 RED='\033[0;31m'
@@ -39,15 +65,30 @@ if [ ! -d "$ARTIFACTS_ROOT" ]; then
 fi
 
 print_status "Processing artifacts in: $ARTIFACTS_ROOT"
+if [ -n "$MAX_FILES" ]; then
+    print_status "Maximum files to process: $MAX_FILES"
+fi
+if [ "$DRY_RUN" = true ]; then
+    print_warning "DRY RUN MODE - No changes will be made"
+fi
 
 # Create backup directory
 BACKUP_DIR="backups/automated_fixes_$(date +%Y%m%d_%H%M%S)"
 mkdir -p "$BACKUP_DIR"
 print_status "Created backup directory: $BACKUP_DIR"
 
+# Build common arguments
+COMMON_ARGS="--directory $ARTIFACTS_ROOT"
+if [ -n "$MAX_FILES" ]; then
+    COMMON_ARGS="$COMMON_ARGS --limit $MAX_FILES"
+fi
+if [ "$DRY_RUN" = true ]; then
+    COMMON_ARGS="$COMMON_ARGS --dry-run"
+fi
+
 # Step 1: Fix naming convention violations
 print_status "Step 1: Fixing naming convention violations..."
-if python "$SCRIPT_DIR/maintenance/fix_naming_conventions.py" --directory "$ARTIFACTS_ROOT" --auto-fix; then
+if python "$SCRIPT_DIR/maintenance/fix_naming_conventions.py" $COMMON_ARGS --auto-fix; then
     print_success "Naming convention fixes completed"
 else
     print_warning "Some naming convention fixes may have failed"
@@ -55,7 +96,7 @@ fi
 
 # Step 2: Add missing frontmatter
 print_status "Step 2: Adding missing frontmatter..."
-if python "$SCRIPT_DIR/maintenance/add_frontmatter.py" --directory "$ARTIFACTS_ROOT" --batch-process; then
+if python "$SCRIPT_DIR/maintenance/add_frontmatter.py" $COMMON_ARGS --batch-process; then
     print_success "Frontmatter generation completed"
 else
     print_warning "Some frontmatter generation may have failed"
@@ -63,7 +104,7 @@ fi
 
 # Step 3: Fix invalid categories and types
 print_status "Step 3: Fixing invalid category/type values..."
-if python "$SCRIPT_DIR/maintenance/fix_categories.py" --directory "$ARTIFACTS_ROOT" --auto-correct; then
+if python "$SCRIPT_DIR/maintenance/fix_categories.py" $COMMON_ARGS --auto-correct; then
     print_success "Category/type fixes completed"
 else
     print_warning "Some category/type fixes may have failed"
@@ -71,7 +112,7 @@ fi
 
 # Step 4: Reorganize misplaced files
 print_status "Step 4: Reorganizing misplaced files..."
-if python "$SCRIPT_DIR/maintenance/reorganize_files.py" --directory "$ARTIFACTS_ROOT" --move-to-correct-dirs; then
+if python "$SCRIPT_DIR/maintenance/reorganize_files.py" $COMMON_ARGS --move-to-correct-dirs; then
     print_success "File reorganization completed"
 else
     print_warning "Some file reorganization may have failed"

@@ -197,14 +197,16 @@ class FileReorganizer:
 
         if not expected_dir:
             # No prefix found, try to determine from content
-            expected_dir = self._determine_directory_from_content(file_path)
-            if expected_dir:
+            expected_dir, confidence = self._determine_directory_from_content(file_path)
+            if expected_dir and confidence >= 0.85:  # Only move if confidence is high enough
                 return MoveOperation(
                     old_path=str(file_path),
                     new_path=str(self.artifacts_root / expected_dir / filename),
                     reason=f"Move to {expected_dir} based on content analysis",
-                    confidence=0.7,
+                    confidence=confidence,
                 )
+            elif expected_dir and confidence < 0.85:
+                print(f"⚠️  Skipping {file_path}: confidence too low ({confidence:.2f} < 0.85)")
             return None
 
         # Check current directory
@@ -220,31 +222,47 @@ class FileReorganizer:
 
         return None
 
-    def _determine_directory_from_content(self, file_path: Path) -> str | None:
-        """Determine correct directory from file content analysis"""
+    def _determine_directory_from_content(self, file_path: Path) -> tuple[str | None, float]:
+        """Determine correct directory from file content analysis
+        
+        Returns:
+            tuple: (directory_name, confidence_score)
+        """
         try:
             with open(file_path, encoding="utf-8") as f:
                 content = f.read()
         except Exception:
-            return None
+            return None, 0.0
 
-        # Check frontmatter first
+        # Check frontmatter first - highest confidence
         frontmatter_type = self._extract_type_from_frontmatter(content)
         if frontmatter_type:
             directory = self._get_directory_for_type(frontmatter_type)
             if directory:
-                return directory
+                return directory, 0.95  # High confidence for frontmatter
 
-        # Analyze content for type patterns
+        # Analyze content for type patterns - lower confidence
         content_lower = content.lower()
+        match_count = {}
+        
         for artifact_type, patterns in self.type_patterns.items():
+            matches = 0
             for pattern in patterns:
                 if re.search(pattern, content_lower, re.IGNORECASE):
-                    directory = self._get_directory_for_type(artifact_type)
-                    if directory:
-                        return directory
+                    matches += 1
+            if matches > 0:
+                match_count[artifact_type] = matches
+        
+        if match_count:
+            # Get type with most pattern matches
+            best_type = max(match_count, key=match_count.get)
+            directory = self._get_directory_for_type(best_type)
+            # Confidence based on match strength (capped at 0.85)
+            confidence = min(0.5 + (match_count[best_type] * 0.1), 0.85)
+            if directory:
+                return directory, confidence
 
-        return None
+        return None, 0.0
 
     def _extract_type_from_frontmatter(self, content: str) -> str | None:
         """Extract type from frontmatter"""
@@ -307,15 +325,9 @@ class FileReorganizer:
 
             # Check if target file already exists
             if new_path.exists():
-                print(f"⚠️  Target file already exists: {new_path}")
-                # Generate unique name
-                counter = 1
-                while new_path.exists():
-                    stem = new_path.stem
-                    suffix = new_path.suffix
-                    new_path = new_path.parent / f"{stem}_{counter}{suffix}"
-                    counter += 1
-                print(f"   Using unique name: {new_path}")
+                print(f"❌ Target file already exists: {new_path}")
+                print(f"   Skipping move to avoid conflict")
+                return False
 
             # Perform move
             shutil.move(str(old_path), str(new_path))
@@ -346,16 +358,23 @@ class FileReorganizer:
             return None
 
     def reorganize_directory(
-        self, directory: Path, dry_run: bool = False
+        self, directory: Path, dry_run: bool = False, limit: int | None = None
     ) -> dict[str, MoveOperation]:
         """Reorganize all files in a directory"""
         results = {}
+        files_processed = 0
 
         for file_path in directory.rglob("*.md"):
             if file_path.is_file():
                 operation = self.reorganize_file(file_path, dry_run)
                 if operation:
                     results[str(file_path)] = operation
+                    files_processed += 1
+                    
+                    # Check limit
+                    if limit is not None and files_processed >= limit:
+                        print(f"✋ Reached file limit ({limit}). Stopping.")
+                        break
 
         return results
 
@@ -506,6 +525,11 @@ def main():
         default="docs/artifacts",
         help="Root directory for artifacts",
     )
+    parser.add_argument(
+        "--limit",
+        type=int,
+        help="Maximum number of files to process",
+    )
 
     args = parser.parse_args()
 
@@ -545,7 +569,7 @@ def main():
     else:
         # Process directory
         directory = Path(args.directory)
-        results = reorganizer.reorganize_directory(directory, dry_run=args.dry_run)
+        results = reorganizer.reorganize_directory(directory, dry_run=args.dry_run, limit=args.limit)
 
     # Generate report
     report = reorganizer.generate_reorganization_report(results)
