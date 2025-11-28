@@ -40,6 +40,7 @@ class FileReorganizer:
         self.valid_prefixes = {
             "implementation_plan_": "implementation_plans/",
             "assessment-": "assessments/",
+            "audit-": "audits/",
             "design-": "design_documents/",
             "research-": "research/",
             "template-": "templates/",
@@ -58,6 +59,11 @@ class FileReorganizer:
                 "description": "Assessments and evaluations",
                 "prefixes": ["assessment-"],
                 "types": ["assessment"],
+            },
+            "audits": {
+                "description": "Framework audits, compliance checks, and quality evaluations",
+                "prefixes": ["audit-"],
+                "types": ["audit"],
             },
             "design_documents": {
                 "description": "Design documents and architecture",
@@ -104,14 +110,24 @@ class FileReorganizer:
             "assessment": [
                 r"assessment",
                 r"evaluation",
-                r"audit",
                 r"review",
                 r"analysis",
-                r"compliance\s+check",
                 r"quality\s+assessment",
                 r"performance\s+review",
                 r"risk\s+assessment",
+            ],
+            "audit": [
+                r"audit",
+                r"compliance\s+status",
+                r"findings",
+                r"recommendations",
+                r"executive\s+summary",
+                r"framework\s+audit",
+                r"quality\s+audit",
                 r"security\s+audit",
+                r"accessibility\s+audit",
+                r"performance\s+audit",
+                r"compliance\s+check",
             ],
             "design": [
                 r"design\s+document",
@@ -272,10 +288,11 @@ class FileReorganizer:
         
         # Priority weights for different types (higher = more specific)
         type_priority = {
-            "assessment": 1.5,  # Highest - very specific
+            "audit": 1.5,  # Highest - very specific
+            "assessment": 1.5,  # Also very specific
             "implementation_plan": 1.4,
             "design": 1.3,
-            "bug_report": 1.2,  # Lower than assessment
+            "bug_report": 1.2,
             "research": 1.1,
             "session_note": 1.0,
             "completion_summary": 1.0,

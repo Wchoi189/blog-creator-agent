@@ -38,8 +38,13 @@ class ArtifactIndexUpdater:
         self.directories = {
             "assessments": {
                 "title": "Assessments",
-                "description": "Audits, evaluations, and assessments of system components and processes.",
+                "description": "Evaluations and assessments of system components and processes.",
                 "icon": "📊",
+            },
+            "audits": {
+                "title": "Audits",
+                "description": "Framework audits, compliance checks, and quality evaluations. Completed audits trigger automated implementation plan generation via GitHub Actions.",
+                "icon": "🔍",
             },
             "bug_reports": {
                 "title": "Bug Reports",

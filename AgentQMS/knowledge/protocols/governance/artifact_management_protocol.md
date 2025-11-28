@@ -30,7 +30,8 @@ The tool:
 ## Choose the Right Artifact Type
 
 - **implementation_plan** – major features or refactors.
-- **assessment** – audits, workflow analyses, evaluations.
+- **assessment** – evaluations and assessments of system components.
+- **audit** – framework audits, compliance checks, quality evaluations with automated plan generation.
 - **design** – architecture and design decisions.
 - **bug_report** – bug documentation and resolution tracking.
 - **research** – investigations and technical research.

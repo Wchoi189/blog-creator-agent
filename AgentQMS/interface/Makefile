@@ -50,6 +50,9 @@ create-plan: ## Create implementation plan (usage: make create-plan NAME=my-plan
 create-assessment: ## Create assessment (usage: make create-assessment NAME=my-assessment TITLE="My Assessment")
 	python ../agent_tools/core/artifact_workflow.py create --type assessment --name $(NAME) --title "$(TITLE)"
 
+create-audit: ## Create audit (usage: make create-audit NAME=my-audit TITLE="My Audit")
+	python ../agent_tools/core/artifact_workflow.py create --type audit --name $(NAME) --title "$(TITLE)"
+
 create-design: ## Create design document (usage: make create-design NAME=my-design TITLE="My Design")
 	python ../agent_tools/core/artifact_workflow.py create --type design --name $(NAME) --title "$(TITLE)"
 

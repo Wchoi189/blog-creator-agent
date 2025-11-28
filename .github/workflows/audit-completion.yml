@@ -1,0 +1,240 @@
+name: Audit Completion - Generate Implementation Plan
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'artifacts/audits/**/*.md'
+
+jobs:
+  generate-plan:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+      
+      - name: Get changed audit files
+        id: changed-audits
+        run: |
+          # Get changed audit files
+          CHANGED_FILES=$(git diff --name-only HEAD^ HEAD | grep "artifacts/audits/.*\.md$" || echo "")
+          echo "Changed audit files: $CHANGED_FILES"
+          echo "files<<EOF" >> $GITHUB_OUTPUT
+          echo "$CHANGED_FILES" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+      
+      - name: Check for completed audits
+        id: check-status
+        run: |
+          COMPLETED_AUDIT=""
+          AUDIT_TITLE=""
+          AUDIT_CATEGORY=""
+          
+          while IFS= read -r file; do
+            if [ -n "$file" ] && [ -f "$file" ]; then
+              if grep -q "status: completed" "$file"; then
+                COMPLETED_AUDIT="$file"
+                AUDIT_TITLE=$(grep "^title:" "$file" | head -1 | sed 's/title: *"\?\([^"]*\)"\?/\1/' | tr -d '"')
+                AUDIT_CATEGORY=$(grep "^category:" "$file" | head -1 | sed 's/category: *"\?\([^"]*\)"\?/\1/' | tr -d '"')
+                echo "Found completed audit: $file"
+                echo "Title: $AUDIT_TITLE"
+                echo "Category: $AUDIT_CATEGORY"
+                break
+              fi
+            fi
+          done <<< "${{ steps.changed-audits.outputs.files }}"
+          
+          echo "completed_audit=$COMPLETED_AUDIT" >> $GITHUB_OUTPUT
+          echo "audit_title=$AUDIT_TITLE" >> $GITHUB_OUTPUT
+          echo "audit_category=$AUDIT_CATEGORY" >> $GITHUB_OUTPUT
+      
+      - name: Extract audit findings
+        id: extract-findings
+        if: steps.check-status.outputs.completed_audit != ''
+        run: |
+          AUDIT_FILE="${{ steps.check-status.outputs.completed_audit }}"
+          
+          # Extract findings section
+          FINDINGS=$(sed -n '/## Findings/,/## Recommendations/p' "$AUDIT_FILE" | head -n -1)
+          
+          # Truncate if too long
+          FINDINGS_PREVIEW=$(echo "$FINDINGS" | head -c 500)
+          if [ ${#FINDINGS} -gt 500 ]; then
+            FINDINGS_PREVIEW="${FINDINGS_PREVIEW}... [truncated]"
+          fi
+          
+          echo "findings_preview<<EOF" >> $GITHUB_OUTPUT
+          echo "$FINDINGS_PREVIEW" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+      
+      - name: Generate implementation plan with GitHub Copilot
+        id: generate-plan
+        if: steps.check-status.outputs.completed_audit != ''
+        run: |
+          # Note: This is a placeholder for GitHub Copilot integration
+          # GitHub Copilot API/Action integration would go here
+          # For now, we'll create a template that prompts for manual completion
+          
+          TIMESTAMP=$(date +"%Y-%m-%d_%H%M")
+          AUDIT_NAME=$(basename "${{ steps.check-status.outputs.completed_audit }}" .md | sed 's/.*audit-//')
+          PLAN_FILE="artifacts/implementation_plans/${TIMESTAMP}_implementation_plan_fix-${AUDIT_NAME}.md"
+          
+          cat > "$PLAN_FILE" << 'PLAN_EOF'
+          ---
+          title: "Implementation Plan: Address ${{ steps.check-status.outputs.audit_title }} Findings"
+          date: $(date +"%Y-%m-%d")
+          type: implementation_plan
+          category: improvement
+          status: draft
+          requires_approval: true
+          source_audit: "../audits/${{ steps.check-status.outputs.completed_audit }}"
+          version: "1.0"
+          tags: [auto-generated, audit-response, ${{ steps.check-status.outputs.audit_category }}]
+          ---
+
+          # Implementation Plan: Address ${{ steps.check-status.outputs.audit_title }} Findings
+
+          **Generated from**: [${{ steps.check-status.outputs.audit_title }}](../${{ steps.check-status.outputs.completed_audit }})  
+          **Category**: ${{ steps.check-security.outputs.audit_category }}  
+          **Status**: Draft (Requires Approval)
+
+          ---
+
+          ## Executive Summary
+
+          This implementation plan addresses the findings identified in the ${{ steps.check-status.outputs.audit_title }}.
+
+          **TODO**: Complete with GitHub Copilot assistance:
+          - Summarize critical findings
+          - Outline overall approach
+          - Estimate effort and timeline
+
+          ---
+
+          ## Goals
+
+          **TODO**: Define specific, measurable goals based on audit findings.
+
+          1. [Goal 1]
+          2. [Goal 2]
+
+          ---
+
+          ## Requirements
+
+          ### Functional Requirements
+
+          **TODO**: List what needs to be implemented/fixed.
+
+          ### Non-Functional Requirements
+
+          **TODO**: Performance, security, accessibility requirements.
+
+          ---
+
+          ## Implementation Steps
+
+          ### Phase 1: Critical Issues
+
+          **TODO**: Address critical findings first.
+
+          1. [Step 1]
+          2. [Step 2]
+
+          ### Phase 2: High Priority Issues
+
+          **TODO**: Address high priority findings.
+
+          ### Phase 3: Medium Priority Issues
+
+          **TODO**: Address remaining findings.
+
+          ---
+
+          ## Testing Strategy
+
+          **TODO**: Define how changes will be validated.
+
+          - [ ] Unit tests
+          - [ ] Integration tests
+          - [ ] Manual testing checklist
+
+          ---
+
+          ## Success Criteria
+
+          **TODO**: Define completion criteria.
+
+          - [ ] All critical issues resolved
+          - [ ] All high priority issues addressed
+          - [ ] Tests pass
+          - [ ] Documentation updated
+
+          ---
+
+          ## Audit Findings Reference
+
+          ${{ steps.extract-findings.outputs.findings_preview }}
+
+          **Full audit**: [View complete audit](../${{ steps.check-status.outputs.completed_audit }})
+
+          ---
+
+          **Note**: This is an auto-generated draft. Please review and complete with assistance from GitHub Copilot.
+          PLAN_EOF
+          
+          echo "plan_file=$PLAN_FILE" >> $GITHUB_OUTPUT
+          echo "Generated plan template: $PLAN_FILE"
+      
+      - name: Create Pull Request
+        if: steps.check-status.outputs.completed_audit != ''
+        uses: peter-evans/create-pull-request@v5
+        with:
+          branch: audit-plan/${{ github.run_number }}-${{ github.sha }}
+          commit-message: "feat: Generate implementation plan for ${{ steps.check-status.outputs.audit_title }}"
+          title: "Implementation Plan from Audit: ${{ steps.check-status.outputs.audit_title }}"
+          body: |
+            ## Auto-generated Implementation Plan
+            
+            **Source Audit**: `${{ steps.check-status.outputs.completed_audit }}`  
+            **Category**: ${{ steps.check-status.outputs.audit_category }}
+            
+            ### Findings Summary
+            
+            ${{ steps.extract-findings.outputs.findings_preview }}
+            
+            [View complete audit](../${{ steps.check-status.outputs.completed_audit }})
+            
+            ---
+            
+            ### Approval Checklist
+            
+            - [ ] Review audit findings
+            - [ ] Complete plan with GitHub Copilot assistance
+            - [ ] Verify plan addresses all critical issues
+            - [ ] Confirm no security concerns
+            - [ ] Validate AgentQMS format compliance
+            - [ ] Update implementation steps and timeline
+            
+            ### Merge Instructions
+            
+            1. Review the generated implementation plan template
+            2. Use GitHub Copilot to complete TODO sections
+            3. Make any necessary adjustments
+            4. Approve and merge when ready
+            5. Manually update source audit's `generated_artifacts` field with relative path to this plan
+            
+            ---
+            
+            **Generated by**: Audit Completion Workflow  
+            **Requires**: Human review and Copilot completion
+          labels: auto-generated, needs-review, audit-plan, ${{ steps.check-status.outputs.audit_category }}
+          assignees: ${{ github.actor }}
+          draft: true

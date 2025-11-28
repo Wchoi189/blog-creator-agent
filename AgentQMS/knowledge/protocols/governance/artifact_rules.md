@@ -19,6 +19,7 @@ id: PROTO-GOV-ARTIFACT-RULES
   - Templates → `templates/`
   - Implementation plans → `implementation_plans/`
   - Assessments → `assessments/`
+  - Audits → `audits/`
   - Research → `research/`
   - Design docs → `design_documents/`
   - Bug reports → `bug_reports/`

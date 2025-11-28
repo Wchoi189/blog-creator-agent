@@ -102,7 +102,8 @@ WORKFLOW_SUGGESTIONS = {
 # Artifact creation triggers
 ARTIFACT_TRIGGERS = {
     "plan": ["plan", "design", "architecture", "blueprint", "strategy", "roadmap"],
-    "assessment": ["assess", "evaluate", "review", "analysis", "audit"],
+    "assessment": ["assess", "evaluate", "review", "analysis"],
+    "audit": ["audit", "compliance", "framework audit", "quality audit", "security audit", "accessibility audit", "performance audit", "code quality audit"],
     "bug_report": ["bug", "error", "issue", "fix", "broken", "crash", "exception"],
     "design": ["design", "spec", "specification", "schema"],
     "research": ["research", "investigate", "explore", "study"],
