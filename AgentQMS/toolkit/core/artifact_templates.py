@@ -778,6 +778,7 @@ High/Medium/Low (urgency for fixing, separate from severity above)
 
         now = datetime.now()
         timestamp = now.strftime("%Y-%m-%d_%H%M")
+        date_only = now.strftime("%Y-%m-%d")
 
         # Handle special case for bug reports (need bug ID)
         if template_type == "bug_report":
@@ -795,11 +796,26 @@ High/Medium/Low (urgency for fixing, separate from severity above)
                 .replace("NNN", bug_id)
             )
         else:
-            return str(
-                template["filename_pattern"]
-                .format(name=normalized_name)
-                .replace("YYYY-MM-DD_HHMM", timestamp)
-            )
+            # For plugin-based templates, use .format() with available variables
+            # Build context with all possible filename variables
+            filename_context = {
+                "name": normalized_name,
+                "date": timestamp,  # Plugin {date} gets full timestamp
+            }
+            
+            filename = template["filename_pattern"]
+            
+            # Try to format with context (for plugin templates)
+            try:
+                filename = filename.format(**filename_context)
+            except KeyError:
+                # Fallback: format with just name
+                filename = filename.format(name=normalized_name)
+            
+            # Replace builtin pattern for legacy compatibility
+            filename = filename.replace("YYYY-MM-DD_HHMM", timestamp)
+            
+            return str(filename)
 
     def create_frontmatter(self, template_type: str, title: str, **kwargs) -> str:
         """Create frontmatter for an artifact."""

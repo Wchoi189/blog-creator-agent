@@ -1,5 +1,5 @@
 metadata:
-  generated_at: '2025-11-28T10:56:36.708523+00:00'
+  generated_at: '2025-11-28T17:54:05.826857+00:00'
   generator: AgentQMS PluginLoader
   schema_version: '1.0'
 discovery_paths:
@@ -7,11 +7,17 @@ discovery_paths:
   project: /workspaces/blog-creator-agent/.agentqms/plugins
 plugins_loaded:
   artifact_types:
+  - audit
   - change_request
   validators: true
   context_bundles:
   - security-review
 plugin_metadata:
+- name: audit
+  type: artifact_type
+  version: '1.0'
+  source: project
+  path: /workspaces/blog-creator-agent/.agentqms/plugins/artifact_types/audit.yaml
 - name: change_request
   type: artifact_type
   version: '1.0'
@@ -30,6 +36,83 @@ plugin_metadata:
 validation_errors: []
 resolved:
   artifact_types:
+    audit:
+      name: audit
+      version: '1.0'
+      description: "Framework audits, compliance checks, and quality evaluations with\
+        \ \nautomated implementation plan generation via GitHub Actions.\n"
+      scope: project
+      metadata:
+        filename_pattern: '{date}_audit-{name}.md'
+        directory: audits/
+        frontmatter:
+          type: audit
+          category: compliance
+          status: draft
+          version: '1.0'
+          related_artifacts: []
+          generated_artifacts: []
+          tags:
+          - audit
+      validation:
+        required_fields:
+        - title
+        - date
+        - type
+        - status
+        - category
+        - related_artifacts
+        - generated_artifacts
+        required_sections:
+        - '## Executive Summary'
+        - '## Findings'
+        - '## Recommendations'
+        - '## Compliance Status'
+        - '## Related Artifacts'
+        filename_prefix: audit-
+        allowed_categories:
+        - accessibility
+        - security
+        - compliance
+        - performance
+        - code_quality
+        - framework
+        allowed_statuses:
+        - draft
+        - active
+        - completed
+        - archived
+      template: "# Audit: {title}\n\n**Audit Date**: {date}  \n**Category**: {category}\
+        \  \n**Status**: {status}\n\n---\n\n## Executive Summary\n\n[Provide high-level\
+        \ overview of the audit scope, findings, and recommendations.]\n\n**Audit\
+        \ Scope**: [Describe what was audited]  \n**Compliance Status**: [Overall\
+        \ status]  \n**Critical Issues**: [Number]  \n**High Priority Issues**: [Number]\n\
+        \n---\n\n## Findings\n\n### \U0001F534 CRITICAL: [Finding Title]\n\n**Severity**:\
+        \ Critical  \n**Location**: [Component/File]\n\n**Issue**:\n[Describe the\
+        \ issue]\n\n**Impact**:\n[Describe the impact]\n\n**Recommendation**:\n[Describe\
+        \ the recommended fix]\n\n---\n\n### \U0001F7E1 HIGH: [Finding Title]\n\n\
+        **Severity**: High  \n**Location**: [Component/File]\n\n**Issue**:\n[Describe\
+        \ the issue]\n\n**Impact**:\n[Describe the impact]\n\n**Recommendation**:\n\
+        [Describe the recommended fix]\n\n---\n\n### \U0001F7E2 MEDIUM: [Finding Title]\n\
+        \n**Severity**: Medium  \n**Location**: [Component/File]\n\n**Issue**:\n[Describe\
+        \ the issue]\n\n**Recommendation**:\n[Describe the recommended fix]\n\n---\n\
+        \n## Recommendations\n\n### Immediate Actions (Week 1)\n1. [Action item with\
+        \ priority and owner]\n2. [Action item with priority and owner]\n\n### Short-term\
+        \ (Weeks 2-4)\n3. [Action item]\n4. [Action item]\n\n### Long-term\n5. [Action\
+        \ item]\n\n---\n\n## Compliance Status\n\n**Overall Compliance**: [Compliant/Non-Compliant/Partially\
+        \ Compliant]\n\n**Standards Evaluated**:\n- [Standard 1]: [Status]\n- [Standard\
+        \ 2]: [Status]\n\n**Compliance Score**: [X/Y checks passed]\n\n**Next Review\
+        \ Date**: [YYYY-MM-DD]\n\n---\n\n## Related Artifacts\n\n**Source Documents**:\n\
+        - [Document](../path/to/document.md) - [Description]\n\n**Generated Implementation\
+        \ Plans**:\n- [Plan](../implementation_plans/YYYY-MM-DD_HHMM_implementation_plan_name.md)\
+        \ - [Description]\n\n**Related Audits**:\n- [Audit](./YYYY-MM-DD_HHMM_audit-name.md)\
+        \ - [Description]\n\n**References**:\n- [External reference or standard]\n\
+        \n---\n\n**Last Updated**: {date}  \n**Auditor**: {auditor}\n"
+      template_variables:
+        date: '2025-11-29'
+        category: compliance
+        status: draft
+        auditor: AI Agent
     change_request:
       name: change_request
       version: '1.0'
