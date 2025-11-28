@@ -193,6 +193,7 @@ class FileReorganizer:
             "MASTER_INDEX.md",
             "REGISTRY.md", 
             "README.md",
+            "CHANGELOG.md",
             "_index.md",
             "index.md"
         ]
@@ -259,9 +260,27 @@ class FileReorganizer:
             if directory:
                 return directory, 0.95  # High confidence for frontmatter
 
+        # Get current directory to use as tie-breaker
+        try:
+            current_dir = str(file_path.parent.relative_to(self.artifacts_root))
+        except ValueError:
+            current_dir = None
+
         # Analyze content for type patterns - lower confidence
         content_lower = content.lower()
         match_count = {}
+        
+        # Priority weights for different types (higher = more specific)
+        type_priority = {
+            "assessment": 1.5,  # Highest - very specific
+            "implementation_plan": 1.4,
+            "design": 1.3,
+            "bug_report": 1.2,  # Lower than assessment
+            "research": 1.1,
+            "session_note": 1.0,
+            "completion_summary": 1.0,
+            "template": 0.7,  # Lowest priority for generic type
+        }
         
         for artifact_type, patterns in self.type_patterns.items():
             matches = 0
@@ -269,16 +288,35 @@ class FileReorganizer:
                 if re.search(pattern, content_lower, re.IGNORECASE):
                     matches += 1
             if matches > 0:
-                match_count[artifact_type] = matches
+                # Apply priority weighting
+                weight = type_priority.get(artifact_type, 1.0)
+                match_count[artifact_type] = matches * weight
         
         if match_count:
-            # Get type with most pattern matches
+            # Get type with highest weighted score
             best_type = max(match_count, key=match_count.get)
             directory = self._get_directory_for_type(best_type)
+            
+            # If current directory matches a valid type and has decent matches, prefer it
+            if current_dir and current_dir in [v for v in self.directory_structure.keys()]:
+                current_type = None
+                for atype, dirs in [(k, v.get("types", [])) for k, v in self.directory_structure.items()]:
+                    if current_dir in self.directory_structure and atype in match_count:
+                        if match_count.get(atype, 0) >= match_count[best_type] * 0.7:
+                            # Current location has decent matches, keep it there
+                            best_type = atype
+                            directory = current_dir
+                            break
+            
             # Confidence based on match strength (capped at 0.85)
-            confidence = min(0.5 + (match_count[best_type] * 0.1), 0.85)
+            base_confidence = min(0.5 + (match_count[best_type] * 0.05), 0.85)
+            
+            # Reduce confidence if type is "template" (too generic)
+            if best_type == "template":
+                base_confidence = min(base_confidence, 0.75)
+            
             if directory:
-                return directory, confidence
+                return directory, base_confidence
 
         return None, 0.0
 
