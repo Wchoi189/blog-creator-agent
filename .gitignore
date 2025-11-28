@@ -50,7 +50,7 @@ coverage.xml
 *.mo
 
 # Qwen Coder configurations
-.qwen/
+# .qwen/
 *.pot
 
 # Django stuff:
@@ -116,7 +116,7 @@ Thumbs.db
 
 # Ruff cache
 .ruff_cache/
-.github
+# .github
 # etc
 .viminfo
 log/
