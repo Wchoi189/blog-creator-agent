@@ -38,7 +38,7 @@ class FileReorganizer:
 
         # Define valid prefixes and their expected directories
         self.valid_prefixes = {
-            "IMPLEMENTATION_PLAN_": "implementation_plans/",
+            "implementation_plan_": "implementation_plans/",
             "assessment-": "assessments/",
             "design-": "design_documents/",
             "research-": "research/",
@@ -51,7 +51,7 @@ class FileReorganizer:
         self.directory_structure = {
             "implementation_plans": {
                 "description": "Implementation plans and blueprints",
-                "prefixes": ["IMPLEMENTATION_PLAN_"],
+                "prefixes": ["implementation_plan_"],
                 "types": ["implementation_plan"],
             },
             "assessments": {

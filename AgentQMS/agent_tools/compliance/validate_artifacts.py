@@ -589,7 +589,7 @@ class ArtifactValidator:
                     if "Naming:" in error:
                         suggestions.append("   🔧 Rename file to follow convention:")
                         suggestions.append(
-                            "      Format: YYYY-MM-DD_HHMM_[TYPE]_descriptive-name.md"
+                            "      Format: YYYY-MM-DD_HHMM_[PREFIX]_descriptive-name.md"
                         )
                     elif "Directory:" in error:
                         suggestions.append("   🔧 Move file to correct directory")

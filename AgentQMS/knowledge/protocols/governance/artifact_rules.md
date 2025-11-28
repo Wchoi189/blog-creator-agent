@@ -14,7 +14,7 @@ id: PROTO-GOV-ARTIFACT-RULES
 
 ## Rules
 
-- **File naming**: Always use `YYYY-MM-DD_HHMM_[TYPE]_descriptive-name.md`.
+- **File naming**: Always use `YYYY-MM-DD_HHMM_[PREFIX]_descriptive-name.md`.
 - **Directory placement**:
   - Templates → `templates/`
   - Implementation plans → `implementation_plans/`

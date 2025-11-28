@@ -52,7 +52,7 @@ make compliance
 Documentation Organization
 --------------------------
 - Artifacts live under `artifacts/` by type.
-- Required frontmatter and naming: `YYYY-MM-DD_HHMM_[type]_descriptive-name.md`.
+- Required frontmatter and naming: `YYYY-MM-DD_HHMM_[prefix]_descriptive-name.md`.
 - Frontmatter `date` must use the full timestamp format `YYYY-MM-DD HH:MM (KST)` for every commit.
 - Long-form guidance lives in `AgentQMS/knowledge/` (not for agents).
 - Agent doc map: see `AgentQMS/knowledge/agent/` index (SST + quick references).

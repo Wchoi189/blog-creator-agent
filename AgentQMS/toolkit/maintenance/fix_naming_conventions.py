@@ -318,7 +318,7 @@ class NamingConventionFixer:
     def _get_prefix_for_type(self, artifact_type: str) -> str | None:
         """Get the appropriate prefix for an artifact type"""
         type_to_prefix = {
-            "implementation_plan": "IMPLEMENTATION_PLAN_",
+            "implementation_plan": "implementation_plan_",
             "assessment": "assessment-",
             "design": "design-",
             "research": "research-",
