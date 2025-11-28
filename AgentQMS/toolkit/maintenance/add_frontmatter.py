@@ -279,15 +279,21 @@ class FrontmatterGenerator:
             return False
 
     def process_files(
-        self, file_paths: list[str], dry_run: bool = False
+        self, file_paths: list[str], dry_run: bool = False, limit: int | None = None
     ) -> dict[str, bool]:
         """Process multiple files"""
         results = {}
+        count = 0
 
         for file_path in file_paths:
+            if limit is not None and count >= limit:
+                print(f"✋ Reached file limit ({limit}). Stopping.")
+                break
+
             print(f"Processing: {file_path}")
             success = self.add_frontmatter_to_file(file_path, dry_run)
             results[file_path] = success
+            count += 1
 
             if success:
                 print(
@@ -302,6 +308,8 @@ class FrontmatterGenerator:
 def main():
     """Main execution function"""
     import argparse
+    import subprocess
+    from pathlib import Path
 
     parser = argparse.ArgumentParser(description="Add frontmatter to files missing it")
     parser.add_argument("--files", nargs="+", help="Specific files to process")
@@ -309,52 +317,63 @@ def main():
         "--all", action="store_true", help="Process all files missing frontmatter"
     )
     parser.add_argument(
+        "--batch-process",
+        action="store_true",
+        help="Process all files in directory missing frontmatter",
+    )
+    parser.add_argument(
+        "--directory",
+        default="docs/artifacts",
+        help="Directory to process (used with --batch-process)",
+    )
+    parser.add_argument(
         "--dry-run",
         action="store_true",
         help="Show what would be done without making changes",
+    )
+    parser.add_argument(
+        "--limit",
+        type=int,
+        help="Maximum number of files to process (for testing)",
     )
 
     args = parser.parse_args()
 
     generator = FrontmatterGenerator()
 
-    if args.all:
-        # Find all files missing frontmatter
-        import subprocess
-
-        result = subprocess.run(
-            [
-                "find",
-                "docs/artifacts",
-                "-name",
-                "*.md",
-                "-exec",
-                "grep",
-                "-L",
-                "^---",
-                "{}",
-                "+",
-            ],
-            capture_output=True,
-            text=True,
-        )
-        file_paths = result.stdout.strip().split("\n") if result.stdout.strip() else []
+    if args.batch_process or args.all:
+        # Find all files missing frontmatter in the directory
+        directory = Path(args.directory)
+        file_paths = []
+        
+        for file_path in directory.rglob("*.md"):
+            if file_path.is_file() and file_path.name not in ["INDEX.md", "README.md", "MASTER_INDEX.md"]:
+                # Check if file is missing frontmatter
+                try:
+                    with open(file_path, encoding="utf-8") as f:
+                        content = f.read(100)  # Read first 100 chars
+                        if not content.startswith("---"):
+                            file_paths.append(str(file_path))
+                except Exception:
+                    pass
     elif args.files:
         file_paths = args.files
     else:
-        print("Please specify --files or --all")
+        print("Please specify --files, --all, or --batch-process")
         return
 
     if not file_paths:
-        print("No files found to process")
+        print("✅ No files found missing frontmatter")
         return
 
     print(f"Processing {len(file_paths)} files...")
-    results = generator.process_files(file_paths, dry_run=args.dry_run)
+    if args.limit:
+        print(f"Maximum files to process: {args.limit}")
+    results = generator.process_files(file_paths, dry_run=args.dry_run, limit=args.limit)
 
     # Summary
     successful = sum(1 for success in results.values() if success)
-    print(f"\nSummary: {successful}/{len(file_paths)} files processed successfully")
+    print(f"\nSummary: {successful}/{len(results)} files processed successfully")
 
 
 if __name__ == "__main__":

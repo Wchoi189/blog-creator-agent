@@ -479,16 +479,22 @@ class CategoryTypeFixer:
         return fixes
 
     def fix_directory(
-        self, directory: Path, dry_run: bool = False
+        self, directory: Path, dry_run: bool = False, limit: int | None = None
     ) -> dict[str, list[CategoryFix]]:
         """Fix category/type issues for all files in a directory"""
         results = {}
+        count = 0
 
         for file_path in directory.rglob("*.md"):
+            if limit is not None and count >= limit:
+                print(f"✋ Reached file limit ({limit}). Stopping.")
+                break
+
             if file_path.is_file() and file_path.name != "INDEX.md":
                 fixes = self.fix_file(file_path, dry_run)
                 if fixes:
                     results[str(file_path)] = fixes
+                count += 1
 
         return results
 
@@ -603,6 +609,11 @@ def main():
         default="docs/artifacts",
         help="Root directory for artifacts",
     )
+    parser.add_argument(
+        "--limit",
+        type=int,
+        help="Maximum number of files to process (for testing)",
+    )
 
     args = parser.parse_args()
 
@@ -631,7 +642,9 @@ def main():
     else:
         # Process directory
         directory = Path(args.directory)
-        results = fixer.fix_directory(directory, dry_run=args.dry_run)
+        if args.limit:
+            print(f"Maximum files to process: {args.limit}")
+        results = fixer.fix_directory(directory, dry_run=args.dry_run, limit=args.limit)
 
     # Generate report
     report = fixer.generate_fix_report(results)
