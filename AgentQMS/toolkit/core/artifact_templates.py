@@ -587,6 +587,7 @@ Another example here
                     "type": "bug_report",
                     "category": "troubleshooting",
                     "status": "open",
+                    "severity": "medium",
                     "version": "1.0",
                     "tags": ["bug", "issue", "troubleshooting"],
                 },
@@ -595,6 +596,7 @@ Another example here
 ## Bug ID
 BUG-{bug_id}
 
+<!-- REQUIRED: Fill these sections when creating the initial bug report -->
 ## Summary
 Brief description of the bug.
 
@@ -628,6 +630,7 @@ If applicable, include screenshots or relevant log entries.
 - **Affected Users**: Who is affected
 - **Workaround**: Any temporary workarounds
 
+<!-- OPTIONAL: Resolution sections - fill these during investigation and fixing -->
 ## Investigation
 
 ### Root Cause Analysis
@@ -662,7 +665,7 @@ How to test the fix.
 Who is working on this bug.
 
 ## Priority
-High/Medium/Low
+High/Medium/Low (urgency for fixing, separate from severity above)
 
 ---
 

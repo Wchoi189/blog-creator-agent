@@ -40,6 +40,12 @@
 **Fix**: Add `---` at start of YAML frontmatter
 **Implementation**: Ensure all frontmatter starts with `---` marker
 
+### Enhancement: Bug Report Template Clarification
+**File**: `AgentQMS/toolkit/core/artifact_templates.py`
+**Issue**: Bug report template lacked clear distinction between required initial fields and optional resolution fields
+**Enhancement**: Added severity field to frontmatter, HTML comments to distinguish REQUIRED vs OPTIONAL sections, clarified Priority vs Severity
+**Implementation**: Updated bug_report template with clear section indicators and frontmatter severity field
+
 ## Documentation Structure Bugs
 
 ### Bug: Loose Docs in Project Root
@@ -99,3 +105,9 @@
 **Issue**: Generated frontmatter missing opening `---`
 **Fix**: Ensure YAML frontmatter always starts with `---`
 **Implementation**: Update frontmatter generation templates
+
+### Bug: Missing sys Import in Artifact Workflow
+**File**: `AgentQMS/toolkit/core/artifact_workflow.py`
+**Issue**: `sys.executable` used without importing `sys`, causing "name 'sys' is not defined" error in index updater
+**Fix**: Add `import sys` to imports
+**Implementation**: Import sys module at the top of the file
