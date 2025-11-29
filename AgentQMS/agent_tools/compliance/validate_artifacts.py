@@ -76,13 +76,14 @@ class ArtifactValidator:
 
     # Built-in defaults (always available)
     _BUILTIN_ARTIFACT_TYPES: Dict[str, str] = {
-        "implementation_plan_": "implementation_plans/",
-        "assessment-": "assessments/",
-        "design-": "design_documents/",
-        "research-": "research/",
-        "template-": "templates/",
-        "BUG_": "bug_reports/",
-        "SESSION_": "completed_plans/completion_summaries/session_notes/",
+        "implementation_plan_": "docs/artifacts/implementation_plans/",
+        "assessment-": "docs/artifacts/assessments/",
+        "audit-": "docs/artifacts/audits/",
+        "design-": "docs/artifacts/design_documents/",
+        "research-": "docs/artifacts/research/",
+        "template-": "docs/artifacts/templates/",
+        "BUG_": "docs/artifacts/bug_reports/",
+        "SESSION_": "docs/artifacts/completed_plans/completion_summaries/session_notes/",
     }
 
     _BUILTIN_TYPES: List[str] = [
