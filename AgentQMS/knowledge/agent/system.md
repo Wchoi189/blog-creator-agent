@@ -51,9 +51,23 @@ make compliance
 
 Documentation Organization
 --------------------------
-- Artifacts live under `artifacts/` by type.
-- Required frontmatter and naming: `YYYY-MM-DD_HHMM_[prefix]_descriptive-name.md`.
+- Artifacts live under `docs/artifacts/` by type.
+- Required frontmatter and naming: `YYYY-MM-DD_HHMM_{ARTIFACT_TYPE}_descriptive-name.md`.
 - Frontmatter `date` must use the full timestamp format `YYYY-MM-DD HH:MM (KST)` for every commit.
+
+**Valid Artifact Types:**
+
+| Artifact Type | Format | Directory |
+|--------------|--------|----------|
+| `implementation_plan_` | `YYYY-MM-DD_HHMM_implementation_plan_name.md` | `docs/artifacts/implementation_plans/` |
+| `assessment-` | `YYYY-MM-DD_HHMM_assessment-name.md` | `docs/artifacts/assessments/` |
+| `audit-` | `YYYY-MM-DD_HHMM_audit-name.md` | `docs/artifacts/audits/` |
+| `design-` | `YYYY-MM-DD_HHMM_design-name.md` | `docs/artifacts/design_documents/` |
+| `research-` | `YYYY-MM-DD_HHMM_research-name.md` | `docs/artifacts/research/` |
+| `template-` | `YYYY-MM-DD_HHMM_template-name.md` | `docs/artifacts/templates/` |
+| `BUG_` | `YYYY-MM-DD_HHMM_BUG_name.md` | `docs/artifacts/bug_reports/` |
+| `SESSION_` | `YYYY-MM-DD_HHMM_SESSION_name.md` | `docs/artifacts/completed_plans/completion_summaries/session_notes/` |
+
 - Long-form guidance lives in `AgentQMS/knowledge/` (not for agents).
 - Agent doc map: see `AgentQMS/knowledge/agent/` index (SST + quick references).
 - Tracking domain: `AgentQMS/knowledge/agent/tracking_cli.md` and related references.
