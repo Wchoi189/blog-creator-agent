@@ -1,8 +1,18 @@
+---
+title: "Critical Authentication Security Fix - Implementation Plan"
+date: "2025-11-26 00:00 (KST)"
+type: "implementation_plan"
+category: "security"
+status: "completed"
+version: "1.0"
+tags: ["auth", "security", "fix", "plan"]
+---
+
 # Critical Authentication Security Fix - Implementation Plan
 
-**Date**: 2025-11-26  
-**Priority**: CRITICAL  
-**Estimated Time**: 6-8 hours  
+**Date**: 2025-11-26
+**Priority**: CRITICAL
+**Estimated Time**: 6-8 hours
 
 ---
 

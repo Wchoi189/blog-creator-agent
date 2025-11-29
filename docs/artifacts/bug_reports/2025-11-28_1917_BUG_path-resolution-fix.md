@@ -1,12 +1,11 @@
 ---
-type: "bug_report"
-category: "troubleshooting"
-status: "open"
-severity: "medium"
-version: "1.0"
-tags: ['bug', 'issue', 'troubleshooting']
 title: "Path Resolution Issues in Artifact Workflow Scripts"
 date: "2025-11-28 19:17 (KST)"
+type: "bug_report"
+category: "troubleshooting"
+status: "active"
+version: "1.0"
+tags: ["bug", "path-resolution", "artifacts"]
 ---
 
 # Bug Report: Path Resolution Issues in Artifact Workflow Scripts

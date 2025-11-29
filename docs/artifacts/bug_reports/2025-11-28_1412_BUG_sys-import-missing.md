@@ -1,11 +1,11 @@
 ---
-type: "bug_report"
-category: "troubleshooting"
-status: "active"
-version: "1.0"
-tags: ['bug', 'issue', 'troubleshooting', 'agentqms', 'python', 'import-error']
 title: "Missing sys import in artifact_workflow.py causing NameError"
 date: "2025-11-28 14:12 (KST)"
+type: "bug_report"
+category: "troubleshooting"
+status: "completed"
+version: "1.0"
+tags: ["bug", "python", "agentqms", "import"]
 ---
 
 # Bug Report: Missing sys import in artifact_workflow.py causing NameError

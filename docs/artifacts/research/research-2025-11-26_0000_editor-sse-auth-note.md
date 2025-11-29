@@ -1,8 +1,18 @@
+---
+title: "Editor Page SSE Authentication Issue"
+date: "2025-11-26 00:00 (KST)"
+type: "research"
+category: "security"
+status: "active"
+version: "1.0"
+tags: ["sse", "auth", "editor", "security"]
+---
+
 # Editor Page SSE Authentication Issue
 
-**File**: `frontend/src/app/(dashboard)/dashboard/editor/[draftId]/page.tsx`  
-**Issue**: Line 67 uses `localStorage.getItem('access_token')` for SSE  
-**Status**: Known limitation - deferred  
+**File**: `frontend/src/app/(dashboard)/dashboard/editor/[draftId]/page.tsx`
+**Issue**: Line 67 uses `localStorage.getItem('access_token')` for SSE
+**Status**: Known limitation - deferred
 
 ---
 

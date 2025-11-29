@@ -1,8 +1,18 @@
+---
+title: "Next.js Codebase Audit Reports"
+date: "2025-11-28 00:00 (KST)"
+type: "assessment"
+category: "reference"
+status: "completed"
+version: "1.0"
+tags: ["audit", "nextjs", "documentation"]
+---
+
 # Next.js Codebase Audit Reports
 
-**Audit Date:** November 25, 2025  
-**Project:** Blog Creator Agent  
-**Next.js Version:** 14.2.33  
+**Audit Date:** November 25, 2025
+**Project:** Blog Creator Agent
+**Next.js Version:** 14.2.33
 **Last Updated:** November 28, 2025
 
 ---

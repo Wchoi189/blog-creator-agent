@@ -1,3 +1,13 @@
+---
+title: "Session Summary - 2025-11-26"
+date: "2025-11-26 00:00 (KST)"
+type: "session_note"
+category: "development"
+status: "completed"
+version: "1.0"
+tags: ["session", "summary", "testing", "backend"]
+---
+
 # Session Summary - 2025-11-26
 
 ## Completed Tasks

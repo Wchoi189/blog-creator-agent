@@ -1,14 +1,15 @@
 ---
-timestamp: 2025-11-27T22:51:00Z
-branch: copilot/update-progress-tracker
-tags: [authentication, session-management, frontend-backend-integration, critical-bug, api-consistency]
-status: planning
-priority: critical
-estimated_hours: 4-6
-related_docs:
-  - docs/assessments/20251127-auth-session-analysis.md
-  - docs/API.md
-  - docs/ARCHITECTURE.md
+title: "Authentication Session Fix Plan"
+date: "2025-11-27 22:51 (KST)"
+type: "implementation_plan"
+category: "security"
+status: "active"
+version: "1.0"
+branch: "copilot/update-progress-tracker"
+priority: "critical"
+estimated_hours: "4-6"
+tags: ["authentication", "session-management", "frontend-backend-integration", "critical-bug", "api-consistency"]
+references: ["docs/assessments/20251127-auth-session-analysis.md", "docs/API.md", "docs/ARCHITECTURE.md"]
 ---
 
 # Authentication Session Fix Plan

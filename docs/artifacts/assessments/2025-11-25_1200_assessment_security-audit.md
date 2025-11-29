@@ -1,6 +1,16 @@
+---
+title: "Security Audit"
+date: "2025-11-25 00:00 (KST)"
+type: "assessment"
+category: "security"
+status: "completed"
+version: "1.0"
+tags: ["security", "audit", "vulnerabilities", "nextjs"]
+---
+
 # Security Audit
 
-**Audit Date:** 2025-11-25  
+**Audit Date:** 2025-11-25
 **Severity Levels:** 🔴 Critical | 🟡 High | 🟢 Medium | 🔵 Low
 
 ---

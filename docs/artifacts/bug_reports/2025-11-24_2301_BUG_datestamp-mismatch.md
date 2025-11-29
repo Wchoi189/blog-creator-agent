@@ -1,14 +1,11 @@
 ---
 title: "Datestamp template stuck on January"
-type: bug
-date: 2025-11-24 23:01 (KST)
-branch: main
-status: fixed
-severity: medium
-tags:
-  - docs
-  - changelog
-  - datestamp
+date: "2025-11-24 23:01 (KST)"
+type: "bug_report"
+category: "troubleshooting"
+status: "completed"
+version: "1.0"
+tags: ["docs", "changelog", "datestamp"]
 ---
 
 ## Summary

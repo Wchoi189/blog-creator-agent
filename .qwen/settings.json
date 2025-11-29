@@ -59,7 +59,8 @@
     }
   },
   "model": {
-    "name": "qwen2.5-coder-32b-instruct"
+    "name": "qwen/qwen3-coder"
+    // "name": "qwen2.5-coder-32b-instruct",
   },
   "$version": 2
 }

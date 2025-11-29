@@ -1,11 +1,11 @@
 ---
-type: "bug_report"
-category: "troubleshooting"
-status: "active"
-version: "1.0"
-tags: ['bug', 'issue', 'troubleshooting', 'qwen-cli', 'git-detection']
 title: "Qwen Coder CLI Fails to Detect Git on Linux Due to Shell Builtin Issue"
 date: "2025-11-28 14:09 (KST)"
+type: "bug_report"
+category: "troubleshooting"
+status: "completed"
+version: "1.0"
+tags: ["bug", "qwen-cli", "git", "shell"]
 ---
 
 # Bug Report: Qwen Coder CLI Fails to Detect Git on Linux Due to Shell Builtin Issue

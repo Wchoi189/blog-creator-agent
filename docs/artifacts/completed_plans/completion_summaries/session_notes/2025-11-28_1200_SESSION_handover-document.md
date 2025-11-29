@@ -1,9 +1,9 @@
 ---
 title: "Session Handover Document"
-date: "2025-11-28 12:00 (UTC)"
-type: "session"
-category: "handover"
-status: "current"
+date: "2025-11-28 12:00 (KST)"
+type: "session_note"
+category: "development"
+status: "active"
 version: "1.0"
 tags: ["session", "handover", "project-status"]
 ---

@@ -1,6 +1,16 @@
+---
+title: "Quick Reference Guide - Next.js Audit"
+date: "2025-11-25 00:00 (KST)"
+type: "research"
+category: "reference"
+status: "active"
+version: "1.0"
+tags: ["reference", "quick", "nextjs", "audit", "development"]
+---
+
 # Quick Reference Guide - Next.js Audit
 
-**For:** Development Team  
+**For:** Development Team
 **Purpose:** Quick lookup of common issues and fixes
 
 ---

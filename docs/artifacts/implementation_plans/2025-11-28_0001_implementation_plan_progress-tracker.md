@@ -1,7 +1,17 @@
+---
+title: "Progress Tracker - Next.js Audit Resolution"
+date: "2025-11-28 00:00 (KST)"
+type: "session_note"
+category: "planning"
+status: "active"
+version: "1.0"
+tags: ["progress", "tracking", "audit", "nextjs"]
+---
+
 # Progress Tracker - Next.js Audit Resolution
 
-**Last Updated**: 2025-11-28 (Morning)  
-**Status**: DOCUMENTATION REORGANIZED - Ready for Next.js 15 Upgrade  
+**Last Updated**: 2025-11-28 (Morning)
+**Status**: DOCUMENTATION REORGANIZED - Ready for Next.js 15 Upgrade
 **Decision**: Performing Next.js 15 upgrade alongside remaining audit resolutions
 
 ---

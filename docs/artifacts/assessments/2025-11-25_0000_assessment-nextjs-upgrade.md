@@ -1,3 +1,13 @@
+---
+title: "Next.js 15 Upgrade Feasibility Analysis"
+date: "2025-11-25 00:00 (KST)"
+type: "assessment"
+category: "planning"
+status: "completed"
+version: "1.0"
+tags: ["nextjs", "upgrade", "react"]
+---
+
 # Next.js 15 Upgrade Feasibility Analysis
 
 **Current Version:** Next.js 14.2.33  

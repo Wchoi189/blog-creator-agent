@@ -1,8 +1,13 @@
 ---
 title: "Chainlit/Chroma Removal & Auth Merge Plan"
-date: 2025-11-27T12:00:00Z
-branch: copilot/update-progress-tracker
-owner: platform-team
+date: "2025-11-27 12:00 (KST)"
+type: "implementation_plan"
+category: "development"
+status: "active"
+version: "1.0"
+branch: "copilot/update-progress-tracker"
+owner: "platform-team"
+tags: ["merge", "cleanup", "auth", "dependencies"]
 ---
 
 **Progress Tracker**  

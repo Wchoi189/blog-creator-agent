@@ -1,14 +1,11 @@
 ---
 title: "Dashboard upload Browse button does nothing"
-type: bug
-date: 2025-11-24 23:45 (KST)
-branch: main
-status: open
-severity: high
-tags:
-  - frontend
-  - dashboard
-  - upload
+date: "2025-11-24 23:45 (KST)"
+type: "bug_report"
+category: "troubleshooting"
+status: "active"
+version: "1.0"
+tags: ["frontend", "dashboard", "upload"]
 ---
 
 ## Summary

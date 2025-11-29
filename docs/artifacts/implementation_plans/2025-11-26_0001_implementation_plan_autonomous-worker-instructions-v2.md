@@ -1,3 +1,13 @@
+---
+title: "Autonomous Worker Instructions v2 - Hybrid Approach"
+date: "2025-11-26 00:00 (KST)"
+type: "implementation_plan"
+category: "planning"
+status: "completed"
+version: "2.0"
+tags: ["autonomous", "instructions", "nextjs", "upgrade", "hybrid"]
+---
+
 # AUTONOMOUS WORKER INSTRUCTIONS v2 - HYBRID APPROACH
 # Audit Resolution + Next.js 15 Upgrade Combined
 
