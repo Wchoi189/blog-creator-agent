@@ -6,6 +6,33 @@
 - **Conciseness**: Keep entries ultra-concise - focus on what changed, not why
 - **Categories**: Group related changes under appropriate section headers
 
+## Artifact Naming Convention Standardization (2025-11-29)
+
+### [2025-11-29 17:30] - Terminology Standardization Complete
+**Scope**: Validation system, documentation, governance
+**Change**: Standardized all references to use "ARTIFACT_TYPE" terminology
+**Impact**: Eliminates confusion between "prefix", "type", "document_type" terms
+**Files**: `validate_artifacts.py` (agent_tools & toolkit), `system.md`, governance docs
+**Details**: See audit report `2025-11-29_1642_assessment-artifact-naming-terminology-conflicts.md`
+
+### [2025-11-29 17:20] - Added Audit Artifact Type
+**File**: `AgentQMS/agent_tools/compliance/validate_artifacts.py`, `AgentQMS/toolkit/compliance/validate_artifacts.py`
+**Addition**: `"audit-": "audits/"` artifact type registered
+**Directory**: Created `docs/artifacts/audits/` for audit artifacts
+**Purpose**: Separate audits from assessments for better categorization
+
+### [2025-11-29 17:25] - Enforced docs/artifacts/ Location
+**File**: `AgentQMS/agent_tools/compliance/validate_artifacts.py`
+**Addition**: `validate_artifacts_root()` method added
+**Enforcement**: Root-level `/artifacts/` directory now forbidden
+**Requirement**: All artifacts must be in `docs/artifacts/` hierarchy
+
+### [2025-11-29 17:28] - Fixed Directory Validation Bug
+**File**: `AgentQMS/agent_tools/compliance/validate_artifacts.py`, `AgentQMS/toolkit/compliance/validate_artifacts.py`
+**Issue**: Directory validation checked `filename.startswith(artifact_type)` (prefix-first) but format is timestamp-first
+**Fix**: Extract artifact type from timestamp-first format using regex, then match against registry
+**Impact**: Directory placement validation now works correctly for all valid filenames
+
 ## Validation System Bugs
 
 ### [2025-11-28 19:25] - Added 'code_quality' category to artifact validation
