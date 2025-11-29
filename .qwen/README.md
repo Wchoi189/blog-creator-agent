@@ -43,9 +43,11 @@ qwen --approval-mode yolo --include-directories /workspaces/blog-creator-agent -
 
 The manual validation script found **27 files** with naming convention violations in `docs/artifacts/`. All files need:
 
-1. **Renaming** to format: `YYYY-MM-DD_HHMM_[TYPE]_descriptive-name.md`
+1. **Renaming** to format: `YYYY-MM-DD_HHMM_{ARTIFACT_TYPE}_descriptive-name.md`
 2. **Frontmatter** addition with proper YAML headers
 3. **Directory** restructuring according to artifact categories
+
+Valid artifact types: `implementation_plan_`, `assessment-`, `audit-`, `design-`, `research-`, `template-`, `BUG_`, `SESSION_`
 
 ## AgentQMS Integration
 

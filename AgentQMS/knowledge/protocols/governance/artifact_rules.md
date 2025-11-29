@@ -14,15 +14,17 @@ id: PROTO-GOV-ARTIFACT-RULES
 
 ## Rules
 
-- **File naming**: Always use `YYYY-MM-DD_HHMM_[PREFIX]_descriptive-name.md`.
+- **File naming**: Always use `YYYY-MM-DD_HHMM_{ARTIFACT_TYPE}_descriptive-name.md`.
+- **Artifact location**: All artifacts must be in `docs/artifacts/` (root-level `/artifacts/` is forbidden).
 - **Directory placement**:
-  - Templates → `templates/`
-  - Implementation plans → `implementation_plans/`
-  - Assessments → `assessments/`
-  - Audits → `audits/`
-  - Research → `research/`
-  - Design docs → `design_documents/`
-  - Bug reports → `bug_reports/`
+  - Templates → `docs/artifacts/templates/`
+  - Implementation plans → `docs/artifacts/implementation_plans/`
+  - Assessments → `docs/artifacts/assessments/`
+  - Audits → `docs/artifacts/audits/`
+  - Research → `docs/artifacts/research/`
+  - Design docs → `docs/artifacts/design_documents/`
+  - Bug reports → `docs/artifacts/bug_reports/`
+  - Session notes → `docs/artifacts/completed_plans/completion_summaries/session_notes/`
 - **Frontmatter**: Always include structured frontmatter with:
   - `title`, `date`, `type`, `category`, `status`, `version`, and `tags`.
 - **Naming conventions**:
