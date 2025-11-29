@@ -33,57 +33,57 @@ You are an autonomous AI agent implementing **AgentQMS Artifact Naming Conventio
 # Living Implementation Blueprint: Artifact Naming Convention Standardization
 
 ## Progress Tracker
-- **STATUS:** Not Started - Awaiting Phase 1 Kickoff
-- **CURRENT PHASE:** Phase 1 - Critical Foundation Fixes
-- **CURRENT STEP:** Task 1.1 - Terminology Standardization in Validation Script
-- **LAST COMPLETED TASK:** None
-- **NEXT TASK:** Update variable names in `validate_artifacts.py` from "prefix" terminology to "artifact_type"
+- **STATUS:** Phase 1 Complete ✅ - Moving to Phase 2
+- **CURRENT PHASE:** Phase 2 - Documentation Standardization  
+- **CURRENT STEP:** Task 2.1 - Update Single Source of Truth (system.md)
+- **LAST COMPLETED TASK:** Task 1.5 - Legacy Shim Update (commit 2b45dd4)
+- **NEXT TASK:** Update `system.md` to replace `[prefix]` with `{ARTIFACT_TYPE}` and add explicit table of valid artifact types
 
 ### Implementation Outline (Checklist)
 
 #### **Phase 1: Critical Foundation Fixes (PRIORITY: CRITICAL)**
 
-1. [ ] **Task 1.1: Terminology Standardization in Code**
-   - [ ] Update `AgentQMS/agent_tools/compliance/validate_artifacts.py`:
-     - [ ] Rename `_BUILTIN_PREFIXES` → `_BUILTIN_ARTIFACT_TYPES`
-     - [ ] Rename `valid_prefixes` → `valid_artifact_types` (all occurrences)
-     - [ ] Update variable names in methods
-   - [ ] Update error messages to use "artifact type" not "prefix"
-   - [ ] Run validation: `cd AgentQMS/interface && make validate`
+1. [x] **Task 1.1: Terminology Standardization in Code** ✅
+   - [x] Update `AgentQMS/agent_tools/compliance/validate_artifacts.py`:
+     - [x] Rename `_BUILTIN_PREFIXES` → `_BUILTIN_ARTIFACT_TYPES`
+     - [x] Rename `valid_prefixes` → `valid_artifact_types` (all occurrences)
+     - [x] Update variable names in methods
+   - [x] Update error messages to use "artifact type" not "prefix"
+   - [x] Run validation: `cd AgentQMS/interface && make validate`
 
-2. [ ] **Task 1.2: Add Audit Artifact Type and Fix Directory Mappings**
-   - [ ] Add `"audit-": "docs/artifacts/audits/"` to `_BUILTIN_ARTIFACT_TYPES`
-   - [ ] Update ALL existing paths to use `docs/artifacts/` prefix:
-     - [ ] `"implementation_plan_": "docs/artifacts/implementation_plans/"`
-     - [ ] `"assessment-": "docs/artifacts/assessments/"`
-     - [ ] `"design-": "docs/artifacts/design_documents/"`
-     - [ ] `"research-": "docs/artifacts/research/"`
-     - [ ] `"template-": "docs/artifacts/templates/"`
-     - [ ] `"BUG_": "docs/artifacts/bug_reports/"`
-     - [ ] `"SESSION_": "docs/artifacts/completed_plans/completion_summaries/session_notes/"`
-   - [ ] Create directory: `mkdir -p docs/artifacts/audits`
-   - [ ] Run validation: `cd AgentQMS/interface && make validate`
+2. [x] **Task 1.2: Add Audit Artifact Type and Fix Directory Mappings** ✅
+   - [x] Add `"audit-": "audits/"` to `_BUILTIN_ARTIFACT_TYPES`
+   - [x] Paths are relative to artifacts_root (already `docs/artifacts/`):
+     - [x] `"implementation_plan_": "implementation_plans/"`
+     - [x] `"assessment-": "assessments/"`
+     - [x] `"design-": "design_documents/"`
+     - [x] `"research-": "research/"`
+     - [x] `"template-": "templates/"`
+     - [x] `"BUG_": "bug_reports/"`
+     - [x] `"SESSION_": "completed_plans/completion_summaries/session_notes/"`
+   - [x] Create directory: `mkdir -p docs/artifacts/audits`
+   - [x] Run validation: `cd AgentQMS/interface && make validate`
 
-3. [ ] **Task 1.3: Add Root-Level Artifacts Directory Validation**
-   - [ ] Add `validate_artifacts_root()` method to `ArtifactValidator` class
-   - [ ] Implement logic to reject paths starting with `artifacts/` (without `docs/`)
-   - [ ] Implement logic to enforce `docs/artifacts/` prefix
-   - [ ] Call validation in `validate_single_file()` method
-   - [ ] Test with files in both locations
-   - [ ] Run validation: `cd AgentQMS/interface && make validate`
+3. [x] **Task 1.3: Add Root-Level Artifacts Directory Validation** ✅
+   - [x] Add `validate_artifacts_root()` method to `ArtifactValidator` class
+   - [x] Implement logic to reject paths starting with `artifacts/` (without `docs/`)
+   - [x] Implement logic to enforce `docs/artifacts/` prefix
+   - [x] Call validation in `validate_single_file()` method
+   - [x] Test with files in both locations
+   - [x] Run validation: `cd AgentQMS/interface && make validate`
 
-4. [ ] **Task 1.4: Fix Directory Validation Logic Bug**
-   - [ ] Locate `validate_directory_placement()` method (Line ~278-297)
-   - [ ] Replace `filename.startswith(prefix)` logic with regex extraction
-   - [ ] Extract artifact_type from timestamp-first format: `^\d{4}-\d{2}-\d{2}_\d{4}_([^_-]+)`
-   - [ ] Match extracted type against `valid_artifact_types` dictionary
-   - [ ] Test with actual files
-   - [ ] Run validation: `cd AgentQMS/interface && make validate`
+4. [x] **Task 1.4: Fix Directory Validation Logic Bug** ✅
+   - [x] Locate `validate_directory_placement()` method
+   - [x] Replace `filename.startswith(artifact_type)` logic with timestamp extraction
+   - [x] Extract everything after timestamp: `^\d{4}-\d{2}-\d{2}_\d{4}_`
+   - [x] Match extracted text against `valid_artifact_types` dictionary keys
+   - [x] Test with actual files
+   - [x] Run validation: `cd AgentQMS/interface && make validate`
 
-5. [ ] **Task 1.5: Update Legacy Shim File**
-   - [ ] Apply same changes to `AgentQMS/toolkit/compliance/validate_artifacts.py`
-   - [ ] Ensure consistency between agent_tools and toolkit versions
-   - [ ] Run validation: `cd AgentQMS/interface && make validate`
+5. [x] **Task 1.5: Update Legacy Shim File** ✅
+   - [x] Apply same changes to `AgentQMS/toolkit/compliance/validate_artifacts.py`
+   - [x] Ensure consistency between agent_tools and toolkit versions
+   - [x] Run validation: `cd AgentQMS/interface && make validate`
 
 #### **Phase 2: Documentation Standardization (PRIORITY: HIGH)**
 
