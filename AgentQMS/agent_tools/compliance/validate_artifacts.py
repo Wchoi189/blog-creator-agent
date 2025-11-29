@@ -75,7 +75,7 @@ class ArtifactValidator:
     """
 
     # Built-in defaults (always available)
-    _BUILTIN_PREFIXES: Dict[str, str] = {
+    _BUILTIN_ARTIFACT_TYPES: Dict[str, str] = {
         "implementation_plan_": "implementation_plans/",
         "assessment-": "assessments/",
         "design-": "design_documents/",
@@ -133,7 +133,7 @@ class ArtifactValidator:
         self.violations = []
 
         # Start with builtin values
-        self.valid_prefixes = dict(self._BUILTIN_PREFIXES)
+        self.valid_artifact_types = dict(self._BUILTIN_ARTIFACT_TYPES)
         self.valid_types = list(self._BUILTIN_TYPES)
         self.valid_categories = list(self._BUILTIN_CATEGORIES)
         self.valid_statuses = list(self._BUILTIN_STATUSES)
@@ -163,9 +163,9 @@ class ArtifactValidator:
             if not validators:
                 return
 
-            # Merge prefixes (plugin values override/extend builtin)
+            # Merge artifact types (plugin values override/extend builtin)
             if "prefixes" in validators:
-                self.valid_prefixes.update(validators["prefixes"])
+                self.valid_artifact_types.update(validators["prefixes"])
 
             # Merge types (unique values)
             if "types" in validators:
@@ -193,7 +193,7 @@ class ArtifactValidator:
                 directory = type_def.get("metadata", {}).get("directory")
 
                 if prefix and directory:
-                    self.valid_prefixes[prefix] = directory
+                    self.valid_artifact_types[prefix] = directory
 
                 # Add artifact type name to valid types
                 if name not in self.valid_types:
@@ -229,22 +229,22 @@ class ArtifactValidator:
 
         after_timestamp = filename[match.end() :]
 
-        # Check for valid prefix after timestamp
-        has_valid_prefix = any(
-            after_timestamp.startswith(prefix) for prefix in self.valid_prefixes
+        # Check for valid artifact type after timestamp
+        has_valid_artifact_type = any(
+            after_timestamp.startswith(artifact_type) for artifact_type in self.valid_artifact_types
         )
-        if not has_valid_prefix:
-            valid_prefixes_str = ", ".join(self.valid_prefixes.keys())
+        if not has_valid_artifact_type:
+            valid_types_str = ", ".join(self.valid_artifact_types.keys())
             return (
                 False,
-                f"Missing valid file type prefix. Valid prefixes: {valid_prefixes_str}",
+                f"Missing valid artifact type. Valid artifact types: {valid_types_str}",
             )
 
         # Check for kebab-case in descriptive part
-        # Extract the part after the prefix
-        for prefix in self.valid_prefixes:
-            if after_timestamp.startswith(prefix):
-                descriptive_part = after_timestamp[len(prefix) : -3]  # Remove .md
+        # Extract the part after the artifact type
+        for artifact_type in self.valid_artifact_types:
+            if after_timestamp.startswith(artifact_type):
+                descriptive_part = after_timestamp[len(artifact_type) : -3]  # Remove .md
 
                 # Check for ALL CAPS or uppercase words (artifacts must be lowercase)
                 if descriptive_part.isupper() or any(
@@ -274,10 +274,10 @@ class ArtifactValidator:
         relative_path = file_path.relative_to(self.artifacts_root)
         current_dir = str(relative_path.parent)
 
-        # Check if file has a valid prefix
+        # Check if file has a valid artifact type
         expected_dir = None
-        for prefix, directory in self.valid_prefixes.items():
-            if filename.startswith(prefix):
+        for artifact_type, directory in self.valid_artifact_types.items():
+            if filename.startswith(artifact_type):
                 expected_dir = directory.rstrip("/")
                 break
 
