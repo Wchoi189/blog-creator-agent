@@ -1,8 +1,17 @@
-# 🏗️ Design Documents
+# Design Documents
 
-Architectural designs, specifications, and technical documentation.
+Active design documents and development roadmaps.
 
-**Last Updated**: 2025-11-29 17:40:40
+**Last Updated**: 2025-11-29 19:14:49
 **Total Artifacts**: 0
 
-*No artifacts found in this directory.*
+## Summary
+
+| Status | Count |
+|--------|-------|
+| Active | 0 |
+| Completed | 0 |
+
+---
+
+*This index is automatically generated. Do not edit manually.*

@@ -70,16 +70,16 @@ validate: ## Validate all artifacts
 	python ../agent_tools/compliance/validate_artifacts.py --all
 
 .PHONY: reindex
-reindex: ## Reindex artifacts (stub)
-	@echo "[stub] Reindex artifacts (deterministic index regeneration)"
+reindex: ## Reindex artifacts
+	python ../agent_tools/documentation/reindex_artifacts.py
 
 .PHONY: check-links
-check-links: ## Check Markdown links referring to artifacts (stub)
-	@echo "[stub] Check Markdown links referring to artifacts"
+check-links: ## Check Markdown links referring to artifacts
+	python ../agent_tools/documentation/check_links.py
 
 .PHONY: fix
-fix: ## Safe autofix pipeline (stub)
-	@echo "[stub] Safe autofix pipeline (use ARGS for options): $${ARGS}"
+fix: ## Safe autofix pipeline
+	python ../agent_tools/utilities/autofix_artifacts.py $(ARGS)
 
 validate-file: ## Validate specific file (usage: make validate-file FILE=path/to/file.md)
 	python ../agent_tools/compliance/validate_artifacts.py --file $(FILE)

@@ -32,6 +32,16 @@ jobs:
           cd AgentQMS/interface
           make validate
 
+      - name: Reindex artifacts
+        run: |
+          cd AgentQMS/interface
+          make reindex
+
+      - name: Check links
+        run: |
+          cd AgentQMS/interface
+          make check-links
+
       - name: Archive validation report
         if: always()
         uses: actions/upload-artifact@v4

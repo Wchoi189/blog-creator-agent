@@ -35,14 +35,21 @@ jobs:
           cd AgentQMS/interface
           uv pip install -r requirements.txt
 
-      - name: Validate (JSON)
+      - name: Validate and save JSON
         run: |
-          python AgentQMS/agent_tools/compliance/validate_artifacts.py --all || true
+          python AgentQMS/agent_tools/compliance/validate_artifacts.py --all --json --output validation.json || true
 
-      - name: Run Autofix (stub)
+      - name: Run Autofix
         run: |
-          echo "Autofix stub: limit=${{ github.event.inputs.limit }} dry_run=${{ github.event.inputs.dry_run }}"
-          # TODO: replace with: uv run python AgentQMS/agent_tools/utilities/autofix_artifacts.py --limit ... --dry-run
+          DRY_RUN_FLAG=""
+          if [ "${{ github.event.inputs.dry_run }}" = "true" ]; then
+            DRY_RUN_FLAG="--dry-run"
+          fi
+          python AgentQMS/agent_tools/utilities/autofix_artifacts.py \
+            --limit ${{ github.event.inputs.limit }} \
+            $DRY_RUN_FLAG \
+            --validation-json validation.json \
+            --commit
 
       - name: Create PR
         uses: peter-evans/create-pull-request@v6
