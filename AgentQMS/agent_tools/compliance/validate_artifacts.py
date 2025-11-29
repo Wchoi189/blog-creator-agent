@@ -75,15 +75,16 @@ class ArtifactValidator:
     """
 
     # Built-in defaults (always available)
+    # Paths are relative to artifacts_root (docs/artifacts/)
     _BUILTIN_ARTIFACT_TYPES: Dict[str, str] = {
-        "implementation_plan_": "docs/artifacts/implementation_plans/",
-        "assessment-": "docs/artifacts/assessments/",
-        "audit-": "docs/artifacts/audits/",
-        "design-": "docs/artifacts/design_documents/",
-        "research-": "docs/artifacts/research/",
-        "template-": "docs/artifacts/templates/",
-        "BUG_": "docs/artifacts/bug_reports/",
-        "SESSION_": "docs/artifacts/completed_plans/completion_summaries/session_notes/",
+        "implementation_plan_": "implementation_plans/",
+        "assessment-": "assessments/",
+        "audit-": "audits/",
+        "design-": "design_documents/",
+        "research-": "research/",
+        "template-": "templates/",
+        "BUG_": "bug_reports/",
+        "SESSION_": "completed_plans/completion_summaries/session_notes/",
     }
 
     _BUILTIN_TYPES: List[str] = [
@@ -275,10 +276,19 @@ class ArtifactValidator:
         relative_path = file_path.relative_to(self.artifacts_root)
         current_dir = str(relative_path.parent)
 
-        # Check if file has a valid artifact type
+        # Validate timestamp format first
+        timestamp_match = re.match(r'^\d{4}-\d{2}-\d{2}_\d{4}_', filename)
+        if not timestamp_match:
+            # File doesn't match timestamp-first format, can't validate directory
+            return True, "Cannot validate directory (non-standard format)"
+        
+        # Extract everything after timestamp
+        after_timestamp = filename[timestamp_match.end():]
+        
+        # Find which artifact type this file matches by checking if it starts with a registered type
         expected_dir = None
         for artifact_type, directory in self.valid_artifact_types.items():
-            if filename.startswith(artifact_type):
+            if after_timestamp.startswith(artifact_type):
                 expected_dir = directory.rstrip("/")
                 break
 
