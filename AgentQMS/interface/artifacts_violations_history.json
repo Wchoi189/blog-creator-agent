@@ -218,5 +218,145 @@
       "directory": 2,
       "frontmatter": 23
     }
+  },
+  {
+    "timestamp": "2025-11-29T16:05:44.536773",
+    "compliance_rate": 69.64285714285714,
+    "invalid_files": 17,
+    "violation_counts": {
+      "naming": 16,
+      "directory": 2,
+      "frontmatter": 16
+    }
+  },
+  {
+    "timestamp": "2025-11-29T16:10:39.831941",
+    "compliance_rate": 69.64285714285714,
+    "invalid_files": 17,
+    "violation_counts": {
+      "naming": 16,
+      "directory": 0,
+      "frontmatter": 9
+    }
+  },
+  {
+    "timestamp": "2025-11-29T16:11:26.337184",
+    "compliance_rate": 71.42857142857143,
+    "invalid_files": 16,
+    "violation_counts": {
+      "naming": 16,
+      "directory": 0,
+      "frontmatter": 4
+    }
+  },
+  {
+    "timestamp": "2025-11-29T16:12:32.642953",
+    "compliance_rate": 71.42857142857143,
+    "invalid_files": 16,
+    "violation_counts": {
+      "naming": 16,
+      "directory": 0,
+      "frontmatter": 1
+    }
+  },
+  {
+    "timestamp": "2025-11-29T16:13:19.754889",
+    "compliance_rate": 71.42857142857143,
+    "invalid_files": 16,
+    "violation_counts": {
+      "naming": 16,
+      "directory": 3,
+      "frontmatter": 0
+    }
+  },
+  {
+    "timestamp": "2025-11-29T16:13:34.484297",
+    "compliance_rate": 71.42857142857143,
+    "invalid_files": 16,
+    "violation_counts": {
+      "naming": 16,
+      "directory": 0,
+      "frontmatter": 0
+    }
+  },
+  {
+    "timestamp": "2025-11-29T16:14:11.735202",
+    "compliance_rate": 71.42857142857143,
+    "invalid_files": 16,
+    "violation_counts": {
+      "naming": 16,
+      "directory": 0,
+      "frontmatter": 0
+    }
+  },
+  {
+    "timestamp": "2025-11-29T16:15:08.022918",
+    "compliance_rate": 76.78571428571429,
+    "invalid_files": 13,
+    "violation_counts": {
+      "naming": 13,
+      "directory": 0,
+      "frontmatter": 0
+    }
+  },
+  {
+    "timestamp": "2025-11-29T16:15:45.483239",
+    "compliance_rate": 71.42857142857143,
+    "invalid_files": 16,
+    "violation_counts": {
+      "naming": 16,
+      "directory": 3,
+      "frontmatter": 0
+    }
+  },
+  {
+    "timestamp": "2025-11-29T16:16:30.643086",
+    "compliance_rate": 71.42857142857143,
+    "invalid_files": 16,
+    "violation_counts": {
+      "naming": 16,
+      "directory": 0,
+      "frontmatter": 0
+    }
+  },
+  {
+    "timestamp": "2025-11-29T16:17:02.549048",
+    "compliance_rate": 71.42857142857143,
+    "invalid_files": 16,
+    "violation_counts": {
+      "naming": 16,
+      "directory": 0,
+      "frontmatter": 0
+    }
+  },
+  {
+    "timestamp": "2025-11-29T16:17:52.653205",
+    "compliance_rate": 76.78571428571429,
+    "invalid_files": 13,
+    "violation_counts": {
+      "naming": 13,
+      "directory": 0,
+      "frontmatter": 0
+    }
+  },
+  {
+    "timestamp": "2025-11-29T16:18:59.019348",
+    "compliance_rate": 76.78571428571429,
+    "invalid_files": 13,
+    "violation_counts": {
+      "naming": 13,
+      "directory": 0,
+      "frontmatter": 0
+    }
+  },
+  {
+    "timestamp": "2025-11-29T16:19:36.976310",
+    "compliance_rate": 76.78571428571429,
+    "invalid_files": 13,
+    "violation_counts": {
+      "naming": 13,
+      "directory": 0,
+      "frontmatter": 0
+    }
   }
 ]
