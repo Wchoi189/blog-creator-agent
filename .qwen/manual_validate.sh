@@ -17,10 +17,10 @@ validate_filename() {
     local file="$1"
     local filename=$(basename "$file")
 
-    # Check if it matches the pattern: YYYY-MM-DD_HHMM_[PREFIX]descriptive-name.md
+    # Check if it matches the pattern: YYYY-MM-DD_HHMM_{ARTIFACT_TYPE}_descriptive-name.md
     if [[ ! $filename =~ ^[0-9]{4}-[0-9]{2}-[0-9]{2}_[0-9]{4}_(.+)\.md$ ]]; then
         echo "❌ INVALID: $filename"
-        echo "   Expected format: YYYY-MM-DD_HHMM_[PREFIX]descriptive-name.md"
+        echo "   Expected format: YYYY-MM-DD_HHMM_{ARTIFACT_TYPE}_descriptive-name.md"
         return 1
     fi
 
@@ -83,7 +83,7 @@ done
 echo "✅ Manual validation complete!"
 echo ""
 echo "💡 To fix issues:"
-echo "   1. Rename files to: YYYY-MM-DD_HHMM_[TYPE]_descriptive-name.md"
+echo "   1. Rename files to: YYYY-MM-DD_HHMM_{ARTIFACT_TYPE}_descriptive-name.md"
 echo "   2. Add proper YAML frontmatter at the top"
 echo "   3. Move files to correct subdirectories"
 echo ""

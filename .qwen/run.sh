@@ -52,7 +52,7 @@ Fix all document validation violations in docs/artifacts/ following AgentQMS nam
 - Ignore: docs/*.md, docs/assets/**, docs/archive/**, AgentQMS/**, .agentqms/**, .copilot/**, .cursor/**, .github/**
 
 ## FIXES NEEDED
-1. Rename files to: YYYY-MM-DD_HHMM_[TYPE]_descriptive-name.md
+1. Rename files to: YYYY-MM-DD_HHMM_{ARTIFACT_TYPE}_descriptive-name.md
 2. Add proper YAML frontmatter
 3. Move files to correct directories
 
