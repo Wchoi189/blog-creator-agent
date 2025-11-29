@@ -48,8 +48,9 @@ jobs:
           VALID=$(jq '[.[] | select(.valid == true)] | length' /tmp/validation.json)
           INVALID=$((TOTAL - VALID))
           
+          # Calculate rate using awk (more portable than bc)
           if [ "$TOTAL" -gt 0 ]; then
-            RATE=$(echo "scale=1; $VALID * 100 / $TOTAL" | bc)
+            RATE=$(awk "BEGIN {printf \"%.1f\", $VALID * 100 / $TOTAL}")
           else
             RATE=100
           fi

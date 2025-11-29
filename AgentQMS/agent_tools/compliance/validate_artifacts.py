@@ -439,8 +439,6 @@ class ArtifactValidator:
 
         return True, "Correct directory placement"
 
-        return True, "Correct directory placement"
-
     def validate_artifacts_root(self, file_path: Path) -> tuple[bool, str]:
         """Ensure artifacts are in docs/artifacts/ not root /artifacts/."""
         try:
@@ -899,8 +897,6 @@ class ArtifactValidator:
             for result in results:
                 if result["valid"]:
                     report.append(f"✓ {result['file']}")
-
-        return "\n".join(report)
 
         return "\n".join(report)
 

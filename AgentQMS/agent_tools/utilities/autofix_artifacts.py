@@ -68,14 +68,26 @@ def find_links_to_file(search_dir: Path, old_path: Path, project_root: Path) -> 
 
 
 def update_links_in_file(file_path: Path, old_url: str, new_url: str, dry_run: bool = False) -> bool:
-    """Update all occurrences of old_url to new_url in a file."""
+    """Update markdown link occurrences of old_url to new_url in a file.
+    
+    Uses regex to match proper markdown link syntax [text](url) to avoid
+    unintended replacements in other contexts.
+    """
     try:
         content = file_path.read_text(encoding="utf-8")
         
-        if old_url not in content:
+        # Escape special regex characters in old_url
+        escaped_old = re.escape(old_url)
+        
+        # Match markdown links containing the old URL
+        # Pattern: [any text](old_url) or [any text](old_url#anchor)
+        pattern = r'(\[[^\]]+\]\()' + escaped_old + r'([#)])'
+        
+        if not re.search(pattern, content):
             return False
         
-        new_content = content.replace(old_url, new_url)
+        # Replace only within markdown link context
+        new_content = re.sub(pattern, r'\g<1>' + new_url.replace('\\', '\\\\') + r'\2', content)
         
         if dry_run:
             print(f"    [dry-run] Would update links in {file_path.name}")
