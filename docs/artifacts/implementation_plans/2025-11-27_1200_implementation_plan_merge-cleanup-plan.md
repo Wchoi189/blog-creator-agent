@@ -77,12 +77,12 @@ tags: ["merge", "cleanup", "auth", "dependencies"]
   - Update `docs/ARCHITECTURE.md` and `README.md` sections titled "Vector Store" / "Chainlit" to state "Removed in Nov 2025".
 6. **Documentation & Tracking**  
   - Add progress updates to `docs/audit/AUTONOMOUS-WORKER-INSTRUCTIONS-v2.md` under the auth/Next.js hybrid plan.  
-  - Append troubleshooting outcomes to `docs/audit/AUTH-FIX-COMPLETE-SUMMARY.md` if new auth fixes are considered part of Phase 9.  
+  - Append troubleshooting outcomes to `docs/artifacts/completed_plans/implementation_plans/2025-11-26_0000_implementation_plan_auth-fix-complete-summary.md` if new auth fixes are considered part of Phase 9.  
   - Capture any lingering risk (e.g., `make s` exit codes) in `PROGRESS-TRACKER.md` under "Blockers" to maintain visibility.
 
 ## Supporting References
 - Branch context & conflict inventory: `PROGRESS-TRACKER.md` (Section "Branch Sync Issue").
-- Auth remediation summary: `docs/audit/AUTH-FIX-COMPLETE-SUMMARY.md`.
+- Auth remediation summary: `docs/artifacts/completed_plans/implementation_plans/2025-11-26_0000_implementation_plan_auth-fix-complete-summary.md`.
 - Autonomous worker guidance: `docs/audit/AUTONOMOUS-WORKER-INSTRUCTIONS-v2.md` (for hybrid Next.js/audit strategy).
 - Chainlit cleanup source commit: `main` @ `c3cda8a`.
 

@@ -19,7 +19,7 @@ Archived implementation plans, migration plans, and completion summaries.
 - [Session End Summary - 2025-11-26](2025-11-26_0001_session_note_session-end-summary.md) (📅 2025-11-26 00:00 (KS, 📝 session_note) - **Session Focus**: Documentation Organization + Critical Auth Security Fix **Duration**: ~4 hours
 - [Session 2025-11-26: Complete Backend E2E Testing & Verification](2025-11-26_0001_session_note_session-ready.md) (📅 2025-11-26 00:00 (KS, 📝 session_note) - **Status**: ✅ **COMPLETE** - All backend API endpoints verified working end-to-end - 11 API endpoints tested and working
 - [Session Summary - 2025-11-26](2025-11-26_0001_session_note_session-summary.md) (📅 2025-11-26 00:00 (KS, 📝 session_note) - - **Authentication System**: Full lifecycle tested (register → login → token validation) - **Document Management**: Upload, processing, retrieval, listing verified
-- [Authentication Security Fix - Final Summary](AUTH-FIX-COMPLETE-SUMMARY.md) (📅 2025-11-26 00:00 (KS, 📄 completion_summary) - ``` **Impact**: Eliminated client-side auth state management
+- [Authentication Security Fix - Final Summary](implementation_plans/2025-11-26_0000_implementation_plan_auth-fix-complete-summary.md) (📅 2025-11-26 00:00 (KS, 📄 completion_summary) - ``` **Impact**: Eliminated client-side auth state management
 
 ## Summary
 

@@ -1,97 +1,82 @@
-# Artifact Validation Tool Test Results
+python ../agent_tools/compliance/validate_artifacts.py --all
+============================================================
+ARTIFACT VALIDATION REPORT
+============================================================
+Total files: 60
+Valid files: 59
+Invalid files: 1
+Compliance rate: 98.3%
 
-**Test Date:** November 29, 2025
-**Documents Tested:** 5 (max)
-**Validation Tool:** AgentQMS Framework - `validate_artifacts.py`
+VIOLATIONS FOUND:
+----------------------------------------
 
----
+❌ /workspaces/blog-creator-agent/docs/artifacts/completed_plans/implementation_plans/2025-11-26_0000_implementation_plan_auth-fix-complete-summary.md
+   • Directory: File should be in 'implementation_plans/' directory, currently in 'completed_plans/implementation_plans/'
 
-## Test Summary
+✅ VALID FILES:
+----------------------------------------
+✓ /workspaces/blog-creator-agent/docs/artifacts/assessments/2025-11-25_0000_assessment-nextjs-upgrade.md
+✓ /workspaces/blog-creator-agent/docs/artifacts/assessments/2025-11-25_0900_assessment-executive-summary.md
+✓ /workspaces/blog-creator-agent/docs/artifacts/assessments/2025-11-25_0901_assessment-architecture-structure.md
+✓ /workspaces/blog-creator-agent/docs/artifacts/assessments/2025-11-25_1200_assessment-performance-optimization.md
+✓ /workspaces/blog-creator-agent/docs/artifacts/assessments/2025-11-25_1200_assessment-security-audit.md
+✓ /workspaces/blog-creator-agent/docs/artifacts/assessments/2025-11-27_1335_assessment-auth-session-analysis.md
+✓ /workspaces/blog-creator-agent/docs/artifacts/assessments/2025-11-28_0000_assessment-readme.md
+✓ /workspaces/blog-creator-agent/docs/artifacts/assessments/2025-11-28_1400_assessment-code-quality-maintainability.md
+✓ /workspaces/blog-creator-agent/docs/artifacts/assessments/2025-11-28_1401_assessment-typescript-usage.md
+✓ /workspaces/blog-creator-agent/docs/artifacts/assessments/2025-11-28_2147_assessment-accessibility-audit.md
+✓ /workspaces/blog-creator-agent/docs/artifacts/assessments/2025-11-28_2147_assessment-auth-failure.md
+✓ /workspaces/blog-creator-agent/docs/artifacts/assessments/2025-11-28_2147_assessment-editor-sse-auth.md
+✓ /workspaces/blog-creator-agent/docs/artifacts/assessments/2025-11-29_1642_assessment-artifact-naming-terminology-conflicts.md
+✓ /workspaces/blog-creator-agent/docs/artifacts/assessments/2025-11-29_1810_assessment-agentqms-artifact-workflow-review.md
+✓ /workspaces/blog-creator-agent/docs/artifacts/assessments/INDEX.md
+✓ /workspaces/blog-creator-agent/docs/artifacts/audits/INDEX.md
+✓ /workspaces/blog-creator-agent/docs/artifacts/bug_reports/2025-11-24_2301_BUG_datestamp-mismatch.md
+✓ /workspaces/blog-creator-agent/docs/artifacts/bug_reports/2025-11-24_2345_BUG_upload-unresponsive.md
+✓ /workspaces/blog-creator-agent/docs/artifacts/bug_reports/2025-11-28_1409_BUG_qwen-cli-git-detection.md
+✓ /workspaces/blog-creator-agent/docs/artifacts/bug_reports/2025-11-28_1412_BUG_sys-import-missing.md
+✓ /workspaces/blog-creator-agent/docs/artifacts/bug_reports/2025-11-28_1917_BUG_path-resolution-fix.md
+✓ /workspaces/blog-creator-agent/docs/artifacts/bug_reports/2025-11-28_1918_BUG_001_path-resolution-fix2.md
+✓ /workspaces/blog-creator-agent/docs/artifacts/bug_reports/2025-11-28_1920_BUG_001_framework-path-resolution-bugs.md
+✓ /workspaces/blog-creator-agent/docs/artifacts/bug_reports/2025-11-28_2153_BUG_001_automated-compliance-fix-bugs.md
+✓ /workspaces/blog-creator-agent/docs/artifacts/bug_reports/INDEX.md
+✓ /workspaces/blog-creator-agent/docs/artifacts/completed_plans/INDEX.md
+✓ /workspaces/blog-creator-agent/docs/artifacts/completed_plans/completion_summaries/INDEX.md
+✓ /workspaces/blog-creator-agent/docs/artifacts/completed_plans/completion_summaries/session_notes/2025-11-26_0001_SESSION_auth-fix-status.md
+✓ /workspaces/blog-creator-agent/docs/artifacts/completed_plans/completion_summaries/session_notes/2025-11-26_0001_SESSION_session-end-summary.md
+✓ /workspaces/blog-creator-agent/docs/artifacts/completed_plans/completion_summaries/session_notes/2025-11-26_0001_SESSION_session-ready.md
+✓ /workspaces/blog-creator-agent/docs/artifacts/completed_plans/completion_summaries/session_notes/2025-11-26_0001_SESSION_session-summary.md
+✓ /workspaces/blog-creator-agent/docs/artifacts/completed_plans/completion_summaries/session_notes/2025-11-26_1200_SESSION_session-progress.md
+✓ /workspaces/blog-creator-agent/docs/artifacts/completed_plans/completion_summaries/session_notes/2025-11-28_1200_SESSION_handover-document.md
+✓ /workspaces/blog-creator-agent/docs/artifacts/completed_plans/implementation_plans/INDEX.md
+✓ /workspaces/blog-creator-agent/docs/artifacts/design_documents/INDEX.md
+✓ /workspaces/blog-creator-agent/docs/artifacts/implementation_plans/2025-11-26_0001_implementation_plan_autonomous-worker-instructions-v2.md
+✓ /workspaces/blog-creator-agent/docs/artifacts/implementation_plans/2025-11-26_0001_implementation_plan_critical-auth-fix-plan.md
+✓ /workspaces/blog-creator-agent/docs/artifacts/implementation_plans/2025-11-27_1200_implementation_plan_merge-cleanup-plan.md
+✓ /workspaces/blog-creator-agent/docs/artifacts/implementation_plans/2025-11-27_2251_implementation_plan_auth-fix-implementation-plan.md
+✓ /workspaces/blog-creator-agent/docs/artifacts/implementation_plans/2025-11-27_2251_implementation_plan_auth-session-fix-plan.md
+✓ /workspaces/blog-creator-agent/docs/artifacts/implementation_plans/2025-11-28_0001_implementation_plan_progress-tracker.md
+✓ /workspaces/blog-creator-agent/docs/artifacts/implementation_plans/2025-11-28_1916_implementation_plan_test-plan.md
+✓ /workspaces/blog-creator-agent/docs/artifacts/implementation_plans/2025-11-28_1916_implementation_plan_test-plan2.md
+✓ /workspaces/blog-creator-agent/docs/artifacts/implementation_plans/2025-11-28_1917_implementation_plan_test-plan3.md
+✓ /workspaces/blog-creator-agent/docs/artifacts/implementation_plans/2025-11-28_2207_implementation_plan_fix-automated-compliance-bugs.md
+✓ /workspaces/blog-creator-agent/docs/artifacts/implementation_plans/2025-11-29_1704_implementation_plan_artifact-naming-standardization-fixes.md
+✓ /workspaces/blog-creator-agent/docs/artifacts/implementation_plans/2025-11-29_1822_implementation_plan_cloud-autonomous-agentqms-workflow-remediation.md
+✓ /workspaces/blog-creator-agent/docs/artifacts/implementation_plans/INDEX.md
+✓ /workspaces/blog-creator-agent/docs/artifacts/research/2025-11-25_0000_research-quick-reference.md
+✓ /workspaces/blog-creator-agent/docs/artifacts/research/2025-11-26_0000_research-editor-sse-auth-note.md
+✓ /workspaces/blog-creator-agent/docs/artifacts/research/2025-11-28_1948_research-hello-world.md
+✓ /workspaces/blog-creator-agent/docs/artifacts/research/INDEX.md
+✓ /workspaces/blog-creator-agent/docs/artifacts/templates/INDEX.md
+✓ AgentQMS/knowledge/context_bundles/debugging.yaml
+✓ AgentQMS/knowledge/context_bundles/development.yaml
+✓ AgentQMS/knowledge/context_bundles/documentation.yaml
+✓ AgentQMS/knowledge/context_bundles/general.yaml
+✓ AgentQMS/knowledge/context_bundles/planning.yaml
+✓ .agentqms/plugins/context_bundles/security-review.yaml
 
-| Artifact | Type | Status | Validation Result |
-|----------|------|--------|-------------------|
-| `artifacts/assessments/2025-11-25_0900_assessment_executive-summary.md` | Assessment | ✅ Valid | Passed all naming and frontmatter checks |
-| `artifacts/audits/2025-11-29_0256_audit-framework-compliance-test.md` | Audit | ✅ Valid | Compliant with audit artifact type spec |
-| `artifacts/audits/2025-11-29_1200_audit-accessibility.md` | Audit | ✅ Valid | Proper accessibility audit formatting |
-| `docs/artifacts/implementation_plans/2025-11-28_2207_implementation_plan_fix-automated-compliance-bugs.md` | Implementation Plan | ✅ Valid | Correct naming convention and metadata |
-| `docs/artifacts/implementation_plans/2025-11-28_1917_implementation_plan_test-plan3.md` | Implementation Plan | ✅ Valid | Standard implementation plan format |
+FIX SUGGESTIONS:
+========================================
 
----
-
-## Overall Results
-
-- **Total Files Scanned:** 55 artifacts
-- **Valid Artifacts:** 28 (50.9%)
-- **Invalid Artifacts:** 27 (49.1%)
-- **Test Documents:** 5 (100% valid)
-
----
-
-## Validation Checks Performed
-
-### ✅ Passing Checks (Test Documents)
-1. **Timestamp Format**: All documents use `YYYY-MM-DD_HHMM` format correctly
-2. **Frontmatter**: All include required YAML frontmatter with `---` delimiters
-3. **Metadata Fields**: Title, date, type, category, status, version all present
-4. **File Naming**: Follow artifact type naming conventions
-5. **Directory Structure**: Files located in appropriate artifact type directories
-
-### ❌ Common Issues Found (Other Artifacts)
-1. **Missing Timestamps**: Files without `YYYY-MM-DD_HHMM` format
-2. **Missing Frontmatter**: Files not starting with `---`
-3. **Invalid Status Values**: Using non-standard status values like "open" instead of "active"
-4. **Wrong Type Prefixes**: Missing or incorrect artifact type identifiers
-5. **Wrong Directory Placement**: Files in incorrect subdirectories
-
----
-
-## Document Details
-
-### 1. Assessment: Executive Summary
-- **Path**: `artifacts/assessments/2025-11-25_0900_assessment_executive-summary.md`
-- **Lines**: 513
-- **Content**: Next.js codebase audit with comprehensive scoring across 6 categories
-- **Metadata**: Complete and properly formatted
-- **Validation**: ✅ All checks passed
-
-### 2. Audit: Framework Compliance Test
-- **Path**: `artifacts/audits/2025-11-29_0256_audit-framework-compliance-test.md`
-- **Lines**: 130
-- **Content**: AgentQMS framework compliance validation
-- **Metadata**: Complete and properly formatted
-- **Validation**: ✅ All checks passed
-
-### 3. Audit: Accessibility
-- **Path**: `artifacts/audits/2025-11-29_1200_audit-accessibility.md`
-- **Lines**: 981
-- **Content**: WCAG 2.1 compliance audit with detailed findings
-- **Metadata**: Complete and properly formatted
-- **Validation**: ✅ All checks passed
-
-### 4. Implementation Plan: Automated Compliance Bugs
-- **Path**: `docs/artifacts/implementation_plans/2025-11-28_2207_implementation_plan_fix-automated-compliance-bugs.md`
-- **Lines**: 255
-- **Content**: Master prompt for autonomous agent implementation
-- **Metadata**: Complete and properly formatted
-- **Validation**: ✅ All checks passed
-
-### 5. Implementation Plan: Test Plan 3
-- **Path**: `docs/artifacts/implementation_plans/2025-11-28_1917_implementation_plan_test-plan3.md`
-- **Lines**: 151
-- **Content**: Living blueprint implementation plan template
-- **Metadata**: Complete and properly formatted
-- **Validation**: ✅ All checks passed
-
----
-
-## Conclusion
-
-The artifact validation tool successfully:
-- ✅ Scanned 55 artifact files across the workspace
-- ✅ Validated proper naming conventions with timestamp and type prefixes
-- ✅ Checked frontmatter presence and YAML format
-- ✅ Verified metadata field requirements and valid enumerations
-- ✅ Identified 27 artifacts needing remediation
-- ✅ Confirmed 5 test documents as fully compliant
-
-The tool provides clear, actionable feedback for improving artifact compliance across the AgentQMS framework.
+📁 /workspaces/blog-creator-agent/docs/artifacts/completed_plans/implementation_plans/2025-11-26_0000_implementation_plan_auth-fix-complete-summary.md
+   🔧 Move file to correct directory

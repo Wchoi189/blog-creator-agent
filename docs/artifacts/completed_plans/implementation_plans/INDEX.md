@@ -7,13 +7,13 @@ Active implementation plans and development roadmaps.
 
 ## Active (2)
 
-- [Authentication Session Fix Plan](20251127-2251_auth-session-fix-plan.md) (📅 2025-11-27 22:51 (KS, 🚀 implementation_plan) - - [ ] **Phase 1: Core Auth Infrastructure** - [ ] Fix backend .env loading (config.py path issue)
-- [Chainlit/Chroma Removal & Auth Merge Plan](20251127-1200_merge_cleanup_plan.md) (📅 2025-11-27 12:00 (KS, 🚀 implementation_plan)
+- [Authentication Session Fix Plan](../../implementation_plans/2025-11-27_2251_implementation_plan_auth-session-fix-plan.md) (📅 2025-11-27 22:51 (KS, 🚀 implementation_plan) - - [ ] **Phase 1: Core Auth Infrastructure** - [ ] Fix backend .env loading (config.py path issue)
+- [Chainlit/Chroma Removal & Auth Merge Plan](../../implementation_plans/2025-11-27_1200_implementation_plan_merge-cleanup-plan.md) (📅 2025-11-27 12:00 (KS, 🚀 implementation_plan)
 
 ## Completed (2)
 
-- [Auth Fix Implementation Plan](20251127-2251_auth-fix-implementation-plan.md) (📅 2025-11-27 22:51 (KS, 🚀 implementation_plan) - _PROJECT_ROOT = Path(__file__).resolve().parent.parent model_config = SettingsConfigDict(
-- [Authentication Security Fix - Final Summary](AUTH-FIX-COMPLETE-SUMMARY.md) (📅 2025-11-26 00:00 (KS, 📄 completion_summary) - ``` **Impact**: Eliminated client-side auth state management
+- [Auth Fix Implementation Plan](../../implementation_plans/2025-11-27_2251_implementation_plan_auth-fix-implementation-plan.md) (📅 2025-11-27 22:51 (KS, 🚀 implementation_plan) - _PROJECT_ROOT = Path(__file__).resolve().parent.parent model_config = SettingsConfigDict(
+- [Authentication Security Fix - Final Summary](2025-11-26_0000_implementation_plan_auth-fix-complete-summary.md) (📅 2025-11-26 00:00 (KS, 📄 completion_summary) - ``` **Impact**: Eliminated client-side auth state management
 
 ## Summary
 

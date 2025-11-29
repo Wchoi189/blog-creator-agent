@@ -1,0 +1,53 @@
+name: AgentQMS Autofix (Limited)
+
+on:
+  workflow_dispatch:
+    inputs:
+      limit:
+        description: 'Max files to autofix'
+        required: false
+        default: '10'
+      dry_run:
+        description: 'Dry-run only'
+        required: false
+        default: 'true'
+
+jobs:
+  autofix:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v1
+
+      - name: Install interface deps
+        run: |
+          cd AgentQMS/interface
+          uv pip install -r requirements.txt
+
+      - name: Validate (JSON)
+        run: |
+          python AgentQMS/agent_tools/compliance/validate_artifacts.py --all || true
+
+      - name: Run Autofix (stub)
+        run: |
+          echo "Autofix stub: limit=${{ github.event.inputs.limit }} dry_run=${{ github.event.inputs.dry_run }}"
+          # TODO: replace with: uv run python AgentQMS/agent_tools/utilities/autofix_artifacts.py --limit ... --dry-run
+
+      - name: Create PR
+        uses: peter-evans/create-pull-request@v6
+        with:
+          title: "AgentQMS: Autofix batch"
+          body: "Automated limited autofix."
+          branch: agentqms/autofix-batch
+          commit-message: "AgentQMS: limited autofix (stub)"
