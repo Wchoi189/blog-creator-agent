@@ -13,10 +13,16 @@ on:
       - 'docs/**'
       - 'AgentQMS/**'
 
+# Restrict permissions to minimum required
+permissions:
+  contents: read
+
 jobs:
   validate:
     name: Validate Artifacts
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     outputs:
       compliance_rate: ${{ steps.validate.outputs.compliance_rate }}
       violations: ${{ steps.validate.outputs.violations }}
@@ -68,6 +74,8 @@ jobs:
     name: Regenerate Indexes
     runs-on: ubuntu-latest
     needs: validate
+    permissions:
+      contents: read
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -94,6 +102,8 @@ jobs:
     name: Check Links
     runs-on: ubuntu-latest
     needs: validate
+    permissions:
+      contents: read
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -122,6 +132,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: [validate, reindex, check-links]
     if: always()
+    permissions: {}
     steps:
       - name: Generate Summary
         run: |
