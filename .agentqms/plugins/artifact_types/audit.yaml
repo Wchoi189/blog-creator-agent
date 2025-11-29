@@ -12,7 +12,7 @@ scope: project
 
 metadata:
   filename_pattern: "{date}_audit-{name}.md"
-  directory: ../../artifacts/audits/
+  directory: audits/
   frontmatter:
     type: audit
     category: compliance

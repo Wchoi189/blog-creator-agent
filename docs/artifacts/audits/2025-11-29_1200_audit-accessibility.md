@@ -1,8 +1,8 @@
 ---
 title: "Accessibility (a11y) Audit"
-date: "2025-11-25"
+date: "2025-11-29 12:00 (KST)"
 type: audit
-category: accessibility
+category: compliance
 status: completed
 version: "1.0"
 related_artifacts: []

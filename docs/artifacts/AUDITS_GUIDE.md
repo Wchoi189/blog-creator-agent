@@ -1,10 +1,10 @@
-# Audits
+# Audits Guide
 
 Framework audits, compliance checks, and quality evaluations with automated implementation plan generation.
 
 ## Purpose
 
-This directory contains comprehensive audits of the codebase, framework, and processes. Audits identify issues, evaluate compliance with standards, and recommend improvements.
+This guide explains how audits work in this repository. The actual audit artifacts live in `docs/artifacts/audits/` and are indexed by the auto-generated `INDEX.md` there.
 
 ## GitHub Actions Automation
 
@@ -23,8 +23,8 @@ When an audit file's status is changed to `completed` and pushed to the main bra
 
 Use relative paths for artifact references:
 
-- **Related implementation plans**: `../implementation_plans/YYYY-MM-DD_HHMM_implementation_plan_name.md`
-- **Related audits**: `./YYYY-MM-DD_HHMM_audit-name.md`
+- **Related implementation plans**: `implementation_plans/YYYY-MM-DD_HHMM_implementation_plan_name.md`
+- **Related audits**: `audits/YYYY-MM-DD_HHMM_audit-name.md`
 - **Source documents**: `../path/to/document.md`
 
 ### Frontmatter Fields
@@ -81,35 +81,13 @@ When working locally without pushing to GitHub:
    ```bash
    make create-plan NAME=fix-my-audit TITLE="Address My Audit Findings"
    ```
-4. Update audit's `generated_artifacts` field with relative path to plan
+4. Update the audit's `generated_artifacts` frontmatter with the relative path to the plan
 
-## Files
+## Examples
 
-### Accessibility Audits
-
-- [Accessibility (a11y) Audit](2025-11-29_1200_audit-accessibility.md) - WCAG 2.1 AA compliance audit with 8 critical issues
-
-### Security Audits
-
-_None yet_
-
-### Compliance Audits
-
-_None yet_
-
-### Performance Audits
-
-_None yet_
-
-### Code Quality Audits
-
-_None yet_
-
-### Framework Audits
-
-_None yet_
+- [Accessibility (a11y) Audit](audits/2025-11-29_1200_audit-accessibility.md) - WCAG 2.1 AA compliance audit with 8 critical issues
+- [Framework Compliance Test](audits/2025-11-29_0256_audit-framework-compliance-test.md)
 
 ---
 
-**Total Audits**: 1  
-**Last Updated**: 2025-11-29
+This guide complements the auto-generated `docs/artifacts/audits/INDEX.md` (do not edit the index manually).
