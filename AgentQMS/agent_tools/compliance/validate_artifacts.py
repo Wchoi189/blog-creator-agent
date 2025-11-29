@@ -290,6 +290,37 @@ class ArtifactValidator:
 
         return True, "Correct directory placement"
 
+    def validate_artifacts_root(self, file_path: Path) -> tuple[bool, str]:
+        """Ensure artifacts are in docs/artifacts/ not root /artifacts/."""
+        try:
+            # Get the path relative to project root
+            from AgentQMS.agent_tools.utils.paths import get_project_root
+            project_root = get_project_root()
+            relative_path = file_path.relative_to(project_root)
+            path_str = str(relative_path).replace("\\", "/")
+            
+            # Check if file starts with artifacts/ (without docs/ prefix)
+            if path_str.startswith("artifacts/") and not path_str.startswith("docs/artifacts/"):
+                return (
+                    False,
+                    f"Artifacts must be in 'docs/artifacts/' not root 'artifacts/'. "
+                    f"Move file from '{path_str}' to 'docs/{path_str}'",
+                )
+            
+            # Verify file is in docs/artifacts/ hierarchy
+            if not path_str.startswith("docs/artifacts/") and not path_str.startswith("AgentQMS/"):
+                return (
+                    False,
+                    f"Artifacts must be in 'docs/artifacts/' directory. "
+                    f"Current location: '{path_str}'",
+                )
+                
+        except ValueError:
+            # File is outside project root - allow it (might be in AgentQMS module)
+            pass
+            
+        return True, "Valid artifacts directory location"
+
     def validate_frontmatter(self, file_path: Path) -> tuple[bool, str]:
         """Validate frontmatter structure and content."""
         try:
@@ -377,6 +408,12 @@ class ArtifactValidator:
         # Skip INDEX.md files
         if file_path.name == "INDEX.md":
             return result
+
+        # Validate artifacts root location (must be in docs/artifacts/)
+        root_valid, root_msg = self.validate_artifacts_root(file_path)
+        if not root_valid:
+            result["valid"] = False
+            result["errors"] += [f"Location: {root_msg}"]
 
         # Validate naming convention
         naming_valid, naming_msg = self.validate_naming_convention(file_path)
