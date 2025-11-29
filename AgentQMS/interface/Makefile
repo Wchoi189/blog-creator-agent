@@ -81,6 +81,20 @@ check-links: ## Check Markdown links referring to artifacts
 fix: ## Safe autofix pipeline
 	python ../agent_tools/utilities/autofix_artifacts.py $(ARGS)
 
+.PHONY: commit-fixes
+commit-fixes: ## Commit artifact fixes with standard message (usage: make commit-fixes MSG="description")
+	@if git diff --quiet && git diff --staged --quiet; then \
+		echo "⚠️  No changes to commit"; \
+	else \
+		git add docs/artifacts/ AgentQMS/; \
+		if [ -z "$(MSG)" ]; then \
+			git commit -m "AgentQMS: artifact fixes"; \
+		else \
+			git commit -m "AgentQMS: $(MSG)"; \
+		fi; \
+		echo "✅ Changes committed"; \
+	fi
+
 validate-file: ## Validate specific file (usage: make validate-file FILE=path/to/file.md)
 	python ../agent_tools/compliance/validate_artifacts.py --file $(FILE)
 
