@@ -33,6 +33,9 @@ Auto-generated tool registry for AI agent discovery.
 | Tool | Description | CLI | Usage |
 |---|---|---|---|
 | **auto_generate_index** | Shim for handbook index generation/validation. | ✓ | `AgentQMS/agent_tools/documentation/auto_generate_index.py` |
+| **check_links** | Check Markdown links: verify artifact references are valid. | ✓ | `AgentQMS/agent_tools/documentation/check_links.py` |
+| **reindex_artifacts** | Reindex artifacts: regenerate INDEX.md files deterministically. | ✓ | `AgentQMS/agent_tools/documentation/reindex_artifacts.py` |
+| **test_check_links** | Unit tests for check_links.py | ✓ | `AgentQMS/agent_tools/documentation/test_check_links.py` |
 | **validate_links** | Shim for documentation link validation. | ✓ | `AgentQMS/agent_tools/documentation/validate_links.py` |
 | **validate_manifest** | Shim for AI handbook manifest validation. | ✓ | `AgentQMS/agent_tools/documentation/validate_manifest.py` |
 ### Utilities
@@ -40,6 +43,7 @@ Auto-generated tool registry for AI agent discovery.
 | Tool | Description | CLI | Usage |
 |---|---|---|---|
 | **adapt_project** | Canonical wrapper for the project adaptation script. | ✓ | `AgentQMS/agent_tools/utilities/adapt_project.py` |
+| **autofix_artifacts** | Safe autofix pipeline: apply validator suggestions with limits. | ✓ | `AgentQMS/agent_tools/utilities/autofix_artifacts.py` |
 | **cli** | Canonical CLI entrypoint for development/debug tracking and experiments. | ✓ | `AgentQMS/agent_tools/utilities/tracking/cli.py` |
 | **config** | Framework configuration loader for AgentQMS. | ✗ | `AgentQMS/agent_tools/utils/config.py` |
 | **get_context** | get_context tool | ✓ | `AgentQMS/agent_tools/utilities/get_context.py` |
@@ -55,11 +59,16 @@ Auto-generated tool registry for AI agent discovery.
 | `status` | Check overall system status | workflow |
 | `create-plan` | Create implementation plan (usage: make create-plan NAME=my-plan TITLE="My Plan") | artifact_creation |
 | `create-assessment` | Create assessment (usage: make create-assessment NAME=my-assessment TITLE="My Assessment") | artifact_creation |
+| `create-audit` | Create audit (usage: make create-audit NAME=my-audit TITLE="My Audit") | artifact_creation |
 | `create-design` | Create design document (usage: make create-design NAME=my-design TITLE="My Design") | artifact_creation |
 | `create-research` | Create research document (usage: make create-research NAME=my-research TITLE="My Research") | artifact_creation |
 | `create-template` | Create template (usage: make create-template NAME=my-template TITLE="My Template") | artifact_creation |
 | `create-bug-report` | Create bug report (usage: make create-bug-report NAME=my-bug TITLE="My Bug Report") | artifact_creation |
 | `validate` | Validate all artifacts | validation |
+| `reindex` | Reindex artifacts | workflow |
+| `check-links` | Check Markdown links referring to artifacts | workflow |
+| `fix` | Safe autofix pipeline | workflow |
+| `commit-fixes` | Commit artifact fixes with standard message (usage: make commit-fixes MSG="description") | workflow |
 | `validate-file` | Validate specific file (usage: make validate-file FILE=path/to/file.md) | validation |
 | `validate-naming` | Check naming conventions only | validation |
 | `boundary` | Validate framework/project boundaries | workflow |
@@ -109,6 +118,7 @@ Auto-generated tool registry for AI agent discovery.
 | `info-tools` | Show detailed tool information | workflow |
 | `info-stats` | Show project statistics | workflow |
 | `tool-catalog` | Generate tool catalog and scripts index | workflow |
+| `generate-registry` | Generate tool registry and context files for auto-discovery | workflow |
 | `export` | Export framework to project-agnostic package (usage: make export OUTPUT=export_package/) | workflow |
 | `export-dry-run` | Dry run export (see what would be exported) (usage: make export-dry-run OUTPUT=export_package/) | workflow |
 | `export-validate` | Export framework with validation (usage: make export-validate OUTPUT=export_package/) | workflow |

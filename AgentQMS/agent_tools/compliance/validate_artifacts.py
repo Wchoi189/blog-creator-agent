@@ -379,12 +379,22 @@ class ArtifactValidator:
         type_details = self.artifact_type_details.get(matched_type, {})
         expected_case = type_details.get("case", "lowercase")
 
-        # Check for ALL CAPS or uppercase words in descriptive part
-        if expected_case != "uppercase_prefix":
-            if descriptive_part.isupper() or any(
-                word.isupper() and len(word) > 1
-                for word in descriptive_part.replace("-", "_").split("_")
-            ):
+        # Check for ALL CAPS, uppercase, or mixed case words in descriptive part
+        # Always validate - descriptive part must be lowercase for ALL types
+        words = descriptive_part.replace("-", "_").split("_")
+        has_uppercase_or_mixed = any(
+            (word.isupper() or (not word.islower() and not word.isdigit())) and len(word) > 1
+            for word in words
+        )
+        
+        if descriptive_part.isupper() or has_uppercase_or_mixed:
+            if expected_case == "uppercase_prefix":
+                return (
+                    False,
+                    "Artifact filenames with uppercase prefix must have lowercase descriptive part. "
+                    f"Example: {matched_type}001_lowercase-name.md (not {matched_type}001_UPPERCASE-NAME.md)",
+                )
+            else:
                 return (
                     False,
                     "Artifact filenames must be lowercase. No ALL CAPS allowed. Use kebab-case (lowercase with hyphens)",

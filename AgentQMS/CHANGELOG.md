@@ -6,6 +6,24 @@
 - **Conciseness**: Keep entries ultra-concise - focus on what changed, not why
 - **Categories**: Group related changes under appropriate section headers
 
+## Bug Fixes (2025-11-30)
+
+### [2025-11-30 16:15] - Fixed uppercase validation skip for BUG_/SESSION_ files
+**File**: `AgentQMS/agent_tools/compliance/validate_artifacts.py`
+**Issue**: Logic error `if expected_case != "uppercase_prefix":` caused validation skip for uppercase_prefix artifact types (BUG_*, SESSION_*)
+**Fix**: Removed skip condition; now always validates descriptive part must be lowercase, including mixed case detection
+**Impact**: BUG_* and SESSION_* files now properly reject uppercase/mixed case descriptive parts (e.g., BUG_001_CAPS.md or BUG_001_Mixed.md now fail)
+**Test**: Added `test_validate_artifacts_uppercase.py` with 11 comprehensive tests
+**Related**: Bug discovered by Cursor Bugbot post-merge of PR#7
+
+### [2025-11-30 15:45] - Fixed ineffective --include-agentqms argument
+**File**: `AgentQMS/agent_tools/documentation/check_links.py`
+**Issue**: `action="store_true"` with `default=True` made flag non-functional
+**Fix**: Changed to `--no-agentqms` with `action="store_false"`
+**Impact**: Users can now exclude AgentQMS directory via CLI (default: included)
+**Test**: Added `test_check_links.py` with pytest coverage
+**Related**: Bug discovered by Cursor Bugbot post-merge of PR#7
+
 ## Artifact Naming Convention Standardization (2025-11-29)
 
 ### [2025-11-29 17:30] - Terminology Standardization Complete

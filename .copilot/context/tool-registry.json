@@ -154,6 +154,39 @@
       "parameters": null
     },
     {
+      "name": "check_links",
+      "category": "documentation",
+      "description": "Check Markdown links: verify artifact references are valid.",
+      "path": "AgentQMS/agent_tools/documentation/check_links.py",
+      "is_cli": true,
+      "usage_hint": "argparse CLI",
+      "tags": [],
+      "make_target": null,
+      "parameters": null
+    },
+    {
+      "name": "reindex_artifacts",
+      "category": "documentation",
+      "description": "Reindex artifacts: regenerate INDEX.md files deterministically.",
+      "path": "AgentQMS/agent_tools/documentation/reindex_artifacts.py",
+      "is_cli": true,
+      "usage_hint": "",
+      "tags": [],
+      "make_target": null,
+      "parameters": null
+    },
+    {
+      "name": "test_check_links",
+      "category": "documentation",
+      "description": "Unit tests for check_links.py",
+      "path": "AgentQMS/agent_tools/documentation/test_check_links.py",
+      "is_cli": true,
+      "usage_hint": "",
+      "tags": [],
+      "make_target": null,
+      "parameters": null
+    },
+    {
       "name": "validate_links",
       "category": "documentation",
       "description": "Shim for documentation link validation.",
@@ -182,6 +215,17 @@
       "path": "AgentQMS/agent_tools/utilities/adapt_project.py",
       "is_cli": true,
       "usage_hint": "",
+      "tags": [],
+      "make_target": null,
+      "parameters": null
+    },
+    {
+      "name": "autofix_artifacts",
+      "category": "utilities",
+      "description": "Safe autofix pipeline: apply validator suggestions with limits.",
+      "path": "AgentQMS/agent_tools/utilities/autofix_artifacts.py",
+      "is_cli": true,
+      "usage_hint": "argparse CLI",
       "tags": [],
       "make_target": null,
       "parameters": null
@@ -278,6 +322,12 @@
       "category": "artifact_creation"
     },
     {
+      "name": "create-audit",
+      "description": "Create audit (usage: make create-audit NAME=my-audit TITLE=\"My Audit\")",
+      "usage": "make create-audit NAME=my-audit TITLE=\"My Audit\")",
+      "category": "artifact_creation"
+    },
+    {
       "name": "create-design",
       "description": "Create design document (usage: make create-design NAME=my-design TITLE=\"My Design\")",
       "usage": "make create-design NAME=my-design TITLE=\"My Design\")",
@@ -306,6 +356,30 @@
       "description": "Validate all artifacts",
       "usage": null,
       "category": "validation"
+    },
+    {
+      "name": "reindex",
+      "description": "Reindex artifacts",
+      "usage": null,
+      "category": "workflow"
+    },
+    {
+      "name": "check-links",
+      "description": "Check Markdown links referring to artifacts",
+      "usage": null,
+      "category": "workflow"
+    },
+    {
+      "name": "fix",
+      "description": "Safe autofix pipeline",
+      "usage": null,
+      "category": "workflow"
+    },
+    {
+      "name": "commit-fixes",
+      "description": "Commit artifact fixes with standard message (usage: make commit-fixes MSG=\"description\")",
+      "usage": "make commit-fixes MSG=\"description\")",
+      "category": "workflow"
     },
     {
       "name": "validate-file",
@@ -602,6 +676,12 @@
       "category": "workflow"
     },
     {
+      "name": "generate-registry",
+      "description": "Generate tool registry and context files for auto-discovery",
+      "usage": null,
+      "category": "workflow"
+    },
+    {
       "name": "export",
       "description": "Export framework to project-agnostic package (usage: make export OUTPUT=export_package/)",
       "usage": "make export OUTPUT=export_package/)",
@@ -731,23 +811,32 @@
     }
   ],
   "categories": {
-    "utilities": [
-      "adapt_project",
-      "cli",
-      "config",
-      "get_context",
-      "paths",
-      "runtime"
+    "audit": [
+      "audit_generator",
+      "audit_validator",
+      "checklist_tool"
+    ],
+    "documentation": [
+      "auto_generate_index",
+      "check_links",
+      "reindex_artifacts",
+      "test_check_links",
+      "validate_links",
+      "validate_manifest"
     ],
     "compliance": [
       "monitor_artifacts",
       "validate_artifacts",
       "validate_boundaries"
     ],
-    "audit": [
-      "audit_generator",
-      "audit_validator",
-      "checklist_tool"
+    "utilities": [
+      "adapt_project",
+      "autofix_artifacts",
+      "cli",
+      "config",
+      "get_context",
+      "paths",
+      "runtime"
     ],
     "core": [
       "artifact_templates",
@@ -756,11 +845,6 @@
       "discover",
       "plugin_loader",
       "workflow_detector"
-    ],
-    "documentation": [
-      "auto_generate_index",
-      "validate_links",
-      "validate_manifest"
     ]
   }
 }

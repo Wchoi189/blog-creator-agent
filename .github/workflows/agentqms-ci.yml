@@ -47,8 +47,15 @@ jobs:
         id: validate
         run: |
           cd AgentQMS/interface
-          python ../agent_tools/compliance/validate_artifacts.py --all --json > /tmp/validation.json 2>&1 || true
+          python ../agent_tools/compliance/validate_artifacts.py --all --json > /tmp/validation.json 2> /tmp/validation.err || true
           
+          # Check if JSON file is valid before parsing
+          if [ ! -s /tmp/validation.json ] || ! jq empty /tmp/validation.json 2>/dev/null; then
+            echo "⚠️ Warning: Invalid or empty JSON output. Errors:" >&2
+            cat /tmp/validation.err >&2 || true
+            echo '[]' > /tmp/validation.json
+          fi
+                    
           # Parse results
           TOTAL=$(jq 'length' /tmp/validation.json)
           VALID=$(jq '[.[] | select(.valid == true)] | length' /tmp/validation.json)

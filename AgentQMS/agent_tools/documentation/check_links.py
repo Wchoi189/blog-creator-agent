@@ -143,8 +143,8 @@ def main():
     parser.add_argument("--json", action="store_true", help="Output results as JSON")
     parser.add_argument("--artifacts-only", action="store_true", 
                         help="Only check links to artifact files")
-    parser.add_argument("--include-agentqms", action="store_true", default=True,
-                        help="Include AgentQMS directory in link checking")
+    parser.add_argument("--no-agentqms", action="store_false", dest="include_agentqms",
+                        help="Exclude AgentQMS directory from link checking (default: included)")
     args = parser.parse_args()
     
     from AgentQMS.agent_tools.utils.paths import get_project_root
