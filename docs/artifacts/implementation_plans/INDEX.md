@@ -2,14 +2,13 @@
 
 Active implementation plans and development roadmaps.
 
-**Last Updated**: 2025-11-29 19:14:49
-**Total Artifacts**: 12
+**Last Updated**: 2025-11-30 03:25:08
+**Total Artifacts**: 11
 
-## Active (9)
+## Active (8)
 
 - [Chainlit/Chroma Removal & Auth Merge Plan](2025-11-27_1200_implementation_plan_merge-cleanup-plan.md) (📅 2025-11-27 12:00 (KST), 📄 implementation_plan) - **Progress Tracker**
 - [Authentication Session Fix Plan](2025-11-27_2251_implementation_plan_auth-session-fix-plan.md) (📅 2025-11-27 22:51 (KST), 📄 implementation_plan) - - [ ] **Phase 1: Core Auth Infrastructure**
-- [Progress Tracker - Next.js Audit Resolution](2025-11-28_0001_implementation_plan_progress-tracker.md) (📅 2025-11-28 00:00 (KST), 📄 session_note) - **Last Updated**: 2025-11-28 (Morning)
 - [Test Implementation Plan](2025-11-28_1916_implementation_plan_test-plan.md) (📅 2025-11-28 19:16 (KST), 📄 implementation_plan) - You are an autonomous AI agent, my Chief of Staff for implementing the **Test Implementation Plan**.
 - [Test Implementation Plan 2](2025-11-28_1916_implementation_plan_test-plan2.md) (📅 2025-11-28 19:16 (KST), 📄 implementation_plan) - You are an autonomous AI agent, my Chief of Staff for implementing the **Test Implementation Plan 2*
 - [Test Implementation Plan 3](2025-11-28_1917_implementation_plan_test-plan3.md) (📅 2025-11-28 19:17 (KST), 📄 implementation_plan) - You are an autonomous AI agent, my Chief of Staff for implementing the **Test Implementation Plan 3*
@@ -27,7 +26,7 @@ Active implementation plans and development roadmaps.
 
 | Status | Count |
 |--------|-------|
-| Active | 9 |
+| Active | 8 |
 | Completed | 3 |
 
 ---
