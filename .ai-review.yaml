@@ -1,0 +1,13 @@
+provider: openrouter
+model: qwen/qwen3-coder:free
+dry_run: true
+include_paths:
+  - backend/**
+  - frontend/**
+exclude_paths:
+  - docs/**
+  - logs/**
+  - backups/**
+  - tests/**
+max_comments_per_file: 10
+max_comments_total: 50

@@ -32,6 +32,7 @@ For detailed migration notes, see [docs/plans/README.md](docs/plans/README.md).
 - Command interpreter script (.qwen/qwen-chat.sh) for conversational AI workflows
 - FastAPI and backend dependencies to pyproject.toml
 - .python-version file for uv compatibility
+- Added AI code review workflow using XAI Review action with OpenRouter integration
 
 ### Changed
 - Migrated dependency management from Poetry to uv
