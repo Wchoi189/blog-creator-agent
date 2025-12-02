@@ -12,6 +12,7 @@ Usage:
 """
 
 import argparse
+import logging
 from datetime import datetime
 from pathlib import Path
 
@@ -242,7 +243,7 @@ class ArtifactIndexUpdater:
                             ]  # Get just the date part
                             metadata.append(f"📅 {date_str}")
                         except Exception:
-                            pass
+                            logging.debug("Error processing date for artifact", exc_info=True)
 
                     if artifact.get("type"):
                         type_icon = {

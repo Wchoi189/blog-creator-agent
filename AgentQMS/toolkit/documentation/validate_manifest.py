@@ -1,13 +1,13 @@
 from __future__ import annotations
 
-
-"""Validate the AI handbook manifest for structural and referential integrity."""
-
-import argparse  # noqa: E402
+import argparse
 import json
 import sys
 from pathlib import Path
 from typing import Any
+
+
+"""Validate the AI handbook manifest for structural and referential integrity."""
 
 
 ROOT = Path(__file__).resolve().parents[2]

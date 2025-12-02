@@ -39,7 +39,7 @@ class EnvLoader:
         if value:
             return value
         try:
-            import streamlit as st  # optional fallback
+            import streamlit as st  # optional fallback  # noqa: PLC0415  # justified: conditional import for optional dependency
 
             return st.secrets.get(key_name)  # type: ignore[attr-defined]
         except Exception:

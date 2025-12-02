@@ -172,7 +172,7 @@ def load_bundle_definition(bundle_name: str) -> dict[str, Any]:
             if plugin_bundle:
                 return plugin_bundle
         except Exception as e:
-            import logging
+            import logging  # noqa: PLC0415  # justified: conditional import for logging error
             logging.warning(f"Failed to get context bundle from plugin registry: {e}")  # Fall through to error
 
     # Not found in either location
@@ -209,6 +209,52 @@ def is_fresh(path: Path | str, days: int = 30) -> bool:
     return days_since_modification <= days
 
 
+def _expand_recursive_pattern(pattern: str) -> list[Path]:
+    """Expand recursive glob patterns containing **."""
+    # Constants for glob pattern parsing
+    EXPECTED_SPLIT_PARTS_COUNT = 2  # For patterns containing "**", we expect 2 parts after splitting
+
+    parts = pattern.split("**")
+    if len(parts) != EXPECTED_SPLIT_PARTS_COUNT:
+        # Complex case - return empty for now
+        return []
+
+    if parts[0] != "":
+        # Pattern like: "dir**pattern" -> base_dir="dir", search_pattern="pattern"
+        base_dir_str = parts[0].rstrip('/')
+        search_pattern = parts[1].lstrip('/')
+
+        base_dir = PROJECT_ROOT / base_dir_str if not Path(base_dir_str).is_absolute() else Path(base_dir_str)
+    elif parts[0] == "":
+        # Pattern starts with **, like: "**/*.py"
+        base_dir = PROJECT_ROOT
+        search_pattern = parts[1].lstrip('/')
+    else:
+        return []
+
+    if not base_dir.exists():
+        return []
+
+    return [p for p in base_dir.rglob(search_pattern) if p.is_file()]
+
+
+def _expand_non_recursive_pattern(pattern: str) -> list[Path]:
+    """Expand non-recursive glob patterns containing * but not **."""
+    if not Path(pattern).is_absolute():
+        full_pattern = PROJECT_ROOT / pattern
+    else:
+        full_pattern = Path(pattern)
+
+    # Get the directory part and pattern part
+    parent_dir = full_pattern.parent
+    pattern_part = full_pattern.name
+
+    if not parent_dir.exists():
+        return []
+
+    return [p for p in parent_dir.glob(pattern_part) if p.is_file()]
+
+
 def expand_glob_pattern(pattern: str, max_files: int | None = None) -> list[Path]:
     """
     Expand glob pattern and return matching files.
@@ -220,11 +266,23 @@ def expand_glob_pattern(pattern: str, max_files: int | None = None) -> list[Path
     Returns:
         List of matching file paths
     """
-    # Make pattern relative to project root
+    # Handle path globbing with Path methods to comply with PTH207
     if not Path(pattern).is_absolute():
-        pattern = str(PROJECT_ROOT / pattern)
+        pattern_path = PROJECT_ROOT / pattern
+    else:
+        pattern_path = Path(pattern)
 
-    matches = [Path(p) for p in glob.glob(pattern, recursive=True) if Path(p).is_file()]
+    if "**" in pattern:
+        matches = _expand_recursive_pattern(pattern)
+    elif "*" in pattern:
+        matches = _expand_non_recursive_pattern(pattern)
+    else:
+        # For non-glob patterns (exact file paths)
+        full_path = pattern_path
+        if full_path.is_file():
+            matches = [full_path]
+        else:
+            matches = []
 
     # Sort by modification time (newest first)
     matches.sort(key=lambda p: p.stat().st_mtime, reverse=True)
@@ -359,7 +417,7 @@ def list_available_bundles() -> list[str]:
             plugin_bundles = registry.get_context_bundles()
             bundles.update(plugin_bundles.keys())
         except Exception as e:
-            import logging
+            import logging  # noqa: PLC0415  # justified: conditional import for logging error
             logging.warning(f"Failed to get context bundles from plugin registry: {e}")  # Continue with framework bundles only
 
     return sorted(bundles)

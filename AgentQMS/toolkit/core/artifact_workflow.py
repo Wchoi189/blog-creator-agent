@@ -14,6 +14,7 @@ Usage:
 """
 
 import argparse
+import logging
 import subprocess
 import sys
 from pathlib import Path
@@ -263,8 +264,8 @@ class ArtifactWorkflow:
             # For now, we'll keep this silent to avoid noise
 
         except Exception:
-            # Silently fail - bundle updates are not critical
-            pass
+            # Bundle updates are not critical, but log for debugging
+            logging.debug("Bundle update failed - continuing", exc_info=True)
 
     def get_available_templates(self) -> list[str]:
         """Get list of available artifact templates."""

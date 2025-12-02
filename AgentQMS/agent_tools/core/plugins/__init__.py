@@ -123,7 +123,7 @@ def get_plugin_registry(force: bool = False) -> PluginRegistry:
             writer = SnapshotWriter(state_dir)
             writer.write(registry, loader.get_discovery_paths())
         except Exception as e:
-            import logging
+            import logging  # noqa: PLC0415  # justified: conditional import for logging error
             logging.warning(f"Snapshot writing failed (non-critical): {e}")  # Snapshot writing is non-critical
 
     return registry

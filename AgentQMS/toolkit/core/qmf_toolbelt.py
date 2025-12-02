@@ -12,7 +12,7 @@ class QualityManagementToolbelt:
     def __init__(self, manifest_path: str | Path | None = None):
         if manifest_path is None:
             # Default to the framework's conventions manifest
-            from AgentQMS.toolkit.utils.paths import get_project_conventions_dir
+            from AgentQMS.toolkit.utils.paths import get_project_conventions_dir  # noqa: PLC0415  # justified: conditional import for performance
 
             manifest_path = get_project_conventions_dir() / "q-manifest.yaml"
 
@@ -123,7 +123,7 @@ class QualityManagementToolbelt:
             schema = json.load(f)
 
         # Validate
-        from jsonschema import validate
+        from jsonschema import validate  # noqa: PLC0415  # justified: conditional import for validation function
         validate(instance=frontmatter, schema=schema)
 
         return True

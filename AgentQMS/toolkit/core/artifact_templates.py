@@ -18,6 +18,7 @@ Usage:
     template = get_template('change_request')  # Plugin-registered type
 """
 
+import logging
 from datetime import datetime, timedelta
 from pathlib import Path
 from typing import Any
@@ -698,7 +699,7 @@ High/Medium/Low (urgency for fixing, separate from severity above)
 
         except Exception:
             # Plugin loading is non-critical - continue with builtins
-            pass
+            logging.warning("Failed to load plugin templates, continuing with builtins", exc_info=True)
 
     def _convert_plugin_to_template(
         self, name: str, plugin_def: dict[str, Any]
@@ -826,7 +827,7 @@ High/Medium/Low (urgency for fixing, separate from severity above)
         frontmatter = template["frontmatter"].copy()
         frontmatter["title"] = title
         # Use KST timezone and simple format: YYYY-MM-DD HH:MM (KST)
-        from datetime import timedelta, timezone
+        from datetime import timedelta, timezone  # noqa: PLC0415  # justified: conditional import for specific function
 
         kst = timezone(timedelta(hours=9))  # KST is UTC+9
         frontmatter["date"] = datetime.now(kst).strftime("%Y-%m-%d %H:%M (KST)")

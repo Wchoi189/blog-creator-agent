@@ -164,7 +164,7 @@ def main() -> int:
     current_version = str(version_info.get("version", "0.0.0"))
 
     if args.health:
-        import json
+        import json  # noqa: PLC0415  # justified: conditional import for health check
 
         health = get_docs_health(current_version)
         print(json.dumps(health, indent=2))

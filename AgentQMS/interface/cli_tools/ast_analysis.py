@@ -4,8 +4,8 @@ Agent AST Analysis Tool (Agent-Only Version)
 Provides AI agents with AST-based code analysis capabilities
 """
 
-import os
 import sys
+from pathlib import Path
 
 from AgentQMS.toolkit.utils.runtime import ensure_project_root_on_sys_path
 
@@ -94,7 +94,7 @@ def agent_ast_analysis():
     except ImportError as e:
         print(f"❌ Error importing AST analysis tool: {e}")
         print("   Make sure you're running from the agent directory")
-        print(f"   Debug: Current path: {os.getcwd()}")
+        print(f"   Debug: Current path: {Path.cwd()}")
         return 1
     except Exception as e:
         print(f"❌ Unexpected error: {e}")

@@ -109,7 +109,7 @@ class ComplianceAlertSystem:
             },
         }
 
-        if os.path.exists(self.config_file):
+        if Path(self.config_file).exists():
             try:
                 with Path(self.config_file).open() as f:
                     config = json.load(f)

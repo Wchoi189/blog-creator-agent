@@ -23,7 +23,7 @@ def extract_markdown_links(file_path: Path) -> list[tuple[int, str, str]]:
                 text, url = match.groups()
                 links.append((i, text, url))
     except Exception as e:
-        import logging
+        import logging  # noqa: PLC0415  # justified: conditional import for logging error
         logging.warning(f"Error extracting links from {file_path}: {e}")
     return links
 
@@ -51,7 +51,7 @@ def extract_artifact_references(file_path: Path, artifacts_root: Path) -> list[t
                     ref = match.group(1) if match.lastindex else match.group(0)
                     references.append((i, ref))
     except Exception as e:
-        import logging
+        import logging  # noqa: PLC0415  # justified: conditional import for logging error
         logging.warning(f"Error extracting artifact references from {file_path}: {e}")
     return references
 

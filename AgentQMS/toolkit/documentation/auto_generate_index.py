@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import logging
 import re
 from collections import defaultdict
 from datetime import UTC, datetime
@@ -105,7 +106,7 @@ def extract_title_from_file(file_path: Path) -> str:
                     title = re.sub(r"\*\*([^*]+)\*\*", r"\1", title)
                     return title
     except Exception:
-        pass
+        logging.debug("Error extracting title from file %s", file_path, exc_info=True)
     # Fallback to filename
     return file_path.stem.replace("_", " ").replace("-", " ").title()
 
@@ -257,8 +258,8 @@ def main() -> None:
 
     # Run validation if requested
     if args.validate:
-        import subprocess
-        import sys
+        import subprocess  # noqa: PLC0415  # justified: conditional import for validation
+        import sys  # noqa: PLC0415  # justified: conditional import for validation
 
         # Use PYTHONPATH-aware invocation for containerized framework
         # Find AgentQMS root by looking for the parent directory containing agent_tools

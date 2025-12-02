@@ -19,6 +19,7 @@ Usage Pattern:
     4. Use lightweight checks (console, network) before expensive operations
 """
 
+import logging
 import time
 from collections.abc import Callable
 from pathlib import Path
@@ -204,7 +205,7 @@ class BrowserExtensionWrapper:
                     self._retry_operation(_wait_loading_gone, "wait_loading_gone")
                 except Exception:
                     # Loading indicator might not always appear, continue anyway
-                    pass
+                    logging.debug("Loading indicator check failed, continuing", exc_info=True)
 
             # Fallback: Simple time-based wait
             time.sleep(2)
@@ -327,7 +328,7 @@ class BrowserExtensionWrapper:
             if not wrapper_path.exists():
                 raise ImportError(f"Puppeteer wrapper not found: {wrapper_path}")
 
-            import importlib.util
+            import importlib.util  # noqa: PLC0415  # justified: conditional import for dynamic loading
 
             spec = importlib.util.spec_from_file_location(
                 "puppeteer_wrapper", wrapper_path

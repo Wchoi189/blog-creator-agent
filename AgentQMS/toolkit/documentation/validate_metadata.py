@@ -33,7 +33,7 @@ from AgentQMS.toolkit.utils.runtime import ensure_project_root_on_sys_path
 
 ensure_project_root_on_sys_path()
 
-from ui.apps.inference.services.checkpoint.validator import MetadataValidator
+from ui.apps.inference.services.checkpoint.validator import MetadataValidator  # noqa: E402  # deferred import for optional dependency
 
 
 # Configure logging

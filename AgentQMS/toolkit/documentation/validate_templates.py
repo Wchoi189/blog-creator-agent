@@ -223,11 +223,11 @@ def main() -> None:
     templates_dir = sys.argv[1]
     docs_dir = sys.argv[2]
 
-    if not os.path.exists(templates_dir):
+    if not Path(templates_dir).exists():
         print(f"Error: Templates directory '{templates_dir}' does not exist")
         sys.exit(1)
 
-    if not os.path.exists(docs_dir):
+    if not Path(docs_dir).exists():
         print(f"Error: Documentation directory '{docs_dir}' does not exist")
         sys.exit(1)
 

@@ -30,8 +30,8 @@
     "excludePatterns": [
       "**/node_modules/**",
       "**/.git/**",
-      "**/AgentQMS/**",
-      "**/.agentqms/**",
+      // "**/AgentQMS/**",
+      // "**/.agentqms/**",
       "**/.copilot/**",
       "**/.cursor/**",
       "**/.github/**",

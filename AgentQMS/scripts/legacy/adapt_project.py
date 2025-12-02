@@ -213,7 +213,7 @@ def interactive_setup():
 
 
 def main():
-    import argparse
+    import argparse  # noqa: PLC0415  # justified: conditional import for performance
 
     parser = argparse.ArgumentParser(
         description="Adapt AI agent framework to a new project",

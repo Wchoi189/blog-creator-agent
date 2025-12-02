@@ -43,7 +43,7 @@ def get_last_version() -> str | None:
 def get_completed_plans(since_date: str | None = None) -> list[dict]:
     """Query tracking DB for completed plans since date."""
     try:
-        from AgentQMS.toolkit.utilities.tracking.db import (
+        from AgentQMS.toolkit.utilities.tracking.db import (  # noqa: PLC0415  # justified: conditional import for optional dependency
             DB_PATH,
             get_connection,
             init_db,
@@ -79,7 +79,7 @@ def get_completed_plans(since_date: str | None = None) -> list[dict]:
 def get_completed_experiments(since_date: str | None = None) -> list[dict]:
     """Query tracking DB for completed experiments with summaries."""
     try:
-        from AgentQMS.toolkit.utilities.tracking.db import (
+        from AgentQMS.toolkit.utilities.tracking.db import (  # noqa: PLC0415  # justified: conditional import for optional dependency
             DB_PATH,
             get_connection,
             init_db,
@@ -164,7 +164,7 @@ def get_git_commits(since_date: str | None = None) -> list[dict]:
 def get_deprecated_docs() -> list[dict]:
     """Get recently deprecated docs from version bump."""
     try:
-        from AgentQMS.toolkit.documentation.deprecate_docs import get_docs_health
+        from AgentQMS.toolkit.documentation.deprecate_docs import get_docs_health  # noqa: PLC0415  # justified: conditional import for optional dependency
 
         version_info = get_version_info()
         current_version = str(version_info.get("version", "0.0.0"))

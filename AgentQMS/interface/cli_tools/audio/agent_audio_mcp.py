@@ -31,7 +31,7 @@ else:
     raise ImportError(f"Could not find play_audio at {PLAY_AUDIO_PATH}")
 
 # Import message templates (this should work as agent.tools.audio is a package)
-from agent.tools.audio.message_templates import (
+from agent.tools.audio.message_templates import (  # noqa: E402  # deferred import for optional dependency
     get_message,
     get_random_message,
     list_categories,

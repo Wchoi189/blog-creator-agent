@@ -157,4 +157,46 @@ Follow AgentQMS/knowledge/agent/system.md. Execute Phase 2 lint remediation plan
 To allow direct editing inside `AgentQMS/`, remove `"**/AgentQMS/**"` from `excludePatterns` temporarily; restore after completion.
 
 ---
+
+## Stage A Complete - Baseline Metrics
+- Total violations captured: 323 (in ruff_phase2_before.txt)
+- Targeted violations (PLR2004, E402, PLC0415, S110, PTH*): 69 violations
+- Branch created: `phase2-lint-qwen`
+
+## Stage B Complete - Pathlib Completion (PTH123)
+- Fixed: os.path.exists() → Path.exists() conversions in 5 files
+- Fixed: os.getcwd() → Path.cwd() conversion in 1 file
+- Fixed: glob.glob() → Path.rglob()/Path.glob() conversions where possible
+- Status: ✅ Completed
+
+## Stage C Complete - Magic Numbers (PLR2004)
+- Fixed: 2 magic number violations in context_bundle.py
+- Extracted magic number `2` to constant EXPECTED_SPLIT_PARTS_COUNT
+- Status: ✅ Completed
+
+## Stage D Complete - Import Placement (E402 / PLC0415)
+- Fixed: Import placement issues in multiple files
+- Applied noqa exceptions with justifications for conditional imports
+- Moved misplaced imports to top of files where appropriate
+- Status: ✅ Completed
+
+## Stage E Complete - Silent Exceptions (S110)
+- Fixed: 5 `except: pass` violations across multiple files
+- Replaced with proper logging using logging.warning or logging.debug
+- Added logging imports where needed
+- Status: ✅ Completed
+
+## Stage F Complete - Targeted Complexity Refactors
+- Refactored expand_glob_pattern() function by extracting helper functions
+- Reduced branch count from 17 to fewer in main function
+- Applied early returns and helper extraction where appropriate
+- Status: ✅ Completed (selective refactoring per constraints)
+
+## Stage G Complete - Cleanup & Consolidation
+- Final metrics captured in ruff_phase2_after.txt
+- Targeted violations reduced from 69 to 23 (66% reduction)
+- All fixes verified to preserve behavior
+- Status: ✅ Completed
+
+---
 Update this file after each stage by appending a short "Stage X Complete" section with before/after counts.

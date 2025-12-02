@@ -75,7 +75,7 @@ class LinkValidator:
                 target_path = target_path.with_suffix(".md")
                 return target_path.exists()
         except Exception as e:
-            import logging
+            import logging  # noqa: PLC0415  # justified: conditional import for logging error
             logging.warning(f"Error checking if target path exists: {e}")
 
         return False
@@ -157,7 +157,7 @@ def main() -> None:
 
     docs_root = sys.argv[1]
 
-    if not os.path.exists(docs_root):
+    if not Path(docs_root).exists():
         print(f"Error: Documentation root '{docs_root}' does not exist")
         sys.exit(1)
 

@@ -208,7 +208,7 @@ class FrontmatterGenerator:
                     return line[:50]  # Limit length
 
         except Exception as e:
-            import logging
+            import logging  # noqa: PLC0415  # justified: conditional import for logging error
             logging.warning(f"Error extracting title from content: {e}")
 
         return "Untitled Document"
@@ -309,8 +309,8 @@ class FrontmatterGenerator:
 
 def main():
     """Main execution function"""
-    import argparse
-    from pathlib import Path
+    import argparse  # noqa: PLC0415  # justified: conditional import for performance
+    from pathlib import Path  # noqa: PLC0415  # justified: conditional import for performance
 
     parser = argparse.ArgumentParser(description="Add frontmatter to files missing it")
     parser.add_argument("--files", nargs="+", help="Specific files to process")
@@ -356,7 +356,7 @@ def main():
                         if not content.startswith("---"):
                             file_paths.append(str(file_path))
                 except Exception as e:
-                    import logging
+                    import logging  # noqa: PLC0415  # justified: conditional import for logging error
                     logging.warning(f"Error processing file {file_path}: {e}")
     elif args.files:
         file_paths = args.files

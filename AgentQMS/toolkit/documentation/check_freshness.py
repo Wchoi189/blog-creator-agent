@@ -107,7 +107,7 @@ def main() -> None:
     docs_root = sys.argv[1]
     max_age_days = int(sys.argv[2]) if len(sys.argv) > MIN_ARGS_REQUIRED else MAX_AGE_DAYS_DEFAULT
 
-    if not os.path.exists(docs_root):
+    if not Path(docs_root).exists():
         print(f"Error: Documentation root '{docs_root}' does not exist")
         sys.exit(1)
 
