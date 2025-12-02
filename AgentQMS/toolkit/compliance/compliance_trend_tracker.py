@@ -186,7 +186,8 @@ class ComplianceTrendTracker:
 
     def _calculate_linear_trend(self, data_points: list[TrendDataPoint]) -> float:
         """Calculate linear trend using least squares regression"""
-        if len(data_points) < 2:
+        MIN_DATA_POINTS_FOR_TREND = 2
+        if len(data_points) < MIN_DATA_POINTS_FOR_TREND:
             return 0.0
 
         # Convert dates to numeric values (days since first date)

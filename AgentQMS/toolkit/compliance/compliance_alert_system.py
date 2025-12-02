@@ -111,7 +111,7 @@ class ComplianceAlertSystem:
 
         if os.path.exists(self.config_file):
             try:
-                with open(self.config_file) as f:
+                with Path(self.config_file).open() as f:
                     config = json.load(f)
                 # Merge with defaults
                 for key, value in default_config.items():
@@ -475,7 +475,8 @@ Please review the compliance status and take appropriate action.
                 self.config["slack"]["webhook_url"], json=payload, timeout=30
             )
 
-            return response.status_code == 200
+            SUCCESS_STATUS_CODE = 200
+            return response.status_code == SUCCESS_STATUS_CODE
 
         except Exception as e:
             print(f"Slack send failed: {e}")
@@ -519,7 +520,7 @@ Please review the compliance status and take appropriate action.
             alerts_data = []
             if alert_file.exists():
                 try:
-                    with open(alert_file) as f:
+                    with alert_file.open() as f:
                         alerts_data = json.load(f)
                 except Exception:
                     alerts_data = []
@@ -533,7 +534,7 @@ Please review the compliance status and take appropriate action.
                 alerts_data = alerts_data[-max_alerts:]
 
             # Write back
-            with open(alert_file, "w") as f:
+            with alert_file.open("w") as f:
                 json.dump(alerts_data, f, indent=2)
 
             return True
@@ -674,7 +675,7 @@ Please review the compliance status and take appropriate action.
                 self.config["webhook"]["headers"] = json.loads(headers_input)
 
         # Save configuration
-        with open(self.config_file, "w") as f:
+        with Path(self.config_file).open("w") as f:
             json.dump(self.config, f, indent=2)
 
         print(f"✅ Configuration saved to {self.config_file}")

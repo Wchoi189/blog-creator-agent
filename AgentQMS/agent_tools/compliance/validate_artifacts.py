@@ -19,6 +19,7 @@ import argparse
 import json
 import logging
 import re
+import subprocess
 import sys
 from datetime import datetime
 from pathlib import Path
@@ -26,7 +27,7 @@ from typing import Any, ClassVar
 
 import yaml
 
-from AgentQMS.agent_tools.utils.paths import get_project_root
+from AgentQMS.agent_tools.utils.paths import get_artifacts_dir, get_project_root
 from AgentQMS.agent_tools.utils.runtime import ensure_project_root_on_sys_path
 
 
@@ -146,15 +147,12 @@ class ArtifactValidator:
     def __init__(self, artifacts_root: str | Path | None = None):
         # Default to the configured artifacts directory if none is provided
         if artifacts_root is None:
-            from AgentQMS.agent_tools.utils.paths import get_artifacts_dir
-
             self.artifacts_root = get_artifacts_dir()
         else:
             artifacts_root_path = Path(artifacts_root)
             if artifacts_root_path.is_absolute():
                 self.artifacts_root = artifacts_root_path
             else:
-                from AgentQMS.agent_tools.utils.paths import get_project_root
                 self.artifacts_root = get_project_root() / artifacts_root_path
 
         self.violations = []
@@ -260,9 +258,9 @@ class ArtifactValidator:
                 if name not in self.valid_types:
                     self.valid_types.append(name)
 
-        except Exception:
+        except Exception as e:
             # Plugin loading is non-critical - continue with builtins
-            pass
+            logger.warning(f"Plugin loading failed in _load_plugin_extensions: {e}")
 
     def _get_error_message(self, error_code: str, **kwargs) -> str:
         """Get formatted error message from templates or fallback."""
@@ -456,7 +454,6 @@ class ArtifactValidator:
         """Ensure artifacts are in docs/artifacts/ not root /artifacts/."""
         try:
             # Get the path relative to project root
-            from AgentQMS.agent_tools.utils.paths import get_project_root
             project_root = get_project_root()
             relative_path = file_path.relative_to(project_root)
             path_str = str(relative_path).replace("\\", "/")
@@ -486,7 +483,7 @@ class ArtifactValidator:
     def validate_frontmatter(self, file_path: Path) -> tuple[bool, str]:
         """Validate frontmatter structure and content."""
         try:
-            with open(file_path, encoding="utf-8") as f:
+            with file_path.open(encoding="utf-8") as f:
                 content = f.read()
         except Exception as e:
             return False, f"Error reading file: {e}"
@@ -562,7 +559,7 @@ class ArtifactValidator:
     def _extract_frontmatter(self, file_path: Path) -> dict[str, str]:
         """Extract frontmatter from a file."""
         try:
-            with open(file_path, encoding="utf-8") as f:
+            with file_path.open(encoding="utf-8") as f:
                 content = f.read()
 
             if not content.startswith("---"):
@@ -739,7 +736,6 @@ class ArtifactValidator:
 
         try:
             # Get project root using utility function
-            from AgentQMS.agent_tools.utils.paths import get_project_root
             project_root = get_project_root()
 
             available_bundles = list_available_bundles()
@@ -985,7 +981,6 @@ def main():
                 results.extend(validator.validate_directory(file_path))
     elif args.staged:
         # Validate only staged files under the artifacts root (git required)
-        import subprocess
 
         rel_artifacts_root = Path(args.artifacts_root)
         results = []
@@ -1031,7 +1026,7 @@ def main():
             output += "\n\n" + validator.fix_suggestions(results)
 
     if args.output:
-        with open(args.output, "w") as f:
+        with Path(args.output).open("w") as f:
             f.write(output)
         print(f"Report written to {args.output}")
     else:

@@ -264,7 +264,7 @@ class FileReorganizer:
             tuple: (directory_name, confidence_score)
         """
         try:
-            with open(file_path, encoding="utf-8") as f:
+            with file_path.open(encoding="utf-8") as f:
                 content = f.read()
         except Exception:
             return None, 0.0
@@ -685,7 +685,7 @@ def main():
     report = reorganizer.generate_reorganization_report(results)
 
     if args.output:
-        with open(args.output, "w") as f:
+        with Path(args.output).open("w") as f:
             f.write(report)
         print(f"Report saved to {args.output}")
     else:

@@ -37,6 +37,11 @@ NAMING_VIOLATION_ALERT = 5
 DIRECTORY_VIOLATION_ALERT = 3
 FRONTMATTER_VIOLATION_ALERT = 5
 
+# Trend analysis constants
+MIN_HISTORY_ENTRIES_FOR_TREND = 2
+TREND_ANALYSIS_THRESHOLD = 90  # Percent compliance below which trend analysis is shown
+COMPLIANCE_PASS_THRESHOLD = 80  # Minimum percent required to pass compliance check
+
 
 class ArtifactMonitor:
     """Monitors artifact organization and compliance."""
@@ -217,7 +222,7 @@ class ArtifactMonitor:
         except Exception:
             return "Error reading historical data."
 
-        if len(history) < 2:
+        if len(history) < MIN_HISTORY_ENTRIES_FOR_TREND:
             return "Insufficient historical data for trend analysis."
 
         # Calculate trends
@@ -307,11 +312,11 @@ class ArtifactMonitor:
         self.save_violations_history(report)
 
         # Show trend analysis
-        if len(alerts) > 0 or report["compliance_rate"] < 90:
+        if len(alerts) > 0 or report["compliance_rate"] < TREND_ANALYSIS_THRESHOLD:
             print(f"\n{self.generate_trend_analysis()}")
 
         # Return success status
-        return report["compliance_rate"] >= 80 and len(alerts) == 0
+        return report["compliance_rate"] >= COMPLIANCE_PASS_THRESHOLD and len(alerts) == 0
 
 
 def main():
@@ -366,7 +371,7 @@ def main():
         else:
             print(report_text)
 
-        return 0 if report["compliance_rate"] >= 80 else 1
+        return 0 if report["compliance_rate"] >= COMPLIANCE_PASS_THRESHOLD else 1
 
     if args.fix_suggestions:
         report = monitor.check_organization_compliance()

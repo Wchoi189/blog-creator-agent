@@ -97,8 +97,9 @@ class QualityManagementToolbelt:
             content = f.read()
 
         # Extract frontmatter
+        MIN_PARTS_FOR_FRONTMATTER = 3
         parts = content.split("---")
-        if len(parts) < 3:
+        if len(parts) < MIN_PARTS_FOR_FRONTMATTER:
             raise ValueError("Invalid frontmatter format.")
 
         frontmatter_str = parts[1]
@@ -118,7 +119,7 @@ class QualityManagementToolbelt:
 
         # Load schema
         schema_path = self.root_path / artifact_meta["schema"]
-        with open(schema_path) as f:
+        with schema_path.open() as f:
             schema = json.load(f)
 
         # Validate

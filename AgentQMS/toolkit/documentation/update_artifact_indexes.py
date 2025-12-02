@@ -97,7 +97,7 @@ class ArtifactIndexUpdater:
         }
 
         try:
-            with open(file_path, encoding="utf-8") as f:
+            with file_path.open(encoding="utf-8") as f:
                 content = f.read()
 
             # Extract frontmatter
@@ -307,7 +307,7 @@ class ArtifactIndexUpdater:
         # Write INDEX.md
         index_path = directory / "INDEX.md"
         try:
-            with open(index_path, "w", encoding="utf-8") as f:
+            with index_path.open("w", encoding="utf-8") as f:
                 f.write(index_content)
             print(f"✅ Updated {index_path}")
             return True
@@ -430,7 +430,7 @@ class ArtifactIndexUpdater:
 
         # Write master index
         try:
-            with open(master_index_path, "w", encoding="utf-8") as f:
+            with master_index_path.open("w", encoding="utf-8") as f:
                 f.write("\n".join(lines))
             print(f"✅ Updated {master_index_path}")
             return True

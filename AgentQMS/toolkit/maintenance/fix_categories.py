@@ -261,7 +261,7 @@ class CategoryTypeFixer:
         fixes = []
 
         try:
-            with open(file_path, encoding="utf-8") as f:
+            with file_path.open(encoding="utf-8") as f:
                 content = f.read()
         except Exception as e:
             print(f"Error reading {file_path}: {e}")
@@ -430,7 +430,7 @@ class CategoryTypeFixer:
 
         try:
             # Read file
-            with open(fix.file_path, encoding="utf-8") as f:
+            with Path(fix.file_path).open(encoding="utf-8") as f:
                 content = f.read()
 
             # Create pattern for the field
@@ -448,7 +448,7 @@ class CategoryTypeFixer:
 
             if new_content != content:
                 # Write updated content
-                with open(fix.file_path, "w", encoding="utf-8") as f:
+                with Path(fix.file_path).open("w", encoding="utf-8") as f:
                     f.write(new_content)
 
                 print(f"✅ Fixed {fix.field} in {fix.file_path}")
@@ -547,7 +547,7 @@ class CategoryTypeFixer:
                 file_issues = []
 
                 try:
-                    with open(file_path, encoding="utf-8") as f:
+                    with file_path.open(encoding="utf-8") as f:
                         content = f.read()
 
                     # Check frontmatter
@@ -649,7 +649,7 @@ def main():
     report = fixer.generate_fix_report(results)
 
     if args.output:
-        with open(args.output, "w") as f:
+        with Path(args.output).open("w") as f:
             f.write(report)
         print(f"Report saved to {args.output}")
     else:

@@ -55,12 +55,13 @@ def agent_ast_analysis():
             else:
                 cli_args.append(".")  # Default to current directory
         elif command == "generate-tests":
-            if len(args) < 2:
+            MIN_ARGS_COUNT = 2
+            if len(args) < MIN_ARGS_COUNT:
                 print("❌ Error: generate-tests requires a file path")
                 return 1
             cli_args = ["generate-tests", args[1]]
         elif command == "extract-docs":
-            if len(args) < 2:
+            if len(args) < MIN_ARGS_COUNT:
                 print("❌ Error: extract-docs requires a file path")
                 return 1
             cli_args = ["extract-docs", args[1]]

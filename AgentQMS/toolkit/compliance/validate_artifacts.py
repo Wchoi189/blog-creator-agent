@@ -222,7 +222,7 @@ class ArtifactValidator:
     def validate_frontmatter(self, file_path: Path) -> tuple[bool, str]:
         """Validate frontmatter structure and content."""
         try:
-            with open(file_path, encoding="utf-8") as f:
+            with file_path.open(encoding="utf-8") as f:
                 content = f.read()
         except Exception as e:
             return False, f"Error reading file: {e}"
@@ -574,7 +574,7 @@ def main():
             output += "\n\n" + validator.fix_suggestions(results)
 
     if args.output:
-        with open(args.output, "w") as f:
+        with Path(args.output).open("w") as f:
             f.write(output)
         print(f"Report written to {args.output}")
     else:

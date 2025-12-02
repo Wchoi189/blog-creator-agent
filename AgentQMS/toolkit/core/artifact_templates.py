@@ -936,7 +936,8 @@ High/Medium/Low (urgency for fixing, separate from severity above)
                 time_diff = (now - file_mtime).total_seconds()
 
                 # If file was created within the last 5 minutes, reuse it
-                if time_diff < 300:  # 5 minutes = 300 seconds
+                RECENT_FILE_THRESHOLD = 300  # 5 minutes in seconds
+                if time_diff < RECENT_FILE_THRESHOLD:  # 5 minutes = 300 seconds
                     print(f"⚠️  Found recently created file: {existing_file.name}")
                     print("   Reusing existing file instead of creating duplicate.")
                     return str(existing_file)
@@ -951,7 +952,7 @@ High/Medium/Low (urgency for fixing, separate from severity above)
 
         # Write file
         full_content = frontmatter + "\n\n" + content
-        with open(file_path, "w", encoding="utf-8") as f:
+        with file_path.open("w", encoding="utf-8") as f:
             f.write(full_content)
 
         return str(file_path)

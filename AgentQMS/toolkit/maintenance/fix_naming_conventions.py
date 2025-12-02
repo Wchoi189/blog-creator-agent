@@ -310,7 +310,7 @@ class NamingConventionFixer:
     def _detect_type_from_content(self, file_path: Path) -> str | None:
         """Detect artifact type from content analysis"""
         try:
-            with open(file_path, encoding="utf-8") as f:
+            with file_path.open(encoding="utf-8") as f:
                 content = f.read().lower()
 
             # Check for type patterns
@@ -523,7 +523,7 @@ def main():
     report = fixer.generate_fix_report(results)
 
     if args.output:
-        with open(args.output, "w") as f:
+        with Path(args.output).open("w") as f:
             f.write(report)
         print(f"Report saved to {args.output}")
     else:

@@ -87,7 +87,7 @@ class TemplateValidator:
         """Load a template file."""
         template_path = self.templates_dir / f"{template_name}.md"
         if template_path.exists():
-            with open(template_path, encoding="utf-8") as f:
+            with template_path.open(encoding="utf-8") as f:
                 return f.read()
         return None
 
@@ -116,7 +116,7 @@ class TemplateValidator:
     def validate_file_structure(self, file_path: Path, template_type: str) -> None:
         """Validate a file against its template structure."""
         try:
-            with open(file_path, encoding="utf-8") as f:
+            with file_path.open(encoding="utf-8") as f:
                 content = f.read()
         except Exception as e:
             self.errors.append(f"Cannot read file {file_path}: {e}")

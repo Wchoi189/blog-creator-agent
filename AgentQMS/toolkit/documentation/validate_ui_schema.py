@@ -18,7 +18,7 @@ def validate_schema(schema_path: Path) -> bool:
         True if validation passes, False otherwise
     """
     try:
-        with open(schema_path, encoding="utf-8") as f:
+        with schema_path.open(encoding="utf-8") as f:
             schema = yaml.safe_load(f)
     except Exception as e:
         print(f"❌ Failed to load schema: {e}")

@@ -15,8 +15,9 @@ def extract_frontmatter(file_path: Path) -> dict[str, str]:
         if not content.startswith("---"):
             return {}
 
-        parts = content.split("---", 2)
-        if len(parts) < 3:
+        MIN_PARTS_FOR_FRONTMATTER = 3
+        parts = content.split("---", 2)  # Split by "---" at most 2 times to get [before, frontmatter, after]
+        if len(parts) < MIN_PARTS_FOR_FRONTMATTER:
             return {}
 
         fm = {}
@@ -48,7 +49,7 @@ def generate_index_content(directory: Path, artifact_type: str) -> str:
         try:
             content = f.read_text(encoding="utf-8")
             lines = content.split("---", 2)
-            if len(lines) >= 3:
+            if len(lines) >= MIN_PARTS_FOR_FRONTMATTER:
                 body = lines[2].strip().split("\n")
                 preview = next((l.strip("# ").strip() for l in body if l.strip() and not l.startswith("#")), "")[:100]
             else:

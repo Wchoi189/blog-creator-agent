@@ -32,7 +32,8 @@ class TestCheckLinksArgumentParsing:
                 result = main()
 
         # Assert check_links_in_directory called twice (docs + AgentQMS)
-        assert mock_check.call_count == 2
+        EXPECTED_CALL_COUNT = 2
+        assert mock_check.call_count == EXPECTED_CALL_COUNT
 
         # Verify both directories were checked
         calls = mock_check.call_args_list
@@ -83,7 +84,7 @@ class TestCheckLinksArgumentParsing:
                     result = main()
 
         # Should check both directories
-        assert mock_check.call_count == 2
+        assert mock_check.call_count == EXPECTED_CALL_COUNT
 
         # Verify JSON output was printed
         assert mock_print.called
@@ -136,7 +137,7 @@ class TestCheckLinksArgumentParsing:
                 result = main()
 
         # Should check both directories
-        assert mock_check.call_count == 2
+        assert mock_check.call_count == EXPECTED_CALL_COUNT
 
         # Verify artifacts_only flag was passed
         for call_args in mock_check.call_args_list:
@@ -242,7 +243,8 @@ class TestCheckLinksInDirectory:
         checked, total, broken = check_links_in_directory(tmp_path, tmp_path, False)
 
         # Should count only .md files
-        assert checked == 2
+        EXPECTED_MD_COUNT = 2
+        assert checked == EXPECTED_MD_COUNT
 
 
 if __name__ == "__main__":

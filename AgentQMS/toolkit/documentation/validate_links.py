@@ -39,7 +39,7 @@ class LinkValidator:
         """Extract all links from a markdown file."""
         links = []
         try:
-            with open(file_path, encoding="utf-8") as f:
+            with file_path.open(encoding="utf-8") as f:
                 for line_num, line in enumerate(f, 1):
                     # Find markdown links: [text](url)
                     md_links = re.findall(r"\[([^\]]+)\]\(([^)]+)\)", line)
@@ -82,7 +82,7 @@ class LinkValidator:
     def check_anchor_exists(self, file_path: Path, anchor: str) -> bool:
         """Check if an anchor exists in a file."""
         try:
-            with open(file_path, encoding="utf-8") as f:
+            with file_path.open(encoding="utf-8") as f:
                 content = f.read()
                 # Look for headers that would generate this anchor
                 # GitHub-style anchor generation: lowercase, spaces to hyphens

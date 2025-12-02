@@ -190,7 +190,7 @@ class FrontmatterGenerator:
     def _extract_title_from_content(self, file_path: str) -> str:
         """Extract title from file content (first heading)"""
         try:
-            with open(file_path, encoding="utf-8") as f:
+            with Path(file_path).open(encoding="utf-8") as f:
                 content = f.read(1000)  # Read first 1000 chars
 
             # Look for markdown headings
@@ -257,7 +257,7 @@ class FrontmatterGenerator:
         """Add frontmatter to a file"""
         try:
             # Read current content
-            with open(file_path, encoding="utf-8") as f:
+            with Path(file_path).open(encoding="utf-8") as f:
                 content = f.read()
 
             # Generate frontmatter
@@ -268,7 +268,7 @@ class FrontmatterGenerator:
 
             if not dry_run:
                 # Write back to file
-                with open(file_path, "w", encoding="utf-8") as f:
+                with Path(file_path).open("w", encoding="utf-8") as f:
                     f.write(new_content)
 
             return True
@@ -348,7 +348,7 @@ def main():
             if file_path.is_file() and file_path.name not in ["INDEX.md", "README.md", "MASTER_INDEX.md"]:
                 # Check if file is missing frontmatter
                 try:
-                    with open(file_path, encoding="utf-8") as f:
+                    with file_path.open(encoding="utf-8") as f:
                         content = f.read(100)  # Read first 100 chars
                         if not content.startswith("---"):
                             file_paths.append(str(file_path))

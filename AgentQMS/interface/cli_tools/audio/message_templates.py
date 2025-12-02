@@ -148,7 +148,8 @@ def validate_message(message: str, max_sentences: int = 3) -> bool:
         return False
 
     # Check length (rough estimate: should be under 200 characters for ~10 seconds)
-    return not len(message) > 200
+    MAX_MESSAGE_LENGTH = 200
+    return not len(message) > MAX_MESSAGE_LENGTH
 
 
 def suggest_message(event_type: str) -> str:

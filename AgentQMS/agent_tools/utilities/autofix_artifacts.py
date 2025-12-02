@@ -320,7 +320,7 @@ def main():
 
     # Run validation to get current state
     if args.validation_json and Path(args.validation_json).exists():
-        with open(args.validation_json) as f:
+        with Path(args.validation_json).open() as f:
             violations = json.load(f)
     else:
         print("🔍 Running validation...")

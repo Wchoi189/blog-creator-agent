@@ -26,8 +26,9 @@ def get_windows_host_ip() -> str | None:
             for line in f:
                 line = line.strip()
                 if line.startswith("nameserver"):
+                    MIN_PARTS_REQUIRED = 2
                     parts = line.split()
-                    if len(parts) >= 2:
+                    if len(parts) >= MIN_PARTS_REQUIRED:
                         return parts[1]
     except (OSError, ValueError):
         pass

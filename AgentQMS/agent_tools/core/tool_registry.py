@@ -207,9 +207,10 @@ def parse_makefile_targets() -> list[WorkflowMetadata]:
 
         for i, line in enumerate(lines):
             # Match pattern: target: ## Description
+            EXPECTED_PARTS_COUNT = 2
             if "##" in line and ":" in line:
                 parts = line.split("##", 1)
-                if len(parts) == 2:
+                if len(parts) == EXPECTED_PARTS_COUNT:
                     target_part = parts[0].strip()
                     desc = parts[1].strip()
 

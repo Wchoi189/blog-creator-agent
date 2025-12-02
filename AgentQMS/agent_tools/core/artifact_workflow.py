@@ -303,9 +303,11 @@ class ArtifactWorkflow:
             # Only log at debug level or when explicitly requested
             # For now, we'll keep this silent to avoid noise
 
-        except Exception:
-            # Silently fail - bundle updates are not critical
-            pass
+        except Exception as e:
+            # Silently fail - bundle updates are not critical, but log for debugging
+            # For now, we'll print to stderr for visibility without interfering with normal output
+            import sys
+            print(f"DEBUG: Bundle update check failed for {artifact_path}: {e}", file=sys.stderr)
 
     def get_available_templates(self) -> list[str]:
         """Get list of available artifact templates."""

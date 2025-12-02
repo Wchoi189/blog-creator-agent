@@ -46,7 +46,7 @@ class ProjectAdapter:
 
     def load_config(self, config_path: Path) -> dict:
         """Load project configuration from YAML file."""
-        with open(config_path) as f:
+        with config_path.open() as f:
             return yaml.safe_load(f)
 
     def replace_placeholders(self, content: str) -> str:
@@ -205,7 +205,7 @@ def interactive_setup():
 
     # Save config
     config_path = Path("project_config.yaml")
-    with open(config_path, "w") as f:
+    with config_path.open("w") as f:
         yaml.dump(config, f, default_flow_style=False, sort_keys=False)
 
     print(f"\n✅ Configuration saved to: {config_path}\n")
