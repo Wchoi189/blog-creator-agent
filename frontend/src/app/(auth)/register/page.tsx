@@ -1,6 +1,7 @@
 'use client';
 
-import { useFormState, useFormStatus } from 'react-dom';
+import { useActionState } from 'react';
+import { useFormStatus } from 'react-dom';
 import Link from 'next/link';
 import { register } from '@/actions/auth';
 
@@ -19,7 +20,7 @@ function SubmitButton() {
 }
 
 export default function RegisterPage() {
-  const [state, formAction] = useFormState(register, { error: undefined });
+  const [state, formAction] = useActionState(register, { error: undefined });
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50">
