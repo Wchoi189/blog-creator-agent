@@ -30,9 +30,11 @@ from pathlib import Path
 
 from AgentQMS.toolkit.utils.runtime import ensure_project_root_on_sys_path
 
+
 ensure_project_root_on_sys_path()
 
 from ui.apps.inference.services.checkpoint.validator import MetadataValidator
+
 
 # Configure logging
 logging.basicConfig(
@@ -124,11 +126,10 @@ def main() -> int:
             if result.is_valid:
                 LOGGER.info("✓ Metadata valid: %s", args.checkpoint)
                 return 0
-            else:
-                LOGGER.error("✗ Validation failed: %s", result.error)
-                return 1
+            LOGGER.error("✗ Validation failed: %s", result.error)
+            return 1
 
-        elif args.exp_dir or args.outputs_dir:
+        if args.exp_dir or args.outputs_dir:
             # Validate directory
             target_dir = args.exp_dir or args.outputs_dir
             recursive = not args.no_recursive

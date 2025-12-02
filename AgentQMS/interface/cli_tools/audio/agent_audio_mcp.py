@@ -13,6 +13,7 @@ from typing import Any
 
 from AgentQMS.toolkit.utils.runtime import ensure_project_root_on_sys_path
 
+
 PROJECT_ROOT = ensure_project_root_on_sys_path()
 PLAY_AUDIO_PATH = PROJECT_ROOT / "AgentQMS" / "scripts" / "maintenance" / "play_audio.py"
 
@@ -150,10 +151,10 @@ class AudioMCPServer:
                 }
             )
 
-        elif method == "tools/list":
+        if method == "tools/list":
             return make_response({"tools": list(self.tools.values())})
 
-        elif method == "tools/call":
+        if method == "tools/call":
             tool_name = params.get("name")
             arguments = params.get("arguments", {})
 
@@ -181,15 +182,14 @@ class AudioMCPServer:
                                 ]
                             }
                         )
-                    else:
-                        return make_response(
-                            error={
-                                "code": -32603,
-                                "message": f"Failed to play audio file: {audio_path}. Check PulseAudio setup and ensure the file exists.",
-                            }
-                        )
+                    return make_response(
+                        error={
+                            "code": -32603,
+                            "message": f"Failed to play audio file: {audio_path}. Check PulseAudio setup and ensure the file exists.",
+                        }
+                    )
 
-                elif tool_name == "get_audio_message":
+                if tool_name == "get_audio_message":
                     event_type = arguments.get("event_type")
                     category = arguments.get("category")
                     index = arguments.get("index")
@@ -212,7 +212,7 @@ class AudioMCPServer:
                         }
                     )
 
-                elif tool_name == "list_audio_categories":
+                if tool_name == "list_audio_categories":
                     categories = list_categories()
                     return make_response(
                         {
@@ -225,7 +225,7 @@ class AudioMCPServer:
                         }
                     )
 
-                elif tool_name == "list_audio_messages":
+                if tool_name == "list_audio_messages":
                     category = arguments.get("category")
                     messages = list_messages(category)
                     return make_response(
@@ -239,7 +239,7 @@ class AudioMCPServer:
                         }
                     )
 
-                elif tool_name == "validate_audio_message":
+                if tool_name == "validate_audio_message":
                     message = arguments.get("message")
                     is_valid = validate_message(message)
                     return make_response(
@@ -256,10 +256,9 @@ class AudioMCPServer:
                         }
                     )
 
-                else:
-                    return make_response(
-                        error={"code": -32601, "message": f"Unknown tool: {tool_name}"}
-                    )
+                return make_response(
+                    error={"code": -32601, "message": f"Unknown tool: {tool_name}"}
+                )
 
             except Exception as e:
                 return make_response(

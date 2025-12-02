@@ -5,16 +5,17 @@ from __future__ import annotations
 
 import argparse
 import json
+import sys
 from dataclasses import dataclass
 from pathlib import Path
-from typing import List, Optional
-import sys
+
 
 PROJECT_ROOT = Path(__file__).resolve().parents[3]
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
 from AgentQMS.toolkit.utils.runtime import ensure_project_root_on_sys_path
+
 
 ensure_project_root_on_sys_path()
 
@@ -92,9 +93,9 @@ paths:
 class Action:
     kind: str
     description: str
-    source: Optional[Path] = None
-    target: Optional[Path] = None
-    content: Optional[str] = None
+    source: Path | None = None
+    target: Path | None = None
+    content: str | None = None
 
     def to_dict(self) -> dict:
         data = {
@@ -120,15 +121,15 @@ class MigrationManager:
     # ------------------------------------------------------------------
     # Planning
     # ------------------------------------------------------------------
-    def plan_actions(self) -> List[Action]:
-        actions: List[Action] = []
+    def plan_actions(self) -> list[Action]:
+        actions: list[Action] = []
         actions.extend(self._plan_directory_renames())
         actions.extend(self._plan_config_defaults())
         actions.extend(self._plan_project_config())
         return actions
 
-    def _plan_directory_renames(self) -> List[Action]:
-        actions: List[Action] = []
+    def _plan_directory_renames(self) -> list[Action]:
+        actions: list[Action] = []
         replacements = [
             (self.framework_root / "agent", self.framework_root / "agent_interface", "Rename Agent interface directory"),
             (self.framework_root / "conventions", self.framework_root / "project_conventions", "Rename project conventions directory"),
@@ -140,8 +141,8 @@ class MigrationManager:
                 )
         return actions
 
-    def _plan_config_defaults(self) -> List[Action]:
-        actions: List[Action] = []
+    def _plan_config_defaults(self) -> list[Action]:
+        actions: list[Action] = []
         if not self.config_defaults_dir.exists():
             actions.append(
                 Action("mkdir", "Create config_defaults directory", target=self.config_defaults_dir)
@@ -197,8 +198,8 @@ class MigrationManager:
 
         return actions
 
-    def _plan_project_config(self) -> List[Action]:
-        actions: List[Action] = []
+    def _plan_project_config(self) -> list[Action]:
+        actions: list[Action] = []
         if not self.project_config_dir.exists():
             actions.append(
                 Action("mkdir", "Create root config directory", target=self.project_config_dir)
@@ -226,7 +227,7 @@ class MigrationManager:
     # ------------------------------------------------------------------
     # Execution helpers
     # ------------------------------------------------------------------
-    def apply(self, actions: List[Action], dry_run: bool = False) -> None:
+    def apply(self, actions: list[Action], dry_run: bool = False) -> None:
         for action in actions:
             log_migration_event(f"{'[DRY RUN] ' if dry_run else ''}{action.description}")
 

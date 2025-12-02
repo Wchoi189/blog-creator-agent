@@ -14,6 +14,7 @@ from AgentQMS.agent_tools.compliance.monitor_artifacts import (
     main,
 )
 
+
 __all__ = ["ArtifactMonitor", "main"]
 
 if __name__ == "__main__":

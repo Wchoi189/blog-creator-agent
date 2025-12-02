@@ -7,6 +7,7 @@ from pathlib import Path
 
 import yaml
 
+
 REPO_ROOT = Path(__file__).resolve().parents[3]
 ARTIFACTS_DIR = REPO_ROOT / "docs" / "artifacts"
 ARCHIVE_DIR = ARTIFACTS_DIR / "_archived"

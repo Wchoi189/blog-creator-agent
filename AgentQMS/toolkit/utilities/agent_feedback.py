@@ -165,25 +165,25 @@ class AgentFeedbackCollector:
     def _load_feedback(self) -> list[dict]:
         """Load existing feedback from file."""
         if self.feedback_file.exists():
-            with open(self.feedback_file) as f:
+            with self.feedback_file.open("r", encoding="utf-8") as f:
                 return json.load(f)
         return []
 
     def _save_feedback(self, feedback: list[dict]):
         """Save feedback to file."""
-        with open(self.feedback_file, "w") as f:
+        with self.feedback_file.open("w", encoding="utf-8") as f:
             json.dump(feedback, f, indent=2)
 
     def _load_suggestions(self) -> list[dict]:
         """Load existing suggestions from file."""
         if self.suggestions_file.exists():
-            with open(self.suggestions_file) as f:
+            with self.suggestions_file.open("r", encoding="utf-8") as f:
                 return json.load(f)
         return []
 
     def _save_suggestions(self, suggestions: list[dict]):
         """Save suggestions to file."""
-        with open(self.suggestions_file, "w") as f:
+        with self.suggestions_file.open("w", encoding="utf-8") as f:
             json.dump(suggestions, f, indent=2)
 
 

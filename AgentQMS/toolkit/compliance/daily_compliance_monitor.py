@@ -203,7 +203,7 @@ class DailyComplianceMonitor:
                     str(self.artifacts_root),
                     "--json",
                 ],
-                capture_output=True,
+                check=False, capture_output=True,
                 text=True,
                 timeout=300,
             )
@@ -298,7 +298,7 @@ class DailyComplianceMonitor:
                             if script != "reorganize_files.py"
                             else "--move-to-correct-dirs",
                         ],
-                        capture_output=True,
+                        check=False, capture_output=True,
                         text=True,
                         timeout=600,
                     )

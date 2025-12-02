@@ -3,7 +3,6 @@ from __future__ import annotations
 
 import argparse
 import subprocess
-import sys
 from datetime import datetime
 from pathlib import Path
 
@@ -11,6 +10,7 @@ import yaml
 
 from AgentQMS.toolkit.utils.paths import get_project_root
 from AgentQMS.toolkit.utils.runtime import ensure_project_root_on_sys_path
+
 
 ensure_project_root_on_sys_path()
 REPO_ROOT = get_project_root()
@@ -120,7 +120,7 @@ def get_git_commits(since_date: str | None = None) -> list[dict]:
         cmd = ["git", "log", "--pretty=format:%H|%ad|%s", "--date=iso"]
         if since_date:
             cmd.append(f"--since={since_date}")
-        result = subprocess.run(cmd, capture_output=True, text=True, cwd=REPO_ROOT)
+        result = subprocess.run(cmd, check=False, capture_output=True, text=True, cwd=REPO_ROOT)
         if result.returncode != 0:
             return []
         commits = []

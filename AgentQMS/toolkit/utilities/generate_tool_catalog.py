@@ -7,6 +7,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import TYPE_CHECKING
 
+
 if TYPE_CHECKING:
     from collections.abc import Iterable
 
@@ -33,7 +34,7 @@ CATEGORIES = {"core", "documentation", "compliance", "utilities", "maintenance"}
 
 
 def discover_python_files(base: Path) -> Iterable[Path]:
-    for dirpath, dirnames, filenames in os.walk(base):
+    for dirpath, _dirnames, filenames in os.walk(base):
         rel = Path(dirpath).relative_to(base)
         parts = set(rel.parts)
         if parts & EXCLUDE_DIRS:
@@ -223,7 +224,7 @@ def check_readme_sprawl() -> list[str]:
     readme_files: list[Path] = []
 
     # Find all README*.md files under scripts/agent_tools
-    for dirpath, dirnames, filenames in os.walk(ROOT):
+    for dirpath, _dirnames, filenames in os.walk(ROOT):
         for fn in filenames:
             if fn.startswith("README") and fn.endswith(".md"):
                 readme_files.append(Path(dirpath) / fn)

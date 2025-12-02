@@ -11,6 +11,7 @@ from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
+
 # Directory structure mapping
 DIRECTORY_STRUCTURE = {
     "01_onboarding": {
@@ -120,10 +121,9 @@ def determine_priority(filename: str, content_type: str) -> str:
     # Default priorities by content type
     if content_type in ["protocols", "architecture"]:
         return "high"
-    elif content_type in ["references", "experiments"]:
+    if content_type in ["references", "experiments"]:
         return "medium"
-    else:
-        return "low"
+    return "low"
 
 
 def determine_owner(filename: str) -> str:
@@ -132,14 +132,13 @@ def determine_owner(filename: str) -> str:
 
     if any(term in filename_lower for term in ["training", "experiment", "model"]):
         return "ml-platform"
-    elif any(term in filename_lower for term in ["ui", "streamlit", "interface"]):
+    if any(term in filename_lower for term in ["ui", "streamlit", "interface"]):
         return "frontend"
-    elif any(term in filename_lower for term in ["debug", "logging", "monitoring"]):
+    if any(term in filename_lower for term in ["debug", "logging", "monitoring"]):
         return "platform"
-    elif any(term in filename_lower for term in ["command", "registry", "automation"]):
+    if any(term in filename_lower for term in ["command", "registry", "automation"]):
         return "automation"
-    else:
-        return "core-team"
+    return "core-team"
 
 
 def scan_directory(handbook_dir: Path) -> dict[str, Any]:
@@ -267,15 +266,15 @@ def main() -> None:
         agentqms_root = current_file.parent
         while agentqms_root.name != "AgentQMS" and agentqms_root.parent != agentqms_root:
             agentqms_root = agentqms_root.parent
-        
+
         validate_script = agentqms_root / "agent_tools/documentation/validate_manifest.py"
         if not validate_script.exists():
             print(f"⚠️  Warning: validate_manifest.py not found at {validate_script}")
             return
-            
+
         result = subprocess.run(
             [sys.executable, str(validate_script), str(args.output)],
-            capture_output=True,
+            check=False, capture_output=True,
             text=True,
         )
 

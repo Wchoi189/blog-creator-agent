@@ -4,6 +4,7 @@ from typing import TYPE_CHECKING
 
 from .db import DB_PATH, get_connection, get_plan_status, init_db
 
+
 if TYPE_CHECKING:
     from collections.abc import Iterable
 
@@ -90,13 +91,13 @@ def get_status(kind: str, key: str | None = None) -> str:
         init_db()
         if kind == "plan":
             return "No plans found."
-        elif kind == "experiment":
+        if kind == "experiment":
             return "No experiments found."
-        elif kind == "debug":
+        if kind == "debug":
             return "No debug sessions."
-        elif kind == "refactor":
+        if kind == "refactor":
             return "No refactors."
-        elif kind == "all":
+        if kind == "all":
             return "No data found."
         return f"Unknown kind: {kind}"
 

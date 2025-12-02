@@ -260,13 +260,13 @@ class ComplianceAlertSystem:
         # Evaluate condition
         if rule.operator == "lt":
             return current_value < rule.threshold, current_value
-        elif rule.operator == "gt":
+        if rule.operator == "gt":
             return current_value > rule.threshold, current_value
-        elif rule.operator == "eq":
+        if rule.operator == "eq":
             return current_value == rule.threshold, current_value
-        elif rule.operator == "gte":
+        if rule.operator == "gte":
             return current_value >= rule.threshold, current_value
-        elif rule.operator == "lte":
+        if rule.operator == "lte":
             return current_value <= rule.threshold, current_value
 
         return False, current_value
@@ -324,9 +324,9 @@ class ComplianceAlertSystem:
 
         if rule.condition == "compliance_rate":
             return f"{emoji} Compliance Alert: Rate is {current_value:.1%} (threshold: {rule.threshold:.1%})"
-        elif rule.condition == "total_issues":
+        if rule.condition == "total_issues":
             return f"{emoji} Issue Alert: {current_value} issues found (threshold: {rule.threshold})"
-        elif rule.condition == "trend_decline":
+        if rule.condition == "trend_decline":
             return f"{emoji} Trend Alert: 7-day trend is {current_value:.1%} (threshold: {rule.threshold:.1%})"
 
         return f"{emoji} Alert: {rule.name} triggered"
@@ -371,14 +371,13 @@ class ComplianceAlertSystem:
         """Send alert to specific channel"""
         if channel == "email":
             return self._send_email(alert)
-        elif channel == "slack":
+        if channel == "slack":
             return self._send_slack(alert)
-        elif channel == "webhook":
+        if channel == "webhook":
             return self._send_webhook(alert)
-        elif channel == "file":
+        if channel == "file":
             return self._send_to_file(alert)
-        else:
-            return False
+        return False
 
     def _send_email(self, alert: Alert) -> bool:
         """Send alert via email"""

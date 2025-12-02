@@ -1,4 +1,4 @@
-"""
+"""  # noqa: N999
 Audit Framework Tools
 
 Tools for generating, validating, and managing framework audit documents.

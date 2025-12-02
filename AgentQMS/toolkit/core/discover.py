@@ -11,7 +11,8 @@ See AgentQMS/toolkit/README.md for migration guidance.
 # Re-export from canonical location
 from AgentQMS.agent_tools.core.discover import main, show_tools
 
-__all__ = ["show_tools", "main"]
+
+__all__ = ["main", "show_tools"]
 
 if __name__ == "__main__":
     main()

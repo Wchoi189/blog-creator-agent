@@ -163,16 +163,15 @@ class TemplateValidator:
 
         if "02_protocols/development" in path_str:
             return "development"
-        elif "02_protocols/configuration" in path_str:
+        if "02_protocols/configuration" in path_str:
             return "configuration"
-        elif "02_protocols/governance" in path_str:
+        if "02_protocols/governance" in path_str:
             return "governance"
-        elif "02_protocols/components" in path_str:
+        if "02_protocols/components" in path_str:
             return "components"
-        elif "03_references" in path_str:
+        if "03_references" in path_str:
             return "references"
-        else:
-            return "base"
+        return "base"
 
     def validate_all_files(self) -> bool:
         """Validate all documentation files against templates."""
@@ -201,9 +200,8 @@ class TemplateValidator:
             for error in self.errors:
                 print(f"  - {error}")
             return False
-        else:
-            print("\n✅ All files pass template validation!")
-            return True
+        print("\n✅ All files pass template validation!")
+        return True
 
     def generate_template_report(self) -> dict[str, Any]:
         """Generate a validation report."""

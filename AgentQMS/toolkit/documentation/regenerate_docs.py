@@ -6,10 +6,10 @@ This script is designed to be run from pre-commit hooks and manual workflows.
 
 import subprocess
 import sys
-from pathlib import Path
 
 from AgentQMS.toolkit.utils.paths import get_docs_dir, get_project_root
 from AgentQMS.toolkit.utils.runtime import ensure_project_root_on_sys_path
+
 
 ensure_project_root_on_sys_path()
 
@@ -33,7 +33,7 @@ def regenerate_index() -> bool:
                 str(INDEX_PATH),
                 "--validate",
             ],
-            cwd=PROJECT_ROOT,
+            check=False, cwd=PROJECT_ROOT,
             capture_output=True,
             text=True,
         )
@@ -43,11 +43,10 @@ def regenerate_index() -> bool:
             if result.stdout:
                 print(result.stdout)
             return True
-        else:
-            print("❌ Index regeneration failed:")
-            print(result.stdout)
-            print(result.stderr)
-            return False
+        print("❌ Index regeneration failed:")
+        print(result.stdout)
+        print(result.stderr)
+        return False
     except Exception as e:
         print(f"❌ Error regenerating index: {e}")
         return False
@@ -64,7 +63,7 @@ def validate_manifest() -> bool:
                 "AgentQMS/agent_tools/documentation/validate_manifest.py",
                 str(INDEX_PATH),
             ],
-            cwd=PROJECT_ROOT,
+            check=False, cwd=PROJECT_ROOT,
             capture_output=True,
             text=True,
         )
@@ -74,11 +73,10 @@ def validate_manifest() -> bool:
             if result.stdout and "WARNING:" in result.stdout:
                 print(result.stdout)
             return True
-        else:
-            print("❌ Manifest validation failed:")
-            print(result.stdout)
-            print(result.stderr)
-            return False
+        print("❌ Manifest validation failed:")
+        print(result.stdout)
+        print(result.stderr)
+        return False
     except Exception as e:
         print(f"❌ Error validating manifest: {e}")
         return False

@@ -17,31 +17,36 @@ Usage:
 
 import argparse
 import json
+import logging
 import re
 import sys
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any, ClassVar
 
 import yaml
 
+from AgentQMS.agent_tools.utils.paths import get_project_root
 from AgentQMS.agent_tools.utils.runtime import ensure_project_root_on_sys_path
+
 
 ensure_project_root_on_sys_path()
 
 from AgentQMS.agent_tools.compliance.validate_boundaries import BoundaryValidator
 
 
-def load_artifact_rules() -> Optional[Dict[str, Any]]:
+logger = logging.getLogger(__name__)
+
+
+def load_artifact_rules() -> dict[str, Any] | None:
     """Load artifact rules from the YAML schema file."""
     try:
-        from AgentQMS.agent_tools.utils.paths import get_project_root
         rules_path = get_project_root() / "AgentQMS" / "knowledge" / "agent" / "artifact_rules.yaml"
         if rules_path.exists():
-            with open(rules_path, encoding="utf-8") as f:
+            with rules_path.open(encoding="utf-8") as f:
                 return yaml.safe_load(f)
-    except Exception:
-        pass
+    except Exception as e:
+        logger.warning(f"Failed to load artifact rules: {e}")
     return None
 
 
@@ -89,14 +94,14 @@ DATE_FORMAT = "%Y-%m-%d %H:%M (KST)"
 
 class ArtifactValidator:
     """Validates artifacts against project naming conventions and structure.
-    
+
     Supports extension via plugin system. Additional prefixes, types, categories,
     and statuses can be registered in .agentqms/plugins/validators.yaml
     """
 
     # Built-in defaults (always available)
     # Paths are relative to artifacts_root (docs/artifacts/)
-    _BUILTIN_ARTIFACT_TYPES: Dict[str, str] = {
+    _BUILTIN_ARTIFACT_TYPES: ClassVar[dict[str, str]] = {
         "implementation_plan_": "implementation_plans/",
         "assessment-": "assessments/",
         "audit-": "audits/",
@@ -107,7 +112,7 @@ class ArtifactValidator:
         "SESSION_": "completed_plans/completion_summaries/session_notes/",
     }
 
-    _BUILTIN_TYPES: List[str] = [
+    _BUILTIN_TYPES: ClassVar[list[str]] = [
         "implementation_plan",
         "assessment",
         "design",
@@ -118,7 +123,7 @@ class ArtifactValidator:
         "completion_summary",
     ]
 
-    _BUILTIN_CATEGORIES: List[str] = [
+    _BUILTIN_CATEGORIES: ClassVar[list[str]] = [
         "development",
         "architecture",
         "evaluation",
@@ -130,7 +135,7 @@ class ArtifactValidator:
         "troubleshooting",
     ]
 
-    _BUILTIN_STATUSES: List[str] = [
+    _BUILTIN_STATUSES: ClassVar[list[str]] = [
         "active",
         "draft",
         "completed",
@@ -153,11 +158,11 @@ class ArtifactValidator:
                 self.artifacts_root = get_project_root() / artifacts_root_path
 
         self.violations = []
-        
+
         # Load rules from YAML schema if available
         self.rules = ARTIFACT_RULES
         self.rules_loaded = self.rules is not None
-        
+
         # Build artifact type mappings from rules or use builtins
         if self.rules and "artifact_types" in self.rules:
             self.valid_artifact_types = {}
@@ -178,7 +183,7 @@ class ArtifactValidator:
         else:
             self.valid_artifact_types = dict(self._BUILTIN_ARTIFACT_TYPES)
             self.artifact_type_details = {}
-        
+
         # Load frontmatter validation values from rules or use builtins
         if self.rules and "frontmatter" in self.rules:
             fm_rules = self.rules["frontmatter"]
@@ -189,7 +194,7 @@ class ArtifactValidator:
             self.valid_statuses = list(self._BUILTIN_STATUSES)
             self.valid_categories = list(self._BUILTIN_CATEGORIES)
             self.required_frontmatter = ["title", "date", "type", "category", "status", "version"]
-        
+
         # Build valid types list from rules or use builtins
         if self.rules and "artifact_types" in self.rules:
             self.valid_types = [
@@ -198,7 +203,7 @@ class ArtifactValidator:
             ]
         else:
             self.valid_types = list(self._BUILTIN_TYPES)
-        
+
         # Load error templates from rules
         self.error_templates = {}
         if self.rules and "error_templates" in self.rules:
@@ -267,12 +272,12 @@ class ArtifactValidator:
             if tmpl.get("code") == error_code:
                 template = tmpl
                 break
-        
+
         if template:
             msg = template.get("message", "Validation error")
             expected = template.get("expected", "")
             hint = template.get("hint", "")
-            
+
             # Format with kwargs
             try:
                 msg = msg.format(**kwargs) if kwargs else msg
@@ -280,7 +285,7 @@ class ArtifactValidator:
                 hint = hint.format(**kwargs) if kwargs else hint
             except (KeyError, ValueError):
                 pass  # Use unformatted if formatting fails
-            
+
             parts = [f"[{error_code}] {msg}"]
             if expected:
                 parts.append(f"Expected: {expected}")
@@ -304,10 +309,10 @@ class ArtifactValidator:
         match_result = match if valid else None
         return valid, msg, match_result
 
-    def _detect_intended_type(self, after_timestamp: str) -> Optional[tuple[str, str]]:
+    def _detect_intended_type(self, after_timestamp: str) -> tuple[str, str] | None:
         """Try to detect what artifact type the user intended based on partial match."""
         after_lower = after_timestamp.lower()
-        
+
         # Check for common misspellings or format errors
         type_hints = [
             ("assessment", "assessment-", "-"),
@@ -321,11 +326,11 @@ class ArtifactValidator:
             ("audit", "audit-", "-"),
             ("template", "template-", "-"),
         ]
-        
+
         for keyword, correct_prefix, expected_sep in type_hints:
             if after_lower.startswith(keyword):
                 return (correct_prefix, expected_sep)
-        
+
         return None
 
     def validate_naming_convention(self, file_path: Path) -> tuple[bool, str]:
@@ -345,7 +350,7 @@ class ArtifactValidator:
             if after_timestamp.startswith(artifact_type):
                 matched_type = artifact_type
                 break
-        
+
         if not matched_type:
             # Try to detect what type the user might have intended
             intended = self._detect_intended_type(after_timestamp)
@@ -353,7 +358,7 @@ class ArtifactValidator:
                 correct_prefix, expected_sep = intended
                 type_details = self.artifact_type_details.get(correct_prefix, {})
                 example = type_details.get("example", "")
-                
+
                 if self.error_templates:
                     msg = self._get_error_message(
                         "E003",
@@ -365,14 +370,13 @@ class ArtifactValidator:
                 else:
                     msg = f"Invalid format for artifact type. Use '{correct_prefix}' prefix. Example: {example}"
                 return (False, msg)
+            # No match found - list valid options
+            valid_types_str = ", ".join(self.valid_artifact_types.keys())
+            if self.error_templates:
+                msg = self._get_error_message("E002")
             else:
-                # No match found - list valid options
-                valid_types_str = ", ".join(self.valid_artifact_types.keys())
-                if self.error_templates:
-                    msg = self._get_error_message("E002")
-                else:
-                    msg = f"Missing valid artifact type. Valid artifact types: {valid_types_str}"
-                return (False, msg)
+                msg = f"Missing valid artifact type. Valid artifact types: {valid_types_str}"
+            return (False, msg)
 
         # Check for kebab-case in descriptive part
         descriptive_part = after_timestamp[len(matched_type):-3]  # Remove .md
@@ -386,7 +390,7 @@ class ArtifactValidator:
             (word.isupper() or (not word.islower() and not word.isdigit())) and len(word) > 1
             for word in words
         )
-        
+
         if descriptive_part.isupper() or has_uppercase_or_mixed:
             if expected_case == "uppercase_prefix":
                 return (
@@ -394,11 +398,10 @@ class ArtifactValidator:
                     "Artifact filenames with uppercase prefix must have lowercase descriptive part. "
                     f"Example: {matched_type}001_lowercase-name.md (not {matched_type}001_UPPERCASE-NAME.md)",
                 )
-            else:
-                return (
-                    False,
-                    "Artifact filenames must be lowercase. No ALL CAPS allowed. Use kebab-case (lowercase with hyphens)",
-                )
+            return (
+                False,
+                "Artifact filenames must be lowercase. No ALL CAPS allowed. Use kebab-case (lowercase with hyphens)",
+            )
 
         if (
             "_" in descriptive_part
@@ -418,14 +421,14 @@ class ArtifactValidator:
         current_dir = str(relative_path.parent)
 
         # Validate timestamp format first
-        timestamp_match = re.match(r'^\d{4}-\d{2}-\d{2}_\d{4}_', filename)
+        timestamp_match = re.match(r"^\d{4}-\d{2}-\d{2}_\d{4}_", filename)
         if not timestamp_match:
             # File doesn't match timestamp-first format, can't validate directory
             return True, "Cannot validate directory (non-standard format)"
-        
+
         # Extract everything after timestamp
         after_timestamp = filename[timestamp_match.end():]
-        
+
         # Find which artifact type this file matches by checking if it starts with a registered type
         expected_dir = None
         matched_prefix = None
@@ -438,12 +441,12 @@ class ArtifactValidator:
         if expected_dir and current_dir != expected_dir:
             type_details = self.artifact_type_details.get(matched_prefix, {})
             type_name = type_details.get("name", "artifact")
-            
+
             if self.error_templates:
                 msg = self._get_error_message("E004", expected_dir=expected_dir)
             else:
                 msg = f"File should be in '{expected_dir}/' directory, currently in '{current_dir}/'"
-            
+
             msg += f" (detected type: {type_name})"
             return (False, msg)
 
@@ -457,7 +460,7 @@ class ArtifactValidator:
             project_root = get_project_root()
             relative_path = file_path.relative_to(project_root)
             path_str = str(relative_path).replace("\\", "/")
-            
+
             # Check if file starts with artifacts/ (without docs/ prefix)
             if path_str.startswith("artifacts/") and not path_str.startswith("docs/artifacts/"):
                 return (
@@ -465,7 +468,7 @@ class ArtifactValidator:
                     f"Artifacts must be in 'docs/artifacts/' not root 'artifacts/'. "
                     f"Move file from '{path_str}' to 'docs/{path_str}'",
                 )
-            
+
             # Verify file is in docs/artifacts/ hierarchy
             if not path_str.startswith("docs/artifacts/") and not path_str.startswith("AgentQMS/"):
                 return (
@@ -473,11 +476,11 @@ class ArtifactValidator:
                     f"Artifacts must be in 'docs/artifacts/' directory. "
                     f"Current location: '{path_str}'",
                 )
-                
+
         except ValueError:
             # File is outside project root - allow it (might be in AgentQMS module)
             pass
-            
+
         return True, "Valid artifacts directory location"
 
     def validate_frontmatter(self, file_path: Path) -> tuple[bool, str]:
@@ -556,19 +559,19 @@ class ArtifactValidator:
 
         return True, "Valid frontmatter"
 
-    def _extract_frontmatter(self, file_path: Path) -> Dict[str, str]:
+    def _extract_frontmatter(self, file_path: Path) -> dict[str, str]:
         """Extract frontmatter from a file."""
         try:
             with open(file_path, encoding="utf-8") as f:
                 content = f.read()
-            
+
             if not content.startswith("---"):
                 return {}
-            
+
             frontmatter_end = content.find("---", 3)
             if frontmatter_end == -1:
                 return {}
-            
+
             frontmatter_content = content[3:frontmatter_end]
             frontmatter = {}
             for line in frontmatter_content.split("\n"):
@@ -582,47 +585,47 @@ class ArtifactValidator:
         except Exception:
             return {}
 
-    def _get_type_from_filename(self, filename: str) -> Optional[str]:
+    def _get_type_from_filename(self, filename: str) -> str | None:
         """Extract artifact type from filename based on prefix."""
-        timestamp_match = re.match(r'^\d{4}-\d{2}-\d{2}_\d{4}_', filename)
+        timestamp_match = re.match(r"^\d{4}-\d{2}-\d{2}_\d{4}_", filename)
         if not timestamp_match:
             return None
-        
+
         after_timestamp = filename[timestamp_match.end():]
-        
+
         for prefix, _ in self.valid_artifact_types.items():
             if after_timestamp.startswith(prefix):
                 type_details = self.artifact_type_details.get(prefix, {})
                 return type_details.get("frontmatter_type", type_details.get("name", ""))
-        
+
         return None
 
     def validate_type_consistency(self, file_path: Path) -> tuple[bool, str]:
         """Cross-validate frontmatter type against filename and directory.
-        
-        Phase 2: Ensures frontmatter `type:` matches the artifact type implied 
+
+        Phase 2: Ensures frontmatter `type:` matches the artifact type implied
         by the filename prefix and the expected directory.
         """
         filename = file_path.name
-        
+
         # Extract frontmatter type
         frontmatter = self._extract_frontmatter(file_path)
         fm_type = frontmatter.get("type", "")
-        
+
         # Extract type from filename
         filename_type = self._get_type_from_filename(filename)
-        
+
         if not filename_type:
             # Can't determine type from filename, skip cross-validation
             return True, "Cannot determine type from filename"
-        
+
         # Check if frontmatter type matches filename type
         if fm_type and fm_type != filename_type:
             # Build consolidated diagnostic
             mismatches = []
             mismatches.append(f"frontmatter type='{fm_type}'")
             mismatches.append(f"filename implies type='{filename_type}'")
-            
+
             if self.error_templates:
                 msg = self._get_error_message(
                     "E005",
@@ -632,9 +635,9 @@ class ArtifactValidator:
                 )
             else:
                 msg = f"Type mismatch: {', '.join(mismatches)}. Update frontmatter type to '{filename_type}'"
-            
+
             return False, msg
-        
+
         return True, "Type consistency validated"
 
     def validate_single_file(self, file_path: Path) -> dict:
@@ -642,7 +645,7 @@ class ArtifactValidator:
         # Resolve relative paths to absolute
         if not file_path.is_absolute():
             file_path = file_path.resolve()
-            
+
         result = {"file": str(file_path), "valid": True, "errors": []}
 
         # Skip INDEX.md files
@@ -854,12 +857,12 @@ class ArtifactValidator:
         # Phase 6: Generate violation summary table
         if invalid_files > 0:
             # Count violations by type
-            violation_counts: Dict[str, int] = {}
+            violation_counts: dict[str, int] = {}
             for result in results:
                 if not result["valid"]:
                     for error in result.get("errors", []):
                         # Extract error code if present
-                        code_match = re.search(r'\[E(\d+)\]', error)
+                        code_match = re.search(r"\[E(\d+)\]", error)
                         if code_match:
                             code = f"E{code_match.group(1)}"
                         elif "Naming:" in error:
@@ -874,9 +877,9 @@ class ArtifactValidator:
                             code = "Location"
                         else:
                             code = "Other"
-                        
+
                         violation_counts[code] = violation_counts.get(code, 0) + 1
-            
+
             report.append("VIOLATION SUMMARY:")
             report.append("-" * 40)
             report.append(f"{'Rule':<20} | {'Count':>6}")
@@ -885,7 +888,7 @@ class ArtifactValidator:
                 report.append(f"{code:<20} | {count:>6}")
             report.append("-" * 40)
             report.append("")
-            
+
             report.append("VIOLATIONS FOUND:")
             report.append("-" * 40)
             for result in results:
@@ -893,12 +896,12 @@ class ArtifactValidator:
                     report.append(f"\n❌ {result['file']}")
                     for error in result["errors"]:
                         report.append(f"   • {error}")
-            
+
             # Add suggested next command
             report.append("")
             report.append("SUGGESTED NEXT COMMAND:")
             report.append("-" * 40)
-            report.append(f"  cd AgentQMS/interface && make fix ARGS=\"--limit {min(invalid_files, 10)} --dry-run\"")
+            report.append(f'  cd AgentQMS/interface && make fix ARGS="--limit {min(invalid_files, 10)} --dry-run"')
             report.append("")
 
         if valid_files > 0:

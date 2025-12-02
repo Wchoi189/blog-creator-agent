@@ -219,10 +219,9 @@ class ComplianceTrendTracker:
 
         if trend > threshold:
             return "improving"
-        elif trend < -threshold:
+        if trend < -threshold:
             return "declining"
-        else:
-            return "stable"
+        return "stable"
 
     def _determine_trend_strength(self, trend: float, std_dev: float) -> str:
         """Determine trend strength based on slope and volatility"""
@@ -230,10 +229,9 @@ class ComplianceTrendTracker:
 
         if abs_trend > 0.02:  # 2% per day
             return "strong"
-        elif abs_trend > 0.005:  # 0.5% per day
+        if abs_trend > 0.005:  # 0.5% per day
             return "moderate"
-        else:
-            return "weak"
+        return "weak"
 
     def _generate_predictions(
         self, data_points: list[TrendDataPoint]
@@ -390,12 +388,11 @@ class ComplianceTrendTracker:
         """Export trend analysis data in specified format"""
         if format == "json":
             return json.dumps(asdict(analysis), indent=2)
-        elif format == "csv":
+        if format == "csv":
             return self._export_csv(analysis)
-        elif format == "html":
+        if format == "html":
             return self._export_html(analysis)
-        else:
-            raise ValueError(f"Unsupported format: {format}")
+        raise ValueError(f"Unsupported format: {format}")
 
     def _export_csv(self, analysis: TrendAnalysis) -> str:
         """Export trend data as CSV"""

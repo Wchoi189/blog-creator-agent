@@ -14,9 +14,9 @@ import re
 from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
-from typing import List, Optional
 
 from AgentQMS.toolkit.utils.runtime import ensure_project_root_on_sys_path
+
 
 ensure_project_root_on_sys_path()
 
@@ -35,8 +35,8 @@ class ValidationResult:
     """Result of document validation."""
     document_path: Path
     valid: bool
-    errors: List[ValidationError]
-    warnings: List[ValidationError]
+    errors: list[ValidationError]
+    warnings: list[ValidationError]
 
 
 # Required sections for each document type
@@ -81,20 +81,20 @@ REQUIRED_SECTIONS = {
 }
 
 
-def check_required_sections(content: str, document_name: str) -> List[ValidationError]:
+def check_required_sections(content: str, document_name: str) -> list[ValidationError]:
     """
     Check if document contains all required sections.
-    
+
     Args:
         content: Document content
         document_name: Name of the document file
-    
+
     Returns:
         List of validation errors for missing sections
     """
     errors = []
     required = REQUIRED_SECTIONS.get(document_name, [])
-    
+
     for section in required:
         # Look for section headers (## or ###)
         pattern = rf"^#{{2,3}}\s+{re.escape(section)}"
@@ -105,24 +105,24 @@ def check_required_sections(content: str, document_name: str) -> List[Validation
                 message=f"Missing required section: {section}",
                 severity="error"
             ))
-    
+
     return errors
 
 
-def check_placeholders(content: str, document_name: str) -> List[ValidationError]:
+def check_placeholders(content: str, document_name: str) -> list[ValidationError]:
     """
     Check for unreplaced placeholders.
-    
+
     Args:
         content: Document content
         document_name: Name of the document file
-    
+
     Returns:
         List of validation errors for unreplaced placeholders
     """
     errors = []
-    placeholders = re.findall(r'\{\{([A-Z_]+)\}\}', content)
-    
+    placeholders = re.findall(r"\{\{([A-Z_]+)\}\}", content)
+
     for placeholder in placeholders:
         errors.append(ValidationError(
             document=document_name,
@@ -130,26 +130,26 @@ def check_placeholders(content: str, document_name: str) -> List[ValidationError
             message=f"Unreplaced placeholder: {{{{ {placeholder} }}}}",
             severity="error"
         ))
-    
+
     return errors
 
 
 DATE_FORMAT = "%Y-%m-%d %H:%M (KST)"
 
 
-def check_frontmatter(content: str, document_name: str) -> List[ValidationError]:
+def check_frontmatter(content: str, document_name: str) -> list[ValidationError]:
     """
     Check if document has valid frontmatter.
-    
+
     Args:
         content: Document content
         document_name: Name of the document file
-    
+
     Returns:
         List of validation errors for frontmatter issues
     """
     errors = []
-    
+
     # Check for frontmatter block
     if not content.startswith("---"):
         errors.append(ValidationError(
@@ -159,9 +159,9 @@ def check_frontmatter(content: str, document_name: str) -> List[ValidationError]
             severity="error"
         ))
         return errors
-    
+
     # Extract frontmatter
-    frontmatter_match = re.match(r'^---\n(.*?)\n---', content, re.DOTALL)
+    frontmatter_match = re.match(r"^---\n(.*?)\n---", content, re.DOTALL)
     if not frontmatter_match:
         errors.append(ValidationError(
             document=document_name,
@@ -170,9 +170,9 @@ def check_frontmatter(content: str, document_name: str) -> List[ValidationError]
             severity="error"
         ))
         return errors
-    
+
     frontmatter = frontmatter_match.group(1)
-    
+
     # Check for required fields
     required_fields = ["type", "category", "title", "date"]
     for field in required_fields:
@@ -196,17 +196,17 @@ def check_frontmatter(content: str, document_name: str) -> List[ValidationError]
                 message="Date must use 'YYYY-MM-DD HH:MM (KST)' format.",
                 severity="error",
             ))
-    
+
     return errors
 
 
 def validate_document(document_path: Path) -> ValidationResult:
     """
     Validate a single audit document.
-    
+
     Args:
         document_path: Path to the document
-    
+
     Returns:
         ValidationResult with validation status and errors
     """
@@ -222,26 +222,25 @@ def validate_document(document_path: Path) -> ValidationResult:
             )],
             warnings=[]
         )
-    
+
     content = document_path.read_text(encoding="utf-8")
     document_name = document_path.name
-    
+
     errors = []
-    warnings = []
-    
+
     # Check required sections
     errors.extend(check_required_sections(content, document_name))
-    
+
     # Check for unreplaced placeholders
     errors.extend(check_placeholders(content, document_name))
-    
+
     # Check frontmatter
     errors.extend(check_frontmatter(content, document_name))
-    
+
     # Separate errors and warnings
     error_list = [e for e in errors if e.severity == "error"]
     warning_list = [e for e in errors if e.severity == "warning"]
-    
+
     return ValidationResult(
         document_path=document_path,
         valid=len(error_list) == 0,
@@ -253,10 +252,10 @@ def validate_document(document_path: Path) -> ValidationResult:
 def validate_completeness(audit_dir: Path) -> dict:
     """
     Validate that all required audit documents exist.
-    
+
     Args:
         audit_dir: Directory containing audit documents
-    
+
     Returns:
         Dictionary with completeness status
     """
@@ -268,17 +267,17 @@ def validate_completeness(audit_dir: Path) -> dict:
         "04_standards_specification.md",
         "05_automation_recommendations.md",
     ]
-    
+
     missing = []
     present = []
-    
+
     for doc in required_docs:
         doc_path = audit_dir / doc
         if doc_path.exists():
             present.append(doc)
         else:
             missing.append(doc)
-    
+
     return {
         "complete": len(missing) == 0,
         "present": present,
@@ -291,36 +290,36 @@ def validate_completeness(audit_dir: Path) -> dict:
 def validate_audit(audit_dir: Path) -> None:
     """
     Validate all documents in an audit directory.
-    
+
     Args:
         audit_dir: Directory containing audit documents
     """
     if not audit_dir.exists():
         print(f"❌ Audit directory not found: {audit_dir}")
         return
-    
+
     print(f"🔍 Validating audit documents in: {audit_dir}")
     print()
-    
+
     # Check completeness
     completeness = validate_completeness(audit_dir)
     print(f"📋 Completeness: {completeness['found']}/{completeness['total']} documents")
-    
+
     if completeness["missing"]:
-        print(f"⚠️  Missing documents:")
+        print("⚠️  Missing documents:")
         for doc in completeness["missing"]:
             print(f"   - {doc}")
     print()
-    
+
     # Validate each document
     all_valid = True
     total_errors = 0
     total_warnings = 0
-    
+
     for doc_name in completeness["present"]:
         doc_path = audit_dir / doc_name
         result = validate_document(doc_path)
-        
+
         if result.valid:
             print(f"✅ {doc_name}")
         else:
@@ -332,12 +331,12 @@ def validate_audit(audit_dir: Path) -> None:
             for warning in result.warnings:
                 print(f"   Warning: {warning.message}")
                 total_warnings += 1
-    
+
     print()
     if all_valid and completeness["complete"]:
-        print(f"✅ All documents valid and complete!")
+        print("✅ All documents valid and complete!")
     else:
-        print(f"❌ Validation failed:")
+        print("❌ Validation failed:")
         if not completeness["complete"]:
             print(f"   - {len(completeness['missing'])} missing document(s)")
         if total_errors > 0:
@@ -355,14 +354,14 @@ def main():
 Examples:
   # Validate all documents in audit directory
   python audit_validator.py validate --audit-dir "docs/audit"
-  
+
   # Validate single document
   python audit_validator.py validate --document "docs/audit/00_audit_summary.md"
         """
     )
-    
+
     subparsers = parser.add_subparsers(dest="command", help="Command to execute")
-    
+
     # Validate command
     validate_parser = subparsers.add_parser("validate", help="Validate audit documents")
     validate_parser.add_argument(
@@ -375,13 +374,13 @@ Examples:
         type=Path,
         help="Single document to validate"
     )
-    
+
     args = parser.parse_args()
-    
+
     if not args.command:
         parser.print_help()
-        return
-    
+        return None
+
     try:
         if args.command == "validate":
             if args.document:
@@ -399,10 +398,10 @@ Examples:
     except Exception as e:
         print(f"❌ Error: {e}")
         return 1
-    
+
     return 0
 
 
 if __name__ == "__main__":
-    exit(main())
+    sys.exit(main())
 

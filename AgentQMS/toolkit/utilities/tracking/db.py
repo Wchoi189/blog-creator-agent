@@ -9,9 +9,11 @@ from typing import Any
 from AgentQMS.toolkit.utils.paths import get_project_root
 from AgentQMS.toolkit.utils.runtime import ensure_project_root_on_sys_path
 
+
 ensure_project_root_on_sys_path()
 
 DB_PATH = get_project_root() / "data/ops/tracking.db"
+SHORT_SUMMARY_MAX_LEN = 280
 
 
 def _utc_now_iso() -> str:
@@ -199,16 +201,13 @@ def set_plan_status(key: str, status: str) -> None:
         ).fetchone()
         if not plan:
             raise KeyError(f"Plan not found: {key}")
-        fields = ["updated_at = ?", _utc_now_iso()]
         if status == "in_progress":
-            fields[0] = "started_at = ?, updated_at = ?"
-            params: tuple[Any, ...] = (_utc_now_iso(), _utc_now_iso(), key)
+            query = "UPDATE feature_plans SET status=?, started_at = ?, updated_at = ? WHERE key=?"
+            params = (status, _utc_now_iso(), _utc_now_iso(), key)
         else:
-            params = (_utc_now_iso(), key)
-        conn.execute(
-            f"UPDATE feature_plans SET status='{status}', {fields[0]} WHERE key=?",
-            params,
-        )
+            query = "UPDATE feature_plans SET status=?, updated_at = ? WHERE key=?"
+            params = (status, _utc_now_iso(), key)
+        conn.execute(query, params)
 
 
 def add_plan_task(plan_key: str, title: str, notes: str | None = None) -> int:
@@ -262,15 +261,13 @@ def set_refactor_status(key: str, status: str) -> None:
         ref = conn.execute("SELECT id FROM refactors WHERE key=?", (key,)).fetchone()
         if not ref:
             raise KeyError(f"Refactor not found: {key}")
-        fields = ["updated_at = ?", _utc_now_iso()]
         if status == "in_progress":
-            fields[0] = "started_at = ?, updated_at = ?"
-            params = (_utc_now_iso(), _utc_now_iso(), key)
+            query = "UPDATE refactors SET status=?, started_at = ?, updated_at = ? WHERE key=?"
+            params = (status, _utc_now_iso(), _utc_now_iso(), key)
         else:
-            params = (_utc_now_iso(), key)
-        conn.execute(
-            f"UPDATE refactors SET status='{status}', {fields[0]} WHERE key=?", params
-        )
+            query = "UPDATE refactors SET status=?, updated_at = ? WHERE key=?"
+            params = (status, _utc_now_iso(), key)
+        conn.execute(query, params)
 
 
 # Debugging
@@ -393,8 +390,8 @@ def link_experiment_artifact(
 
 
 def save_summary(entity_type: str, entity_id: int, style: str, text: str) -> int:
-    if style == "short" and len(text) > 280:
-        raise ValueError("Short summaries must be <= 280 characters")
+    if style == "short" and len(text) > SHORT_SUMMARY_MAX_LEN:
+        raise ValueError(f"Short summaries must be <= {SHORT_SUMMARY_MAX_LEN} characters")
     conn = get_connection()
     with conn:
         conn.execute(

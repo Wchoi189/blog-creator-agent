@@ -17,6 +17,7 @@ from pathlib import Path
 
 from AgentQMS.agent_tools.utils.runtime import ensure_project_root_on_sys_path
 
+
 ensure_project_root_on_sys_path()
 
 from AgentQMS.agent_tools.utils.paths import get_project_root
@@ -137,7 +138,7 @@ class ArtifactIndexUpdater:
                 if line.startswith("# ") and not in_content:
                     in_content = True
                     continue
-                elif in_content and line and not line.startswith("#"):
+                if in_content and line and not line.startswith("#"):
                     if line.startswith("##"):
                         break
                     description_lines.append(line)
@@ -495,9 +496,8 @@ def main():
         if successful == total and master_success:
             print("✅ All indexes updated successfully")
             return 0
-        else:
-            print("❌ Some indexes failed to update")
-            return 1
+        print("❌ Some indexes failed to update")
+        return 1
 
     else:
         # Default: update all
@@ -515,10 +515,9 @@ def main():
         if successful == total and master_success:
             print("✅ All indexes updated successfully")
             return 0
-        else:
-            print("❌ Some indexes failed to update")
-            return 1
+        print("❌ Some indexes failed to update")
+        return 1
 
 
 if __name__ == "__main__":
-    exit(main())
+    sys.exit(main())

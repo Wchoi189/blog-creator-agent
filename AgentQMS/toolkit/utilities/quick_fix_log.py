@@ -14,8 +14,6 @@ def log_quick_fix(
     issue: str,
     fix: str,
     files: str,
-    impact: str = "minimal",
-    test: str = "none",
 ) -> None:
     """Log a quick fix to the QUICK_FIXES.md file."""
 
@@ -26,8 +24,6 @@ def log_quick_fix(
 **Issue**: {issue}
 **Fix**: {fix}
 **Files**: {files}
-**Impact**: {impact}
-**Test**: {test}
 """
 
     # Read existing content
@@ -79,18 +75,6 @@ def main() -> None:
     parser.add_argument(
         "--files", required=True, help="Comma-separated list of affected files"
     )
-    parser.add_argument(
-        "--impact",
-        choices=["minimal", "major", "none"],
-        default="minimal",
-        help="Impact level (default: minimal)",
-    )
-    parser.add_argument(
-        "--test",
-        choices=["unit", "ui", "manual", "integration", "none"],
-        default="none",
-        help="Testing performed (default: none)",
-    )
 
     args = parser.parse_args()
 
@@ -100,8 +84,6 @@ def main() -> None:
         issue=args.issue,
         fix=args.fix,
         files=args.files,
-        impact=args.impact,
-        test=args.test,
     )
 
 

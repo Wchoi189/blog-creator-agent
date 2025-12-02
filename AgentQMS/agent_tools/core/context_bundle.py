@@ -17,7 +17,7 @@ Usage:
 
     # Explicit task type
     files = get_context_bundle("fix bug", task_type="debugging")
-    
+
     # Plugin-registered bundle
     files = get_context_bundle("security review", task_type="security-review")
 """
@@ -26,7 +26,8 @@ import glob
 import sys
 import time
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any
+
 
 try:
     import yaml
@@ -36,8 +37,9 @@ except ImportError:
     )
     sys.exit(1)
 
-from AgentQMS.agent_tools.utils.paths import get_docs_dir, get_project_root
+from AgentQMS.agent_tools.utils.paths import get_project_root
 from AgentQMS.agent_tools.utils.runtime import ensure_project_root_on_sys_path
+
 
 ensure_project_root_on_sys_path()
 PROJECT_ROOT = get_project_root()
@@ -364,15 +366,15 @@ def list_available_bundles() -> list[str]:
 def auto_suggest_context(task_description: str) -> dict[str, Any]:
     """
     Automatically suggest context bundle and related information based on task description.
-    
+
     This function analyzes the task description and returns suggestions for:
     - Which context bundle to load
     - Related workflows to consider
     - Tools that might be useful
-    
+
     Args:
         task_description: Description of the current task
-        
+
     Returns:
         Dictionary with suggestions:
         - task_type: Detected task type
@@ -383,13 +385,13 @@ def auto_suggest_context(task_description: str) -> dict[str, Any]:
     """
     # Detect task type
     detected_type = analyze_task_type(task_description)
-    
+
     # Get context bundle files
     try:
         bundle_files = get_context_bundle(task_description, detected_type)
     except FileNotFoundError:
         bundle_files = []
-    
+
     # Try to import workflow detector for enhanced suggestions
     suggestions: dict[str, Any] = {
         "task_type": detected_type,
@@ -398,10 +400,10 @@ def auto_suggest_context(task_description: str) -> dict[str, Any]:
         "suggested_workflows": [],
         "suggested_tools": [],
     }
-    
+
     try:
         from AgentQMS.agent_tools.core.workflow_detector import suggest_workflows
-        
+
         workflow_suggestions = suggest_workflows(task_description)
         suggestions["suggested_workflows"] = workflow_suggestions.get("workflows", [])
         suggestions["suggested_tools"] = workflow_suggestions.get("tools", [])
@@ -421,7 +423,7 @@ def auto_suggest_context(task_description: str) -> dict[str, Any]:
         elif detected_type == "planning":
             suggestions["suggested_workflows"] = ["create-plan", "create-design"]
             suggestions["suggested_tools"] = ["artifact_workflow"]
-    
+
     return suggestions
 
 
@@ -471,14 +473,14 @@ def main():
         print(f"Task Type: {suggestions['task_type']}")
         print(f"Context Bundle: {suggestions['context_bundle']}")
         print(f"\nBundle Files ({len(suggestions['bundle_files'])}):")
-        for f in suggestions['bundle_files']:
+        for f in suggestions["bundle_files"]:
             print(f"  - {f}")
         if suggestions.get("suggested_workflows"):
-            print(f"\nSuggested Workflows:")
+            print("\nSuggested Workflows:")
             for wf in suggestions["suggested_workflows"]:
                 print(f"  - {wf}")
         if suggestions.get("suggested_tools"):
-            print(f"\nSuggested Tools:")
+            print("\nSuggested Tools:")
             for tool in suggestions["suggested_tools"]:
                 print(f"  - {tool}")
     elif args.task:

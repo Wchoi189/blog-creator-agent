@@ -8,7 +8,7 @@ behavior via the `AgentQMS.agent_tools` namespace for agents and docs.
 
 from __future__ import annotations
 
-from AgentQMS.toolkit.utilities.adapt_project import *  # noqa: F401,F403
+from AgentQMS.toolkit.utilities.adapt_project import *  # noqa: F403
 
 
 if __name__ == "__main__":  # pragma: no cover - thin CLI shim

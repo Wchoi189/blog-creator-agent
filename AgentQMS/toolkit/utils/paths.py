@@ -6,7 +6,6 @@ path resolution across the framework.
 
 from __future__ import annotations
 
-from functools import lru_cache
 from pathlib import Path
 
 from .config import get_config_loader, load_config

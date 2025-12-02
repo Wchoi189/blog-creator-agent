@@ -1,1 +1,1 @@
-"""Compliance validation utilities for AI-generated artifacts."""
+"""Compliance validation utilities for AI-generated artifacts."""  # noqa: N999

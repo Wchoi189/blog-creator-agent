@@ -13,7 +13,6 @@ import json
 import sys
 from dataclasses import dataclass
 from pathlib import Path
-from typing import List
 
 from AgentQMS.agent_tools.utils.paths import (
     get_artifacts_dir,
@@ -22,6 +21,7 @@ from AgentQMS.agent_tools.utils.paths import (
     get_project_root,
 )
 from AgentQMS.agent_tools.utils.runtime import ensure_project_root_on_sys_path
+
 
 ensure_project_root_on_sys_path()
 
@@ -39,9 +39,9 @@ class BoundaryValidator:
     def __init__(self) -> None:
         self.project_root = get_project_root().resolve()
         self.framework_root = get_framework_root().resolve()
-        self.violations: List[BoundaryViolation] = []
+        self.violations: list[BoundaryViolation] = []
 
-    def validate(self) -> List[BoundaryViolation]:
+    def validate(self) -> list[BoundaryViolation]:
         self.violations.clear()
         self._check_framework_boundary()
         self._check_project_boundary()
@@ -134,14 +134,13 @@ def main() -> int:
             for v in violations
         ]
         print(json.dumps(payload, indent=2))
+    elif not violations:
+        print("✅ No boundary violations detected")
     else:
-        if not violations:
-            print("✅ No boundary violations detected")
-        else:
-            print("❌ Boundary violations detected:\n")
-            for violation in violations:
-                prefix = "ERROR" if violation.severity == "error" else "WARN"
-                print(f"[{prefix}] {violation.path}\n    {violation.message}\n")
+        print("❌ Boundary violations detected:\n")
+        for violation in violations:
+            prefix = "ERROR" if violation.severity == "error" else "WARN"
+            print(f"[{prefix}] {violation.path}\n    {violation.message}\n")
 
     errors = [v for v in violations if v.severity == "error"]
     return 1 if errors else 0

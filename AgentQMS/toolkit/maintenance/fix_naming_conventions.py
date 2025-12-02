@@ -397,30 +397,30 @@ class NamingConventionFixer:
 
     def validate_operations(self, operations: dict[str, list[RenameOperation]]) -> tuple[bool, list[str]]:
         """Validate all operations before execution
-        
+
         Returns:
             tuple: (all_valid, list_of_issues)
         """
         issues = []
         final_paths = {}
-        
+
         for old_path, ops in operations.items():
             # Trace through sequential operations to find final path
             current_path = old_path
             for op in ops:
                 current_path = op.new_path
-            
+
             # Check for duplicate final paths
             if current_path in final_paths:
                 issues.append(f"Conflict: {old_path} and {final_paths[current_path]} both rename to {current_path}")
             else:
                 final_paths[current_path] = old_path
-            
+
             # Check if any intermediate target exists
             for op in ops:
                 if Path(op.new_path).exists() and op.new_path != op.old_path:
                     issues.append(f"Target exists: {op.new_path}")
-        
+
         return len(issues) == 0, issues
 
     def fix_directory(
@@ -436,7 +436,7 @@ class NamingConventionFixer:
                 if operations:
                     results[str(file_path)] = operations
                     files_processed += 1
-                    
+
                     # Check limit
                     if limit is not None and files_processed >= limit:
                         print(f"✋ Reached file limit ({limit}). Stopping.")
@@ -451,7 +451,7 @@ class NamingConventionFixer:
                     print(f"   • {issue}")
                 print("\nℹ️  No changes will be made. Use --dry-run to preview.")
                 return {}
-        
+
         return results
 
     def generate_fix_report(self, results: dict[str, list[RenameOperation]]) -> str:

@@ -80,9 +80,8 @@ class FreshnessChecker:
                 else:
                     print(f"  - {file_path}: {age} days old (max: {self.max_age_days})")
             return False
-        else:
-            print(f"\n✅ All {len(self.fresh_files)} documentation files are fresh!")
-            return True
+        print(f"\n✅ All {len(self.fresh_files)} documentation files are fresh!")
+        return True
 
     def generate_report(self) -> dict[str, int | list[dict[str, str | int]]]:
         """Generate a freshness report."""

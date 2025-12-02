@@ -1,10 +1,10 @@
-"""AgentQMS – Quality Management Framework for AI Coding Agents.
+"""AgentQMS - Quality Management Framework for AI Coding Agents.  # noqa: N999
 
 This package provides:
-- `agent_tools` – Canonical implementation layer (validation, artifact workflows, documentation tools)
-- `toolkit` – Legacy compatibility shim (delegates to agent_tools)
-- `conventions` – Artifact types, schemas, templates, audit framework
-- `knowledge` – Protocols, references, and agent-facing instructions
+- `agent_tools` - Canonical implementation layer (validation, artifact workflows, documentation tools)
+- `toolkit` - Legacy compatibility shim (delegates to agent_tools)
+- `conventions` - Artifact types, schemas, templates, audit framework
+- `knowledge` - Protocols, references, and agent-facing instructions
 
 Usage:
     from AgentQMS.agent_tools.core.artifact_workflow import ArtifactWorkflow

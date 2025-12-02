@@ -70,11 +70,10 @@ class LinkValidator:
             target_path = (file_path.parent / url).resolve()
             if target_path.exists():
                 return True
-            else:
-                # Try with .md extension if not present
-                if not target_path.suffix and "." not in target_path.name:
-                    target_path = target_path.with_suffix(".md")
-                    return target_path.exists()
+            # Try with .md extension if not present
+            if not target_path.suffix and "." not in target_path.name:
+                target_path = target_path.with_suffix(".md")
+                return target_path.exists()
         except Exception:
             pass
 
@@ -143,9 +142,8 @@ class LinkValidator:
             for error in self.errors:
                 print(f"  - {error}")
             return False
-        else:
-            print("\n✅ All links are valid!")
-            return True
+        print("\n✅ All links are valid!")
+        return True
 
 
 def main() -> None:

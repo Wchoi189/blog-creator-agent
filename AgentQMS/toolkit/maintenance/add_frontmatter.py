@@ -107,19 +107,19 @@ class FrontmatterGenerator:
         # Check filename patterns
         if "assessment" in filename.lower():
             return "assessment"
-        elif "design" in filename.lower():
+        if "design" in filename.lower():
             return "design"
-        elif "implementation" in filename.lower() or "plan" in filename.lower():
+        if "implementation" in filename.lower() or "plan" in filename.lower():
             return "implementation_plan"
-        elif "research" in filename.lower():
+        if "research" in filename.lower():
             return "research"
-        elif "template" in filename.lower():
+        if "template" in filename.lower():
             return "template"
-        elif "bug" in filename.lower():
+        if "bug" in filename.lower():
             return "bug_report"
-        elif "session" in filename.lower():
+        if "session" in filename.lower():
             return "session_note"
-        elif "completion" in filename.lower() or "summary" in filename.lower():
+        if "completion" in filename.lower() or "summary" in filename.lower():
             return "completion_summary"
 
         # Default fallback
@@ -140,15 +140,15 @@ class FrontmatterGenerator:
         # Check filename patterns
         if "assessment" in filename.lower():
             return "evaluation"
-        elif "design" in filename.lower():
+        if "design" in filename.lower():
             return "architecture"
-        elif "implementation" in filename.lower() or "plan" in filename.lower():
+        if "implementation" in filename.lower() or "plan" in filename.lower():
             return "planning"
-        elif "research" in filename.lower():
+        if "research" in filename.lower():
             return "research"
-        elif "template" in filename.lower():
+        if "template" in filename.lower():
             return "reference"
-        elif "bug" in filename.lower():
+        if "bug" in filename.lower():
             return "troubleshooting"
 
         # Default fallback
@@ -214,12 +214,11 @@ class FrontmatterGenerator:
         """Determine status based on directory and filename"""
         if "completed" in directory.lower():
             return "completed"
-        elif "template" in directory.lower():
+        if "template" in directory.lower():
             return "template"
-        elif "index" in filename.lower():
+        if "index" in filename.lower():
             return "active"
-        else:
-            return "active"
+        return "active"
 
     def _generate_tags(
         self, file_type: str, category: str, directory: str
@@ -308,7 +307,6 @@ class FrontmatterGenerator:
 def main():
     """Main execution function"""
     import argparse
-    import subprocess
     from pathlib import Path
 
     parser = argparse.ArgumentParser(description="Add frontmatter to files missing it")
@@ -345,7 +343,7 @@ def main():
         # Find all files missing frontmatter in the directory
         directory = Path(args.directory)
         file_paths = []
-        
+
         for file_path in directory.rglob("*.md"):
             if file_path.is_file() and file_path.name not in ["INDEX.md", "README.md", "MASTER_INDEX.md"]:
                 # Check if file is missing frontmatter

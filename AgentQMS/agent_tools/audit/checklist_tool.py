@@ -7,7 +7,7 @@ canonical `AgentQMS.agent_tools.audit` CLI path.
 
 from __future__ import annotations
 
-from AgentQMS.toolkit.audit.checklist_tool import *  # noqa: F401,F403
+from AgentQMS.toolkit.audit.checklist_tool import *  # noqa: F403
 
 
 if __name__ == "__main__":  # pragma: no cover - thin CLI shim

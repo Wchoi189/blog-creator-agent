@@ -455,9 +455,8 @@ class CategoryTypeFixer:
                 print(f"   {fix.old_value} -> {fix.new_value}")
                 print(f"   Reason: {fix.reason}")
                 return True
-            else:
-                print(f"⚠️  No changes made to {fix.file_path}")
-                return False
+            print(f"⚠️  No changes made to {fix.file_path}")
+            return False
 
         except Exception as e:
             print(f"❌ Failed to fix {fix.file_path}: {e}")

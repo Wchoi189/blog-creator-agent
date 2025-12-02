@@ -20,7 +20,8 @@ Usage:
 
 from datetime import datetime, timedelta
 from pathlib import Path
-from typing import Any, Dict, Optional
+from typing import Any
+
 
 # Try to import plugin registry for extensibility
 try:
@@ -33,7 +34,7 @@ except ImportError:
 
 class ArtifactTemplates:
     """Templates for creating properly formatted artifacts.
-    
+
     Supports extension via plugin system. Additional artifact types can be
     registered in .agentqms/plugins/artifact_types/*.yaml
     """
@@ -700,10 +701,10 @@ High/Medium/Low (urgency for fixing, separate from severity above)
             pass
 
     def _convert_plugin_to_template(
-        self, name: str, plugin_def: Dict[str, Any]
-    ) -> Optional[Dict[str, Any]]:
+        self, name: str, plugin_def: dict[str, Any]
+    ) -> dict[str, Any] | None:
         """Convert a plugin artifact type definition to template format.
-        
+
         Plugin schema format:
             metadata:
               filename_pattern: "CR_{date}_{name}.md"
@@ -711,7 +712,7 @@ High/Medium/Low (urgency for fixing, separate from severity above)
               frontmatter: {...}
             template: "# Content..."
             template_variables: {...}
-        
+
         Template format:
             filename_pattern: "YYYY-MM-DD_HHMM_type_{name}.md"
             directory: "directory/"
@@ -720,17 +721,17 @@ High/Medium/Low (urgency for fixing, separate from severity above)
         """
         try:
             metadata = plugin_def.get("metadata", {})
-            
+
             # Required fields
             filename_pattern = metadata.get("filename_pattern")
             directory = metadata.get("directory")
             template_content = plugin_def.get("template")
-            
+
             if not all([filename_pattern, directory, template_content]):
                 return None
-            
+
             # Build template dict
-            template: Dict[str, Any] = {
+            template: dict[str, Any] = {
                 "filename_pattern": filename_pattern,
                 "directory": directory,
                 "frontmatter": metadata.get("frontmatter", {
@@ -742,13 +743,13 @@ High/Medium/Low (urgency for fixing, separate from severity above)
                 }),
                 "content_template": template_content,
             }
-            
+
             # Store template variables for use in create_content
             if "template_variables" in plugin_def:
                 template["_plugin_variables"] = plugin_def["template_variables"]
-            
+
             return template
-            
+
         except Exception:
             return None
 
@@ -795,27 +796,26 @@ High/Medium/Low (urgency for fixing, separate from severity above)
                 .replace("YYYY-MM-DD_HHMM", timestamp)
                 .replace("NNN", bug_id)
             )
-        else:
-            # For plugin-based templates, use .format() with available variables
-            # Build context with all possible filename variables
-            filename_context = {
-                "name": normalized_name,
-                "date": timestamp,  # Plugin {date} gets full timestamp
-            }
-            
-            filename = template["filename_pattern"]
-            
-            # Try to format with context (for plugin templates)
-            try:
-                filename = filename.format(**filename_context)
-            except KeyError:
-                # Fallback: format with just name
-                filename = filename.format(name=normalized_name)
-            
-            # Replace builtin pattern for legacy compatibility
-            filename = filename.replace("YYYY-MM-DD_HHMM", timestamp)
-            
-            return str(filename)
+        # For plugin-based templates, use .format() with available variables
+        # Build context with all possible filename variables
+        filename_context = {
+            "name": normalized_name,
+            "date": timestamp,  # Plugin {date} gets full timestamp
+        }
+
+        filename = template["filename_pattern"]
+
+        # Try to format with context (for plugin templates)
+        try:
+            filename = filename.format(**filename_context)
+        except KeyError:
+            # Fallback: format with just name
+            filename = filename.format(name=normalized_name)
+
+        # Replace builtin pattern for legacy compatibility
+        filename = filename.replace("YYYY-MM-DD_HHMM", timestamp)
+
+        return str(filename)
 
     def create_frontmatter(self, template_type: str, title: str, **kwargs) -> str:
         """Create frontmatter for an artifact."""

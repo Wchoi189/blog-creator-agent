@@ -21,9 +21,11 @@ from pathlib import Path
 
 from AgentQMS.agent_tools.utils.runtime import ensure_project_root_on_sys_path
 
+
 ensure_project_root_on_sys_path()
 
 from AgentQMS.agent_tools.compliance.validate_boundaries import BoundaryValidator
+
 
 # Try to import context bundle functions for validation
 try:
@@ -194,14 +196,14 @@ class ArtifactValidator:
         current_dir = str(relative_path.parent)
 
         # Validate timestamp format first
-        timestamp_match = re.match(r'^\d{4}-\d{2}-\d{2}_\d{4}_', filename)
+        timestamp_match = re.match(r"^\d{4}-\d{2}-\d{2}_\d{4}_", filename)
         if not timestamp_match:
             # File doesn't match timestamp-first format, can't validate directory
             return True, "Cannot validate directory (non-standard format)"
-        
+
         # Extract everything after timestamp
         after_timestamp = filename[timestamp_match.end():]
-        
+
         # Find which artifact type this file matches
         expected_dir = None
         for artifact_type, directory in self.valid_artifact_types.items():

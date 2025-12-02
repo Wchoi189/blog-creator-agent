@@ -16,6 +16,8 @@ from .db import (
     add_debug_note,
     add_experiment_run,
     add_plan_task,
+    create_debug_session,
+    get_connection,
     get_experiment_runs_export,
     get_plan_status,
     init_db,
@@ -50,7 +52,7 @@ def _create_artifact(artifact_type: str, name: str, title: str) -> str:
         "--title",
         title,
     ]
-    res = subprocess.run(cmd, capture_output=True, text=True)
+    res = subprocess.run(cmd, capture_output=True, text=True, check=False)
     if res.returncode != 0:
         raise RuntimeError(f"artifact creation failed: {res.stderr or res.stdout}")
     for line in (res.stdout or "").splitlines():
@@ -135,8 +137,6 @@ def cmd_refactor_done(ns: argparse.Namespace) -> None:
 
 # Debugging
 def cmd_debug_new(ns: argparse.Namespace) -> None:
-    from .db import create_debug_session
-
     key = ns.key or ns.title.lower().replace(" ", "-")
     id_ = create_debug_session(key, ns.title, ns.hypothesis or "", ns.scope or "")
     try:
@@ -185,8 +185,6 @@ def cmd_exp_summarize(ns: argparse.Namespace) -> None:
     if ns.style not in ("short", "delta"):
         raise SystemExit("--style must be short|delta")
     text = _generate_short_summary_text(ns.points or [])
-    from .db import get_connection
-
     conn = get_connection()
     row = conn.execute("SELECT id FROM experiments WHERE key=?", (ns.key,)).fetchone()
     if not row:
@@ -201,8 +199,6 @@ def cmd_exp_summarize(ns: argparse.Namespace) -> None:
 
 
 def cmd_exp_status(ns: argparse.Namespace) -> None:
-    from .db import get_connection
-
     conn = get_connection()
     row = conn.execute(
         "SELECT id,title,status FROM experiments WHERE key=?", (ns.key,)
@@ -240,7 +236,7 @@ def cmd_exp_export_runs(ns: argparse.Namespace) -> None:
     print(str(out))
 
 
-def build_parser() -> argparse.ArgumentParser:
+def build_parser() -> argparse.ArgumentParser:  # noqa: PLR0915
     p = argparse.ArgumentParser(
         prog="tracking", description="Development/Debug and Experiment tracking CLI"
     )

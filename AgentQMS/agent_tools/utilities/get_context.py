@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+
 """Lookup utility for documentation context bundles.
 
 This is the canonical implementation in agent_tools.
@@ -21,8 +22,9 @@ import sys
 from pathlib import Path
 from typing import Any
 
-from AgentQMS.agent_tools.utils.paths import get_docs_dir
+from AgentQMS.agent_tools.utils.paths import get_docs_dir, get_project_root
 from AgentQMS.agent_tools.utils.runtime import ensure_project_root_on_sys_path
+
 
 ensure_project_root_on_sys_path()
 
@@ -35,9 +37,9 @@ try:
     CONTEXT_BUNDLES_AVAILABLE = True
 except ImportError:
     # Graceful fallback if context_bundle module not available
-    get_context_bundle = None  # type: ignore
-    list_available_bundles = None  # type: ignore
-    print_context_bundle = None  # type: ignore
+    get_context_bundle = None  # type: ignore[assignment]
+    list_available_bundles = None  # type: ignore[assignment]
+    print_context_bundle = None  # type: ignore[assignment]
     CONTEXT_BUNDLES_AVAILABLE = False
 
 
@@ -49,7 +51,6 @@ def _get_doc_index_path() -> Path:
     if new_path.exists():
         return new_path
     # Fall back to deprecated location
-    from AgentQMS.agent_tools.utils.paths import get_project_root
     deprecated_path = get_project_root() / "docs_deprecated" / "ai_handbook" / "index.json"
     if deprecated_path.exists():
         return deprecated_path

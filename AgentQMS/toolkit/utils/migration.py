@@ -2,13 +2,15 @@
 
 from __future__ import annotations
 
-from datetime import datetime, timezone
-from pathlib import Path
-from typing import Dict, Any, Iterable, Tuple, Set
 import sys
+from collections.abc import Iterable
+from datetime import UTC, datetime
+from pathlib import Path
+from typing import Any
+
 
 MIGRATION_LOG = Path(".agentqms") / "migration.log"
-_EMITTED_MESSAGES: Set[str] = set()
+_EMITTED_MESSAGES: set[str] = set()
 
 
 def log_migration_event(message: str) -> None:
@@ -17,7 +19,7 @@ def log_migration_event(message: str) -> None:
         return
     _EMITTED_MESSAGES.add(message)
 
-    timestamp = datetime.now(timezone.utc).isoformat()
+    timestamp = datetime.now(UTC).isoformat()
     payload = f"[{timestamp}] {message}"
     print(f"[AgentQMS migration] {message}", file=sys.stderr)
     MIGRATION_LOG.parent.mkdir(parents=True, exist_ok=True)
@@ -27,7 +29,7 @@ def log_migration_event(message: str) -> None:
 
 def warn_if_legacy_directories(framework_root: Path) -> None:
     """Log a warning when deprecated directories are still present."""
-    replacements: Iterable[Tuple[str, str]] = (
+    replacements: Iterable[tuple[str, str]] = (
         ("agent", "agent_interface"),
         ("conventions", "project_conventions"),
     )
@@ -41,10 +43,10 @@ def warn_if_legacy_directories(framework_root: Path) -> None:
             )
 
 
-def warn_if_legacy_paths(config: Dict[str, Any]) -> None:
+def warn_if_legacy_paths(config: dict[str, Any]) -> None:
     """Log a warning when configuration points to deprecated directories."""
     paths = config.get("paths", {}) or {}
-    mappings: Iterable[Tuple[str, str, str]] = (
+    mappings: Iterable[tuple[str, str, str]] = (
         ("agent_interface", "agent", "AgentQMS/agent_interface"),
         ("project_conventions", "conventions", "AgentQMS/project_conventions"),
     )

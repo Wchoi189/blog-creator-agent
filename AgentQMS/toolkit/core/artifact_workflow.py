@@ -21,6 +21,7 @@ from typing import cast
 
 from AgentQMS.agent_tools.utils.runtime import ensure_project_root_on_sys_path
 
+
 ensure_project_root_on_sys_path()
 
 from AgentQMS.agent_tools.compliance.validate_artifacts import ArtifactValidator
@@ -126,11 +127,10 @@ class ArtifactWorkflow:
         if result["valid"]:
             print("✅ Artifact validation passed")
             return True
-        else:
-            print("❌ Artifact validation failed:")
-            for error in result["errors"]:
-                print(f"   • {error}")
-            return False
+        print("❌ Artifact validation failed:")
+        for error in result["errors"]:
+            print(f"   • {error}")
+        return False
 
     def validate_all(self) -> bool:
         """Validate all artifacts."""
@@ -145,9 +145,8 @@ class ArtifactWorkflow:
         if failed_count > 0:
             print(f"\n❌ {failed_count} artifacts failed validation")
             return False
-        else:
-            print("\n✅ All artifacts passed validation")
-            return True
+        print("\n✅ All artifacts passed validation")
+        return True
 
     def update_indexes(self) -> bool:
         """Update all artifact indexes."""
@@ -165,16 +164,15 @@ class ArtifactWorkflow:
                     ),
                     "--all",
                 ],
-                capture_output=True,
+                check=False, capture_output=True,
                 text=True,
             )
 
             if result.returncode == 0:
                 print("✅ Indexes updated successfully")
                 return True
-            else:
-                print(f"❌ Error updating indexes: {result.stderr}")
-                return False
+            print(f"❌ Error updating indexes: {result.stderr}")
+            return False
 
         except Exception as e:
             print(f"❌ Error running index updater: {e}")
@@ -302,8 +300,7 @@ class ArtifactWorkflow:
                 if choice.isdigit() and 1 <= int(choice) <= len(templates):
                     artifact_type = templates[int(choice) - 1]
                     break
-                else:
-                    print("❌ Invalid choice. Please try again.")
+                print("❌ Invalid choice. Please try again.")
             except KeyboardInterrupt:
                 print("\n❌ Cancelled by user")
                 return ""
@@ -393,51 +390,48 @@ def main():
             if args.interactive:
                 file_path = workflow.interactive_create()
                 return 0 if file_path else 1
-            else:
-                kwargs = {}
-                if args.description:
-                    kwargs["description"] = args.description
-                if args.tags:
-                    kwargs["tags"] = [tag.strip() for tag in args.tags.split(",")]
+            kwargs = {}
+            if args.description:
+                kwargs["description"] = args.description
+            if args.tags:
+                kwargs["tags"] = [tag.strip() for tag in args.tags.split(",")]
 
-                file_path = workflow.create_artifact(
-                    args.type, args.name, args.title, **kwargs
-                )
-                return 0 if file_path else 1
+            file_path = workflow.create_artifact(
+                args.type, args.name, args.title, **kwargs
+            )
+            return 0 if file_path else 1
 
-        elif args.command == "validate":
+        if args.command == "validate":
             if args.file:
                 success = workflow.validate_artifact(args.file)
                 return 0 if success else 1
-            elif args.all:
+            if args.all:
                 success = workflow.validate_all()
                 return 0 if success else 1
-            else:
-                print("❌ Please specify --file or --all")
-                return 1
+            print("❌ Please specify --file or --all")
+            return 1
 
-        elif args.command == "update-indexes":
+        if args.command == "update-indexes":
             success = workflow.update_indexes()
             return 0 if success else 1
 
-        elif args.command == "check-compliance":
+        if args.command == "check-compliance":
             compliance_report = workflow.check_compliance()
             return 0 if compliance_report["invalid_files"] == 0 else 1
 
-        elif args.command == "list-templates":
+        if args.command == "list-templates":
             templates = workflow.get_available_templates()
             print("Available artifact templates:")
             for template in templates:
                 print(f"  - {template}")
             return 0
 
-        elif args.command == "template-info":
+        if args.command == "template-info":
             workflow.show_template_info(args.type)
             return 0
 
-        else:
-            print(f"❌ Unknown command: {args.command}")
-            return 1
+        print(f"❌ Unknown command: {args.command}")
+        return 1
 
     except KeyboardInterrupt:
         print("\n❌ Cancelled by user")
@@ -448,4 +442,4 @@ def main():
 
 
 if __name__ == "__main__":
-    exit(main())
+    sys.exit(main())

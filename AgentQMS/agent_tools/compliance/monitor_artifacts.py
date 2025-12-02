@@ -20,11 +20,22 @@ import sys
 from datetime import datetime, timedelta
 from pathlib import Path
 
+from AgentQMS.agent_tools.compliance.validate_artifacts import ArtifactValidator
 from AgentQMS.agent_tools.utils.runtime import ensure_project_root_on_sys_path
+
 
 ensure_project_root_on_sys_path()
 
-from AgentQMS.agent_tools.compliance.validate_artifacts import ArtifactValidator
+# Compliance thresholds
+EXCELLENT_THRESHOLD = 95
+GOOD_THRESHOLD = 85
+FAIR_THRESHOLD = 70
+LOW_THRESHOLD = 80
+MAX_VIOLATIONS_DISPLAY = 5
+HIGH_VIOLATION_COUNT = 10
+NAMING_VIOLATION_ALERT = 5
+DIRECTORY_VIOLATION_ALERT = 3
+FRONTMATTER_VIOLATION_ALERT = 5
 
 
 class ArtifactMonitor:
@@ -32,9 +43,9 @@ class ArtifactMonitor:
 
     def __init__(self, artifacts_root: str | Path | None = None):
         if artifacts_root is None:
-            from AgentQMS.agent_tools.utils.paths import get_artifacts_dir
+            from AgentQMS.agent_tools.utils.paths import get_artifacts_dir  # noqa: PLC0415
             artifacts_root = get_artifacts_dir()
-        
+
         self.artifacts_root = Path(artifacts_root)
         self.validator = ArtifactValidator(self.artifacts_root)
         self.violations_history_file = Path("artifacts_violations_history.json")
@@ -69,7 +80,7 @@ class ArtifactMonitor:
                             {"file": result["file"], "error": error}
                         )
 
-        compliance_report = {
+        return {
             "timestamp": datetime.now().isoformat(),
             "total_files": total_files,
             "valid_files": valid_files,
@@ -78,8 +89,6 @@ class ArtifactMonitor:
             "violation_categories": violation_categories,
             "all_violations": [r for r in results if not r["valid"]],
         }
-
-        return compliance_report
 
     def generate_compliance_report(self, report: dict) -> str:
         """Generate a human-readable compliance report."""
@@ -95,11 +104,11 @@ class ArtifactMonitor:
         lines.append("")
 
         # Overall status
-        if report["compliance_rate"] >= 95:
+        if report["compliance_rate"] >= EXCELLENT_THRESHOLD:
             lines.append("🟢 EXCELLENT: Compliance rate is excellent")
-        elif report["compliance_rate"] >= 85:
+        elif report["compliance_rate"] >= GOOD_THRESHOLD:
             lines.append("🟡 GOOD: Compliance rate is good, minor improvements needed")
-        elif report["compliance_rate"] >= 70:
+        elif report["compliance_rate"] >= FAIR_THRESHOLD:
             lines.append("🟠 FAIR: Compliance rate is fair, improvements needed")
         else:
             lines.append(
@@ -122,8 +131,8 @@ class ArtifactMonitor:
                         lines.append(f"  • {violation['file']}")
                         lines.append(f"    {violation['error']}")
 
-                    if len(violations) > 5:
-                        lines.append(f"  ... and {len(violations) - 5} more")
+                    if len(violations) > MAX_VIOLATIONS_DISPLAY:
+                        lines.append(f"  ... and {len(violations) - MAX_VIOLATIONS_DISPLAY} more")
 
         return "\n".join(lines)
 
@@ -132,29 +141,29 @@ class ArtifactMonitor:
         alerts = []
 
         # Low compliance rate
-        if report["compliance_rate"] < 80:
+        if report["compliance_rate"] < LOW_THRESHOLD:
             alerts.append(
-                f"🔴 LOW COMPLIANCE: {report['compliance_rate']:.1f}% compliance rate is below 80% threshold"
+                f"🔴 LOW COMPLIANCE: {report['compliance_rate']:.1f}% compliance rate is below {LOW_THRESHOLD}% threshold"
             )
 
         # High number of violations
-        if report["invalid_files"] > 10:
+        if report["invalid_files"] > HIGH_VIOLATION_COUNT:
             alerts.append(
                 f"🔴 HIGH VIOLATION COUNT: {report['invalid_files']} files have violations"
             )
 
         # Specific violation types
-        if len(report["violation_categories"]["naming"]) > 5:
+        if len(report["violation_categories"]["naming"]) > NAMING_VIOLATION_ALERT:
             alerts.append(
                 f"🟡 NAMING VIOLATIONS: {len(report['violation_categories']['naming'])} files have naming issues"
             )
 
-        if len(report["violation_categories"]["directory"]) > 3:
+        if len(report["violation_categories"]["directory"]) > DIRECTORY_VIOLATION_ALERT:
             alerts.append(
                 f"🟡 DIRECTORY VIOLATIONS: {len(report['violation_categories']['directory'])} files are in wrong directories"
             )
 
-        if len(report["violation_categories"]["frontmatter"]) > 5:
+        if len(report["violation_categories"]["frontmatter"]) > FRONTMATTER_VIOLATION_ALERT:
             alerts.append(
                 f"🟡 FRONTMATTER VIOLATIONS: {len(report['violation_categories']['frontmatter'])} files have frontmatter issues"
             )
@@ -167,7 +176,7 @@ class ArtifactMonitor:
 
         if self.violations_history_file.exists():
             try:
-                with open(self.violations_history_file) as f:
+                with self.violations_history_file.open("r", encoding="utf-8") as f:
                     history = json.load(f)
             except Exception:
                 history = []
@@ -194,7 +203,7 @@ class ArtifactMonitor:
             if datetime.fromisoformat(entry["timestamp"]) > cutoff_date
         ]
 
-        with open(self.violations_history_file, "w") as f:
+        with self.violations_history_file.open("w", encoding="utf-8") as f:
             json.dump(history, f, indent=2)
 
     def generate_trend_analysis(self) -> str:
@@ -203,7 +212,7 @@ class ArtifactMonitor:
             return "No historical data available for trend analysis."
 
         try:
-            with open(self.violations_history_file) as f:
+            with self.violations_history_file.open() as f:
                 history = json.load(f)
         except Exception:
             return "Error reading historical data."
@@ -333,7 +342,7 @@ def main():
         success = monitor.run_compliance_check()
         return 0 if success else 1
 
-    elif args.alert:
+    if args.alert:
         report = monitor.check_organization_compliance()
         alerts = monitor.check_for_alerts(report)
 
@@ -342,16 +351,16 @@ def main():
             for alert in alerts:
                 print(f"  {alert}")
             return 1
-        else:
-            print("✅ No alerts - compliance is good")
-            return 0
+        print("✅ No alerts - compliance is good")
+        return 0
 
-    elif args.report:
+    if args.report:
         report = monitor.check_organization_compliance()
         report_text = monitor.generate_compliance_report(report)
 
         if args.output:
-            with open(args.output, "w") as f:
+            output_path = Path(args.output)
+            with output_path.open("w") as f:
                 f.write(report_text)
             print(f"Report written to {args.output}")
         else:
@@ -359,12 +368,13 @@ def main():
 
         return 0 if report["compliance_rate"] >= 80 else 1
 
-    elif args.fix_suggestions:
+    if args.fix_suggestions:
         report = monitor.check_organization_compliance()
         suggestions = monitor.generate_fix_suggestions(report)
 
         if args.output:
-            with open(args.output, "w") as f:
+            output_path = Path(args.output)
+            with output_path.open("w") as f:
                 f.write(suggestions)
             print(f"Fix suggestions written to {args.output}")
         else:
@@ -372,10 +382,9 @@ def main():
 
         return 0
 
-    else:
-        # Default: run compliance check
-        success = monitor.run_compliance_check()
-        return 0 if success else 1
+    # Default: run compliance check
+    success = monitor.run_compliance_check()
+    return 0 if success else 1
 
 
 if __name__ == "__main__":

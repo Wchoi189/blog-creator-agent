@@ -6,7 +6,6 @@ Provides AI agents with AST-based code analysis capabilities
 
 import os
 import sys
-from pathlib import Path
 
 from AgentQMS.toolkit.utils.runtime import ensure_project_root_on_sys_path
 

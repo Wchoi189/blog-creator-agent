@@ -203,11 +203,11 @@ class FileReorganizer:
         # Skip INDEX.md and registry files
         if filename == "INDEX.md":
             return None
-        
+
         # Skip common registry/index files that shouldn't be moved
         skip_patterns = [
             "MASTER_INDEX.md",
-            "REGISTRY.md", 
+            "REGISTRY.md",
             "README.md",
             "CHANGELOG.md",
             "_index.md",
@@ -233,14 +233,14 @@ class FileReorganizer:
                 if current_dir == expected_dir:
                     print(f"✅ {file_path.relative_to(self.artifacts_root)} is already in correct directory")
                     return None
-                    
+
                 return MoveOperation(
                     old_path=str(file_path),
                     new_path=str(self.artifacts_root / expected_dir / filename),
                     reason=f"Move to {expected_dir} based on content analysis",
                     confidence=confidence,
                 )
-            elif expected_dir and confidence < 0.85:
+            if expected_dir and confidence < 0.85:
                 print(f"⚠️  Skipping {file_path}: confidence too low ({confidence:.2f} < 0.85)")
             return None
 
@@ -259,7 +259,7 @@ class FileReorganizer:
 
     def _determine_directory_from_content(self, file_path: Path) -> tuple[str | None, float]:
         """Determine correct directory from file content analysis
-        
+
         Returns:
             tuple: (directory_name, confidence_score)
         """
@@ -285,7 +285,7 @@ class FileReorganizer:
         # Analyze content for type patterns - lower confidence
         content_lower = content.lower()
         match_count = {}
-        
+
         # Priority weights for different types (higher = more specific)
         type_priority = {
             "audit": 1.5,  # Highest - very specific
@@ -298,7 +298,7 @@ class FileReorganizer:
             "completion_summary": 1.0,
             "template": 0.7,  # Lowest priority for generic type
         }
-        
+
         for artifact_type, patterns in self.type_patterns.items():
             matches = 0
             for pattern in patterns:
@@ -308,12 +308,12 @@ class FileReorganizer:
                 # Apply priority weighting
                 weight = type_priority.get(artifact_type, 1.0)
                 match_count[artifact_type] = matches * weight
-        
+
         if match_count:
             # Get type with highest weighted score
             best_type = max(match_count, key=match_count.get)
             directory = self._get_directory_for_type(best_type)
-            
+
             # If current directory matches a valid type and has decent matches, prefer it
             if current_dir and current_dir in [v for v in self.directory_structure.keys()]:
                 current_type = None
@@ -324,14 +324,14 @@ class FileReorganizer:
                             best_type = atype
                             directory = current_dir
                             break
-            
+
             # Confidence based on match strength (capped at 0.85)
             base_confidence = min(0.5 + (match_count[best_type] * 0.05), 0.85)
-            
+
             # Reduce confidence if type is "template" (too generic)
             if best_type == "template":
                 base_confidence = min(base_confidence, 0.75)
-            
+
             if directory:
                 return directory, base_confidence
 
@@ -399,7 +399,7 @@ class FileReorganizer:
             # Check if target file already exists
             if new_path.exists():
                 print(f"❌ Target file already exists: {new_path}")
-                print(f"   Skipping move to avoid conflict")
+                print("   Skipping move to avoid conflict")
                 return False
 
             # Perform move
@@ -427,35 +427,34 @@ class FileReorganizer:
 
         if success:
             return operation
-        else:
-            return None
+        return None
 
     def validate_operations(self, operations: dict[str, MoveOperation]) -> tuple[bool, list[str]]:
         """Validate all operations before execution
-        
+
         Returns:
             tuple: (all_valid, list_of_issues)
         """
         issues = []
         target_paths = set()
-        
+
         for old_path, operation in operations.items():
             new_path = operation.new_path
-            
+
             # Check for duplicate target paths (two files trying to move to same location)
             if new_path in target_paths:
                 issues.append(f"Conflict: Multiple files trying to move to {new_path}")
             else:
                 target_paths.add(new_path)
-            
+
             # Check if target already exists
             if Path(new_path).exists():
                 issues.append(f"Target exists: {new_path}")
-            
+
             # Check if source file still exists
             if not Path(old_path).exists():
                 issues.append(f"Source missing: {old_path}")
-        
+
         return len(issues) == 0, issues
 
     def reorganize_directory(
@@ -471,7 +470,7 @@ class FileReorganizer:
                 if operation:
                     results[str(file_path)] = operation
                     files_processed += 1
-                    
+
                     # Check limit
                     if limit is not None and files_processed >= limit:
                         print(f"✋ Reached file limit ({limit}). Stopping.")
@@ -486,7 +485,7 @@ class FileReorganizer:
                     print(f"   • {issue}")
                 print("\nℹ️  No changes will be made. Use --dry-run to preview.")
                 return {}
-        
+
         return results
 
     def generate_reorganization_report(self, results: dict[str, MoveOperation]) -> str:

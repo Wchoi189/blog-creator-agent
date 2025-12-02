@@ -14,6 +14,7 @@ import argparse
 import sys
 from pathlib import Path
 
+
 # Valid values from validate_artifacts.py
 VALID_CATEGORIES = [
     "development",

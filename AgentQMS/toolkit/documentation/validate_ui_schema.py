@@ -120,8 +120,7 @@ def main() -> int:
 
     if validate_schema(schema_path):
         return 0
-    else:
-        return 1
+    return 1
 
 
 if __name__ == "__main__":

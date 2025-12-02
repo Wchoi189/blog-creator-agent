@@ -17,6 +17,7 @@ import sys
 from pathlib import Path
 from typing import Any
 
+
 try:
     import yaml  # noqa: F401
 except ImportError:
@@ -309,7 +310,7 @@ This package contains the AI collaboration and documentation management framewor
 
 - `agent_tools/` - Implementation layer (Python automation scripts)
 - `agent_interface/` - Interface layer (Makefile, wrappers, config)
-- `ai_handbook/` - AI agent documentation and protocols (includes \`04_agent_system/\`)
+- `ai_handbook/` - AI agent documentation and protocols (includes `04_agent_system/`)
 - `scripts/` - Adaptation scripts
 - `docs/` - Export documentation
 

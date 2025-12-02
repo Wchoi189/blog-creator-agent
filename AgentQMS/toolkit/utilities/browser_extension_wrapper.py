@@ -345,13 +345,12 @@ class BrowserExtensionWrapper:
                     "method": "puppeteer_fallback",
                     "original_operation": operation,
                 }
-            else:
-                return {
-                    "success": False,
-                    "error": result.get("error", "Unknown Puppeteer error"),
-                    "method": "puppeteer_fallback",
-                    "original_operation": operation,
-                }
+            return {
+                "success": False,
+                "error": result.get("error", "Unknown Puppeteer error"),
+                "method": "puppeteer_fallback",
+                "original_operation": operation,
+            }
 
         except Exception as e:
             return {
@@ -477,7 +476,7 @@ def reliable_browser_snapshot_pattern(
     url: str,
     browser_navigate_func: Callable,
     browser_snapshot_func: Callable,
-    browser_wait_for_func: Callable | None = None,  # noqa: ARG001
+    browser_wait_for_func: Callable | None = None,
     max_retries: int = 3,
 ) -> dict[str, Any]:
     """
@@ -502,7 +501,7 @@ def reliable_browser_snapshot_pattern(
 def reliable_browser_navigate_pattern(
     url: str,
     browser_navigate_func: Callable,
-    browser_wait_for_func: Callable | None = None,  # noqa: ARG001
+    browser_wait_for_func: Callable | None = None,
     wait_for_load: bool = True,
 ) -> dict[str, Any]:
     """
