@@ -22,8 +22,9 @@ def extract_markdown_links(file_path: Path) -> list[tuple[int, str, str]]:
             for match in re.finditer(r"\[([^\]]+)\]\(([^)]+)\)", line):
                 text, url = match.groups()
                 links.append((i, text, url))
-    except Exception:
-        pass
+    except Exception as e:
+        import logging
+        logging.warning(f"Error extracting links from {file_path}: {e}")
     return links
 
 
@@ -49,8 +50,9 @@ def extract_artifact_references(file_path: Path, artifacts_root: Path) -> list[t
                 for match in re.finditer(pattern, line, re.IGNORECASE):
                     ref = match.group(1) if match.lastindex else match.group(0)
                     references.append((i, ref))
-    except Exception:
-        pass
+    except Exception as e:
+        import logging
+        logging.warning(f"Error extracting artifact references from {file_path}: {e}")
     return references
 
 
@@ -147,7 +149,7 @@ def main():
                         help="Exclude AgentQMS directory from link checking (default: included)")
     args = parser.parse_args()
 
-    from AgentQMS.agent_tools.utils.paths import get_project_root
+    from AgentQMS.agent_tools.utils.paths import get_project_root  # noqa: PLC0415  # justified: conditional import for performance
 
     project_root = get_project_root()
     docs_dir = project_root / "docs"

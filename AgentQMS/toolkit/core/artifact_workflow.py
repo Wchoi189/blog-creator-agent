@@ -24,9 +24,9 @@ from AgentQMS.agent_tools.utils.runtime import ensure_project_root_on_sys_path
 
 ensure_project_root_on_sys_path()
 
-from AgentQMS.agent_tools.compliance.validate_artifacts import ArtifactValidator
-from AgentQMS.agent_tools.compliance.validate_boundaries import BoundaryValidator
-from AgentQMS.agent_tools.core.artifact_templates import (
+from AgentQMS.agent_tools.compliance.validate_artifacts import ArtifactValidator  # noqa: E402
+from AgentQMS.agent_tools.compliance.validate_boundaries import BoundaryValidator  # noqa: E402
+from AgentQMS.agent_tools.core.artifact_templates import (  # noqa: E402
     ArtifactTemplates,
     create_artifact,
 )
@@ -65,7 +65,7 @@ class ArtifactWorkflow:
         # Default to the configured artifacts directory if none is provided
         if artifacts_root is None:
             # Import lazily to avoid circular imports at module load time
-            from AgentQMS.agent_tools.utils.paths import get_artifacts_dir
+            from AgentQMS.agent_tools.utils.paths import get_artifacts_dir  # noqa: PLC0415  # justified: conditional import for performance
 
             root = get_artifacts_dir()
         else:

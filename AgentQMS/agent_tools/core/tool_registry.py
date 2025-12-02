@@ -343,7 +343,7 @@ def write_registry_files(output_dir: Path) -> None:
 
 def main() -> int:
     """Main entry point."""
-    import argparse
+    import argparse  # noqa: PLC0415  # justified: conditional import for performance
 
     parser = argparse.ArgumentParser(description="Generate AgentQMS tool registry")
     parser.add_argument(

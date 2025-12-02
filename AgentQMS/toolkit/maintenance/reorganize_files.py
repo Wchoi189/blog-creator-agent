@@ -226,8 +226,9 @@ class FileReorganizer:
 
         if not expected_dir:
             # No prefix found, try to determine from content
+            MIN_CONFIDENCE_THRESHOLD_FOR_MOVE = 0.85  # Only move if confidence is high enough
             expected_dir, confidence = self._determine_directory_from_content(file_path)
-            if expected_dir and confidence >= 0.85:  # Only move if confidence is high enough
+            if expected_dir and confidence >= MIN_CONFIDENCE_THRESHOLD_FOR_MOVE:  # Only move if confidence is high enough
                 # Check if already in correct directory
                 current_dir = str(file_path.parent.relative_to(self.artifacts_root))
                 if current_dir == expected_dir:
@@ -240,8 +241,8 @@ class FileReorganizer:
                     reason=f"Move to {expected_dir} based on content analysis",
                     confidence=confidence,
                 )
-            if expected_dir and confidence < 0.85:
-                print(f"⚠️  Skipping {file_path}: confidence too low ({confidence:.2f} < 0.85)")
+            if expected_dir and confidence < MIN_CONFIDENCE_THRESHOLD_FOR_MOVE:
+                print(f"⚠️  Skipping {file_path}: confidence too low ({confidence:.2f} < {MIN_CONFIDENCE_THRESHOLD_FOR_MOVE})")
             return None
 
         # Check current directory

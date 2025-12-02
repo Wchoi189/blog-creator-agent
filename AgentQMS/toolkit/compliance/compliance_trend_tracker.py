@@ -228,9 +228,12 @@ class ComplianceTrendTracker:
         """Determine trend strength based on slope and volatility"""
         abs_trend = abs(trend)
 
-        if abs_trend > 0.02:  # 2% per day
+        STRONG_TREND_THRESHOLD = 0.02  # 2% per day
+        MODERATE_TREND_THRESHOLD = 0.005  # 0.5% per day
+
+        if abs_trend > STRONG_TREND_THRESHOLD:  # 2% per day
             return "strong"
-        if abs_trend > 0.005:  # 0.5% per day
+        if abs_trend > MODERATE_TREND_THRESHOLD:  # 0.5% per day
             return "moderate"
         return "weak"
 
@@ -238,7 +241,8 @@ class ComplianceTrendTracker:
         self, data_points: list[TrendDataPoint]
     ) -> tuple[float, float, float]:
         """Generate compliance predictions using trend analysis"""
-        if len(data_points) < 3:
+        MIN_DATA_POINTS_FOR_PREDICTION = 3
+        if len(data_points) < MIN_DATA_POINTS_FOR_PREDICTION:
             return 0.0, 0.0, 0.0
 
         # Use linear trend for prediction
@@ -336,6 +340,13 @@ class ComplianceTrendTracker:
         """Generate recommendations based on trend analysis"""
         recommendations = []
 
+        # Define constants for recommendations
+        HIGH_VOLATILITY_THRESHOLD = 0.1  # 10% volatility
+        WEEKLY_PREDICTION_THRESHOLD = 0.9  # 90% threshold
+        MONTHLY_PREDICTION_THRESHOLD = 0.95  # 95% threshold
+        LOW_CONFIDENCE_THRESHOLD = 0.7  # 70% confidence
+        SIGNIFICANT_IMPROVEMENT_THRESHOLD = 0.05  # 5% improvement
+
         # Trend-based recommendations
         if analysis.trend_direction == "declining":
             recommendations.append(
@@ -351,24 +362,24 @@ class ComplianceTrendTracker:
             )
 
         # Volatility recommendations
-        if analysis.volatility > 0.1:  # 10% volatility
+        if analysis.volatility > HIGH_VOLATILITY_THRESHOLD:  # 10% volatility
             recommendations.append(
                 "📊 High volatility detected. Consider stabilizing processes and reducing variability."
             )
 
         # Prediction recommendations
-        if analysis.next_week_prediction < 0.9:
+        if analysis.next_week_prediction < WEEKLY_PREDICTION_THRESHOLD:
             recommendations.append(
                 "⚠️  Predicted compliance below 90% next week. Plan proactive fixes."
             )
 
-        if analysis.next_month_prediction < 0.95:
+        if analysis.next_month_prediction < MONTHLY_PREDICTION_THRESHOLD:
             recommendations.append(
                 "🎯 Predicted compliance below target next month. Implement improvement strategies."
             )
 
         # Confidence recommendations
-        if analysis.confidence_level < 0.7:
+        if analysis.confidence_level < LOW_CONFIDENCE_THRESHOLD:
             recommendations.append(
                 "📊 Low prediction confidence. Collect more data points for better forecasting."
             )
@@ -378,7 +389,7 @@ class ComplianceTrendTracker:
             recommendations.append(
                 "📉 Overall decline detected. Review and address root causes."
             )
-        elif analysis.total_improvement > 0.05:  # 5% improvement
+        elif analysis.total_improvement > SIGNIFICANT_IMPROVEMENT_THRESHOLD:  # 5% improvement
             recommendations.append(
                 "🎉 Significant improvement achieved. Document successful practices."
             )

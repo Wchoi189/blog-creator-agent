@@ -182,7 +182,8 @@ class FrontmatterGenerator:
         title = " ".join(word.capitalize() for word in title.split())
 
         # If title is empty or too short, try to read from file content
-        if len(title) < 3:
+        MIN_TITLE_LENGTH = 3
+        if len(title) < MIN_TITLE_LENGTH:
             title = self._extract_title_from_content(file_path)
 
         return title
@@ -200,13 +201,15 @@ class FrontmatterGenerator:
 
             # Look for any text that could be a title
             lines = content.split("\n")
+            MIN_LINE_LENGTH_FOR_TITLE = 5
             for line in lines[:10]:  # Check first 10 lines
                 line = line.strip()
-                if line and not line.startswith("#") and len(line) > 5:
+                if line and not line.startswith("#") and len(line) > MIN_LINE_LENGTH_FOR_TITLE:
                     return line[:50]  # Limit length
 
-        except Exception:
-            pass
+        except Exception as e:
+            import logging
+            logging.warning(f"Error extracting title from content: {e}")
 
         return "Untitled Document"
 
@@ -352,8 +355,9 @@ def main():
                         content = f.read(100)  # Read first 100 chars
                         if not content.startswith("---"):
                             file_paths.append(str(file_path))
-                except Exception:
-                    pass
+                except Exception as e:
+                    import logging
+                    logging.warning(f"Error processing file {file_path}: {e}")
     elif args.files:
         file_paths = args.files
     else:

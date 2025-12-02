@@ -215,7 +215,8 @@ class TemplateValidator:
 
 def main() -> None:
     """Main entry point."""
-    if len(sys.argv) < 3:
+    MIN_ARGS_REQUIRED = 3  # script name + 2 arguments
+    if len(sys.argv) < MIN_ARGS_REQUIRED:
         print("Usage: python validate_templates.py <templates_dir> <docs_dir>")
         sys.exit(1)
 

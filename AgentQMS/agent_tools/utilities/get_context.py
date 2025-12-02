@@ -16,20 +16,20 @@ Usage examples:
     PYTHONPATH=. python AgentQMS/agent_tools/utilities/get_context.py --list-bundles
 """
 
-import argparse
+import argparse  # noqa: E402
 import json
 import sys
 from pathlib import Path
 from typing import Any
 
-from AgentQMS.agent_tools.utils.paths import get_docs_dir, get_project_root
-from AgentQMS.agent_tools.utils.runtime import ensure_project_root_on_sys_path
+from AgentQMS.agent_tools.utils.paths import get_docs_dir, get_project_root  # noqa: E402
+from AgentQMS.agent_tools.utils.runtime import ensure_project_root_on_sys_path  # noqa: E402
 
 
 ensure_project_root_on_sys_path()
 
 try:
-    from AgentQMS.agent_tools.core.context_bundle import (
+    from AgentQMS.agent_tools.core.context_bundle import (  # noqa: E402
         get_context_bundle,
         list_available_bundles,
         print_context_bundle,

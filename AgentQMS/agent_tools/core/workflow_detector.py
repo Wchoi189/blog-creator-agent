@@ -202,7 +202,7 @@ def generate_workflow_triggers_yaml(output_path: Path) -> None:
 
 def main() -> int:
     """CLI entry point for testing."""
-    import argparse
+    import argparse  # noqa: PLC0415  # justified: conditional import for performance
 
     parser = argparse.ArgumentParser(description="Workflow detection and suggestion")
     parser.add_argument("task", nargs="?", help="Task description to analyze")

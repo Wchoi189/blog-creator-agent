@@ -83,9 +83,9 @@ def agent_ast_analysis():
 
         try:
             try:
-                from AgentQMS.scripts.ast_analysis_cli import main
+                from AgentQMS.scripts.ast_analysis_cli import main  # noqa: PLC0415
             except ImportError:
-                from scripts.ast_analysis_cli import main  # pragma: no cover - legacy fallback
+                from scripts.ast_analysis_cli import main  # noqa: PLC0415  # pragma: no cover - legacy fallback
 
             main()
         finally:

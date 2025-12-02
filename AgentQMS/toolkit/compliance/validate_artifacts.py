@@ -24,7 +24,7 @@ from AgentQMS.agent_tools.utils.runtime import ensure_project_root_on_sys_path
 
 ensure_project_root_on_sys_path()
 
-from AgentQMS.agent_tools.compliance.validate_boundaries import BoundaryValidator
+from AgentQMS.agent_tools.compliance.validate_boundaries import BoundaryValidator  # noqa: E402
 
 
 # Try to import context bundle functions for validation
@@ -64,7 +64,7 @@ class ArtifactValidator:
     def __init__(self, artifacts_root: str | Path | None = None):
         # Default to the configured artifacts directory if none is provided
         if artifacts_root is None:
-            from AgentQMS.agent_tools.utils.paths import get_artifacts_dir
+            from AgentQMS.agent_tools.utils.paths import get_artifacts_dir  # noqa: PLC0415  # justified: conditional import for performance
 
             root = get_artifacts_dir()
         else:

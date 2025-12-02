@@ -21,7 +21,7 @@ def agent_quality_check():
     ensure_project_root_on_sys_path()
 
     try:
-        from AgentQMS.toolkit.compliance.documentation_quality_monitor import main
+        from AgentQMS.toolkit.compliance.documentation_quality_monitor import main  # noqa: PLC0415
 
         main()
     except ImportError as e:

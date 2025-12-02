@@ -118,12 +118,13 @@ def get_plugin_registry(force: bool = False) -> PluginRegistry:
     # Auto-write snapshot on first load
     if not force:
         try:
-            from AgentQMS.agent_tools.utils.paths import get_project_root
+            from AgentQMS.agent_tools.utils.paths import get_project_root  # noqa: PLC0415  # justified: conditional import for performance
             state_dir = get_project_root() / ".agentqms" / "state"
             writer = SnapshotWriter(state_dir)
             writer.write(registry, loader.get_discovery_paths())
-        except Exception:
-            pass  # Snapshot writing is non-critical
+        except Exception as e:
+            import logging
+            logging.warning(f"Snapshot writing failed (non-critical): {e}")  # Snapshot writing is non-critical
 
     return registry
 

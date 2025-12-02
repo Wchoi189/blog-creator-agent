@@ -74,8 +74,9 @@ class LinkValidator:
             if not target_path.suffix and "." not in target_path.name:
                 target_path = target_path.with_suffix(".md")
                 return target_path.exists()
-        except Exception:
-            pass
+        except Exception as e:
+            import logging
+            logging.warning(f"Error checking if target path exists: {e}")
 
         return False
 
@@ -101,8 +102,9 @@ class LinkValidator:
             if not url.startswith(("http://", "https://")):
                 return True
 
+            HTTP_SUCCESS_THRESHOLD = 400  # Status codes below 400 are considered successful
             response = requests.head(url, timeout=10, allow_redirects=True)
-            return response.status_code < 400
+            return response.status_code < HTTP_SUCCESS_THRESHOLD
         except Exception:
             return False
 
@@ -148,7 +150,8 @@ class LinkValidator:
 
 def main() -> None:
     """Main entry point."""
-    if len(sys.argv) != 2:
+    EXPECTED_ARG_COUNT = 2  # script name + 1 argument
+    if len(sys.argv) != EXPECTED_ARG_COUNT:
         print("Usage: python validate_links.py <docs_root>")
         sys.exit(1)
 

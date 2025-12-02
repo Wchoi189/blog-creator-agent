@@ -84,7 +84,7 @@ def get_message(category: str, index: int | None = None) -> str:
 
     messages = MESSAGES[category]
     if index is None:
-        import random
+        import random  # noqa: PLC0415
 
         return random.choice(messages)
     return messages[index]
@@ -96,7 +96,7 @@ def get_random_message() -> str:
     Returns:
         Random message string
     """
-    import random
+    import random  # noqa: PLC0415
 
     return random.choice(ALL_MESSAGES)
 

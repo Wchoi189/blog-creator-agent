@@ -6,7 +6,7 @@ from AgentQMS.toolkit.utils.runtime import ensure_project_root_on_sys_path
 
 ensure_project_root_on_sys_path()
 
-from AgentQMS.toolkit.maintenance.regenerate_docs import main as regenerate_main
+from AgentQMS.toolkit.maintenance.regenerate_docs import main as regenerate_main  # noqa: E402
 
 
 def main() -> None:

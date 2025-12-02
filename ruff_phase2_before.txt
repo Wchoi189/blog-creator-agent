@@ -7,313 +7,178 @@ N999 Invalid module name: 'AgentQMS'
 N999 Invalid module name: 'AgentQMS'
 --> AgentQMS/agent_tools/audit/__init__.py:1:1
 
-PLR2004 Magic value used in comparison, consider replacing `2` with a constant variable
-   --> AgentQMS/agent_tools/compliance/monitor_artifacts.py:220:27
-    |
-218 |             return "Error reading historical data."
-219 |
-220 |         if len(history) < 2:
-    |                           ^
-221 |             return "Insufficient historical data for trend analysis."
-    |
-
-PLR2004 Magic value used in comparison, consider replacing `90` with a constant variable
-   --> AgentQMS/agent_tools/compliance/monitor_artifacts.py:310:59
-    |
-309 |         # Show trend analysis
-310 |         if len(alerts) > 0 or report["compliance_rate"] < 90:
-    |                                                           ^^
-311 |             print(f"\n{self.generate_trend_analysis()}")
-    |
-
-PLR2004 Magic value used in comparison, consider replacing `80` with a constant variable
-   --> AgentQMS/agent_tools/compliance/monitor_artifacts.py:314:45
-    |
-313 |         # Return success status
-314 |         return report["compliance_rate"] >= 80 and len(alerts) == 0
-    |                                             ^^
-    |
-
-PLR2004 Magic value used in comparison, consider replacing `80` with a constant variable
-   --> AgentQMS/agent_tools/compliance/monitor_artifacts.py:369:50
-    |
-367 |             print(report_text)
-368 |
-369 |         return 0 if report["compliance_rate"] >= 80 else 1
-    |                                                  ^^
-370 |
-371 |     if args.fix_suggestions:
-    |
-
 E402 Module level import not at top of file
-  --> AgentQMS/agent_tools/compliance/validate_artifacts.py:35:1
+  --> AgentQMS/agent_tools/compliance/validate_artifacts.py:36:1
    |
-33 | ensure_project_root_on_sys_path()
-34 |
-35 | from AgentQMS.agent_tools.compliance.validate_boundaries import BoundaryValidator
+34 | ensure_project_root_on_sys_path()
+35 |
+36 | from AgentQMS.agent_tools.compliance.validate_boundaries import BoundaryValidator
    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
    |
 
 PLR0912 Too many branches (13 > 12)
-   --> AgentQMS/agent_tools/compliance/validate_artifacts.py:146:9
+   --> AgentQMS/agent_tools/compliance/validate_artifacts.py:147:9
     |
-144 |     ]
-145 |
-146 |     def __init__(self, artifacts_root: str | Path | None = None):
+145 |     ]
+146 |
+147 |     def __init__(self, artifacts_root: str | Path | None = None):
     |         ^^^^^^^^
-147 |         # Default to the configured artifacts directory if none is provided
-148 |         if artifacts_root is None:
-    |
-
-PLC0415 `import` should be at the top-level of a file
-   --> AgentQMS/agent_tools/compliance/validate_artifacts.py:149:13
-    |
-147 |         # Default to the configured artifacts directory if none is provided
-148 |         if artifacts_root is None:
-149 |             from AgentQMS.agent_tools.utils.paths import get_artifacts_dir
-    |             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-150 |
-151 |             self.artifacts_root = get_artifacts_dir()
-    |
-
-PLC0415 `import` should be at the top-level of a file
-   --> AgentQMS/agent_tools/compliance/validate_artifacts.py:157:17
-    |
-155 |                 self.artifacts_root = artifacts_root_path
-156 |             else:
-157 |                 from AgentQMS.agent_tools.utils.paths import get_project_root
-    |                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-158 |                 self.artifacts_root = get_project_root() / artifacts_root_path
+148 |         # Default to the configured artifacts directory if none is provided
+149 |         if artifacts_root is None:
     |
 
 PLR0912 Too many branches (16 > 12)
-   --> AgentQMS/agent_tools/compliance/validate_artifacts.py:215:9
+   --> AgentQMS/agent_tools/compliance/validate_artifacts.py:213:9
     |
-213 |         self._load_plugin_extensions()
-214 |
-215 |     def _load_plugin_extensions(self) -> None:
+211 |         self._load_plugin_extensions()
+212 |
+213 |     def _load_plugin_extensions(self) -> None:
     |         ^^^^^^^^^^^^^^^^^^^^^^^
-216 |         """Load additional validation rules from plugin registry."""
-217 |         if not PLUGINS_AVAILABLE:
-    |
-
-S110 `try`-`except`-`pass` detected, consider logging the exception
-   --> AgentQMS/agent_tools/compliance/validate_artifacts.py:263:9
-    |
-261 |                       self.valid_types.append(name)
-262 |
-263 | /         except Exception:
-264 | |             # Plugin loading is non-critical - continue with builtins
-265 | |             pass
-    | |________________^
-266 |
-267 |       def _get_error_message(self, error_code: str, **kwargs) -> str:
+214 |         """Load additional validation rules from plugin registry."""
+215 |         if not PLUGINS_AVAILABLE:
     |
 
 B007 Loop control variable `name` not used within loop body
-   --> AgentQMS/agent_tools/compliance/validate_artifacts.py:271:13
+   --> AgentQMS/agent_tools/compliance/validate_artifacts.py:269:13
     |
-269 |         # Find template by code
-270 |         template = None
-271 |         for name, tmpl in self.error_templates.items():
+267 |         # Find template by code
+268 |         template = None
+269 |         for name, tmpl in self.error_templates.items():
     |             ^^^^
-272 |             if tmpl.get("code") == error_code:
-273 |                 template = tmpl
+270 |             if tmpl.get("code") == error_code:
+271 |                 template = tmpl
     |
 help: Rename unused `name` to `_name`
 
 PLR0911 Too many return statements (7 > 6)
-   --> AgentQMS/agent_tools/compliance/validate_artifacts.py:336:9
+   --> AgentQMS/agent_tools/compliance/validate_artifacts.py:334:9
     |
-334 |         return None
-335 |
-336 |     def validate_naming_convention(self, file_path: Path) -> tuple[bool, str]:
+332 |         return None
+333 |
+334 |     def validate_naming_convention(self, file_path: Path) -> tuple[bool, str]:
     |         ^^^^^^^^^^^^^^^^^^^^^^^^^^
-337 |         """Validate artifact naming convention."""
-338 |         filename = file_path.name
-    |
-
-PLC0415 `import` should be at the top-level of a file
-   --> AgentQMS/agent_tools/compliance/validate_artifacts.py:459:13
-    |
-457 |         try:
-458 |             # Get the path relative to project root
-459 |             from AgentQMS.agent_tools.utils.paths import get_project_root
-    |             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-460 |             project_root = get_project_root()
-461 |             relative_path = file_path.relative_to(project_root)
+335 |         """Validate artifact naming convention."""
+336 |         filename = file_path.name
     |
 
 PLR0912 Too many branches (14 > 12)
-   --> AgentQMS/agent_tools/compliance/validate_artifacts.py:486:9
+   --> AgentQMS/agent_tools/compliance/validate_artifacts.py:483:9
     |
-484 |         return True, "Valid artifacts directory location"
-485 |
-486 |     def validate_frontmatter(self, file_path: Path) -> tuple[bool, str]:
+481 |         return True, "Valid artifacts directory location"
+482 |
+483 |     def validate_frontmatter(self, file_path: Path) -> tuple[bool, str]:
     |         ^^^^^^^^^^^^^^^^^^^^
-487 |         """Validate frontmatter structure and content."""
-488 |         try:
-    |
-
-PTH123 `open()` should be replaced by `Path.open()`
-   --> AgentQMS/agent_tools/compliance/validate_artifacts.py:489:18
-    |
-487 |         """Validate frontmatter structure and content."""
-488 |         try:
-489 |             with open(file_path, encoding="utf-8") as f:
-    |                  ^^^^
-490 |                 content = f.read()
-491 |         except Exception as e:
+484 |         """Validate frontmatter structure and content."""
+485 |         try:
     |
 
 PLW2901 `for` loop variable `line` overwritten by assignment target
-   --> AgentQMS/agent_tools/compliance/validate_artifacts.py:508:13
+   --> AgentQMS/agent_tools/compliance/validate_artifacts.py:505:13
     |
-506 |         frontmatter = {}
-507 |         for line in frontmatter_content.split("\n"):
-508 |             line = line.strip()
+503 |         frontmatter = {}
+504 |         for line in frontmatter_content.split("\n"):
+505 |             line = line.strip()
     |             ^^^^
-509 |             if ":" in line and not line.startswith("#"):
-510 |                 key, value = line.split(":", 1)
-    |
-
-PTH123 `open()` should be replaced by `Path.open()`
-   --> AgentQMS/agent_tools/compliance/validate_artifacts.py:565:18
-    |
-563 |         """Extract frontmatter from a file."""
-564 |         try:
-565 |             with open(file_path, encoding="utf-8") as f:
-    |                  ^^^^
-566 |                 content = f.read()
+506 |             if ":" in line and not line.startswith("#"):
+507 |                 key, value = line.split(":", 1)
     |
 
 PLW2901 `for` loop variable `line` overwritten by assignment target
-   --> AgentQMS/agent_tools/compliance/validate_artifacts.py:578:17
+   --> AgentQMS/agent_tools/compliance/validate_artifacts.py:575:17
     |
-576 |             frontmatter = {}
-577 |             for line in frontmatter_content.split("\n"):
-578 |                 line = line.strip()
+573 |             frontmatter = {}
+574 |             for line in frontmatter_content.split("\n"):
+575 |                 line = line.strip()
     |                 ^^^^
-579 |                 if ":" in line and not line.startswith("#"):
-580 |                     key, value = line.split(":", 1)
+576 |                 if ":" in line and not line.startswith("#"):
+577 |                     key, value = line.split(":", 1)
     |
 
 PLR0912 Too many branches (18 > 12)
-   --> AgentQMS/agent_tools/compliance/validate_artifacts.py:723:9
+   --> AgentQMS/agent_tools/compliance/validate_artifacts.py:720:9
     |
-721 |         return results
-722 |
-723 |     def validate_bundles(self) -> list[dict]:
+718 |         return results
+719 |
+720 |     def validate_bundles(self) -> list[dict]:
     |         ^^^^^^^^^^^^^^^^
-724 |         """
-725 |         Validate context bundle definitions.
-    |
-
-PLC0415 `import` should be at the top-level of a file
-   --> AgentQMS/agent_tools/compliance/validate_artifacts.py:742:13
-    |
-740 |         try:
-741 |             # Get project root using utility function
-742 |             from AgentQMS.agent_tools.utils.paths import get_project_root
-    |             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-743 |             project_root = get_project_root()
+721 |         """
+722 |         Validate context bundle definitions.
     |
 
 B007 Loop control variable `tier_key` not used within loop body
-   --> AgentQMS/agent_tools/compliance/validate_artifacts.py:776:25
+   --> AgentQMS/agent_tools/compliance/validate_artifacts.py:772:25
     |
-774 |                     tiers = bundle_def.get("tiers", {})
-775 |
-776 |                     for tier_key, tier in tiers.items():
+770 |                     tiers = bundle_def.get("tiers", {})
+771 |
+772 |                     for tier_key, tier in tiers.items():
     |                         ^^^^^^^^
-777 |                         tier_files = tier.get("files", [])
-778 |                         for file_spec in tier_files:
+773 |                         tier_files = tier.get("files", [])
+774 |                         for file_spec in tier_files:
     |
 help: Rename unused `tier_key` to `_tier_key`
 
 PLR0912 Too many branches (18 > 12)
-   --> AgentQMS/agent_tools/compliance/validate_artifacts.py:837:9
+   --> AgentQMS/agent_tools/compliance/validate_artifacts.py:833:9
     |
-835 |         return results
-836 |
-837 |     def generate_report(self, results: list[dict]) -> str:
+831 |         return results
+832 |
+833 |     def generate_report(self, results: list[dict]) -> str:
     |         ^^^^^^^^^^^^^^^
-838 |         """Generate a validation report with violation summary table."""
-839 |         total_files = len(results)
+834 |         """Generate a validation report with violation summary table."""
+835 |         total_files = len(results)
     |
 
 PLR0915 Too many statements (54 > 50)
-   --> AgentQMS/agent_tools/compliance/validate_artifacts.py:837:9
+   --> AgentQMS/agent_tools/compliance/validate_artifacts.py:833:9
     |
-835 |         return results
-836 |
-837 |     def generate_report(self, results: list[dict]) -> str:
+831 |         return results
+832 |
+833 |     def generate_report(self, results: list[dict]) -> str:
     |         ^^^^^^^^^^^^^^^
-838 |         """Generate a validation report with violation summary table."""
-839 |         total_files = len(results)
+834 |         """Generate a validation report with violation summary table."""
+835 |         total_files = len(results)
     |
 
 PLR0912 Too many branches (20 > 12)
-   --> AgentQMS/agent_tools/compliance/validate_artifacts.py:942:5
+   --> AgentQMS/agent_tools/compliance/validate_artifacts.py:938:5
     |
-942 | def main():
+938 | def main():
     |     ^^^^
-943 |     """Main entry point for the validation script."""
-944 |     parser = argparse.ArgumentParser(
+939 |     """Main entry point for the validation script."""
+940 |     parser = argparse.ArgumentParser(
     |
 
-PLR0915 Too many statements (62 > 50)
-   --> AgentQMS/agent_tools/compliance/validate_artifacts.py:942:5
+PLR0915 Too many statements (61 > 50)
+   --> AgentQMS/agent_tools/compliance/validate_artifacts.py:938:5
     |
-942 | def main():
+938 | def main():
     |     ^^^^
-943 |     """Main entry point for the validation script."""
-944 |     parser = argparse.ArgumentParser(
-    |
-
-PLC0415 `import` should be at the top-level of a file
-   --> AgentQMS/agent_tools/compliance/validate_artifacts.py:988:9
-    |
-986 |     elif args.staged:
-987 |         # Validate only staged files under the artifacts root (git required)
-988 |         import subprocess
-    |         ^^^^^^^^^^^^^^^^^
-989 |
-990 |         rel_artifacts_root = Path(args.artifacts_root)
+939 |     """Main entry point for the validation script."""
+940 |     parser = argparse.ArgumentParser(
     |
 
 S607 Starting a process with a partial executable path
-   --> AgentQMS/agent_tools/compliance/validate_artifacts.py:995:17
+   --> AgentQMS/agent_tools/compliance/validate_artifacts.py:990:17
     |
-993 |         try:
-994 |             completed = subprocess.run(
-995 |                 ["git", "diff", "--cached", "--name-only"],
+988 |         try:
+989 |             completed = subprocess.run(
+990 |                 ["git", "diff", "--cached", "--name-only"],
     |                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-996 |                 check=False,
-997 |                 capture_output=True,
+991 |                 check=False,
+992 |                 capture_output=True,
     |
 
 SIM201 Use `path.suffix.lower() != ".md"` instead of `not path.suffix.lower() == ".md"`
-    --> AgentQMS/agent_tools/compliance/validate_artifacts.py:1002:20
-     |
-1000 |             for line in (completed.stdout or "").splitlines():
-1001 |                 path = Path(line.strip())
-1002 |                 if not path.suffix.lower() == ".md":
-     |                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-1003 |                     continue
-1004 |                 # Only validate files within the artifacts tree
-     |
+   --> AgentQMS/agent_tools/compliance/validate_artifacts.py:997:20
+    |
+995 |             for line in (completed.stdout or "").splitlines():
+996 |                 path = Path(line.strip())
+997 |                 if not path.suffix.lower() == ".md":
+    |                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+998 |                     continue
+999 |                 # Only validate files within the artifacts tree
+    |
 help: Replace with `!=` operator
-
-PTH123 `open()` should be replaced by `Path.open()`
-    --> AgentQMS/agent_tools/compliance/validate_artifacts.py:1034:14
-     |
-1033 |     if args.output:
-1034 |         with open(args.output, "w") as f:
-     |              ^^^^
-1035 |             f.write(output)
-1036 |         print(f"Report written to {args.output}")
-     |
 
 E402 Module level import not at top of file
   --> AgentQMS/agent_tools/core/artifact_workflow.py:27:1
@@ -383,44 +248,41 @@ S112 `try`-`except`-`continue` detected, consider logging the exception
 302 |               # Artifact not in any bundle - this is expected for most artifacts
     |
 
-S110 `try`-`except`-`pass` detected, consider logging the exception
-   --> AgentQMS/agent_tools/core/artifact_workflow.py:306:9
+PLC0415 `import` should be at the top-level of a file
+   --> AgentQMS/agent_tools/core/artifact_workflow.py:309:13
     |
-304 |               # For now, we'll keep this silent to avoid noise
-305 |
-306 | /         except Exception:
-307 | |             # Silently fail - bundle updates are not critical
-308 | |             pass
-    | |________________^
-309 |
-310 |       def get_available_templates(self) -> list[str]:
+307 |             # Silently fail - bundle updates are not critical, but log for debugging
+308 |             # For now, we'll print to stderr for visibility without interfering with normal output
+309 |             import sys
+    |             ^^^^^^^^^^
+310 |             print(f"DEBUG: Bundle update check failed for {artifact_path}: {e}", file=sys.stderr)
     |
 
 PLR0911 Too many return statements (13 > 6)
-   --> AgentQMS/agent_tools/core/artifact_workflow.py:383:5
+   --> AgentQMS/agent_tools/core/artifact_workflow.py:385:5
     |
-383 | def main():
+385 | def main():
     |     ^^^^
-384 |     """Main entry point for the artifact workflow."""
-385 |     parser = argparse.ArgumentParser(description="AI Agent Artifact Workflow")
+386 |     """Main entry point for the artifact workflow."""
+387 |     parser = argparse.ArgumentParser(description="AI Agent Artifact Workflow")
     |
 
 PLR0912 Too many branches (15 > 12)
-   --> AgentQMS/agent_tools/core/artifact_workflow.py:383:5
+   --> AgentQMS/agent_tools/core/artifact_workflow.py:385:5
     |
-383 | def main():
+385 | def main():
     |     ^^^^
-384 |     """Main entry point for the artifact workflow."""
-385 |     parser = argparse.ArgumentParser(description="AI Agent Artifact Workflow")
+386 |     """Main entry point for the artifact workflow."""
+387 |     parser = argparse.ArgumentParser(description="AI Agent Artifact Workflow")
     |
 
 PLR0915 Too many statements (54 > 50)
-   --> AgentQMS/agent_tools/core/artifact_workflow.py:383:5
+   --> AgentQMS/agent_tools/core/artifact_workflow.py:385:5
     |
-383 | def main():
+385 | def main():
     |     ^^^^
-384 |     """Main entry point for the artifact workflow."""
-385 |     parser = argparse.ArgumentParser(description="AI Agent Artifact Workflow")
+386 |     """Main entry point for the artifact workflow."""
+387 |     parser = argparse.ArgumentParser(description="AI Agent Artifact Workflow")
     |
 
 S110 `try`-`except`-`pass` detected, consider logging the exception
@@ -774,52 +636,52 @@ B007 Loop control variable `i` not used within loop body
 208 |         for i, line in enumerate(lines):
     |             ^
 209 |             # Match pattern: target: ## Description
-210 |             if "##" in line and ":" in line:
+210 |             EXPECTED_PARTS_COUNT = 2
     |
 help: Rename unused `i` to `_i`
 
-PLR2004 Magic value used in comparison, consider replacing `2` with a constant variable
-   --> AgentQMS/agent_tools/core/tool_registry.py:212:34
+N806 Variable `EXPECTED_PARTS_COUNT` in function should be lowercase
+   --> AgentQMS/agent_tools/core/tool_registry.py:210:13
     |
-210 |             if "##" in line and ":" in line:
-211 |                 parts = line.split("##", 1)
-212 |                 if len(parts) == 2:
-    |                                  ^
-213 |                     target_part = parts[0].strip()
-214 |                     desc = parts[1].strip()
+208 |         for i, line in enumerate(lines):
+209 |             # Match pattern: target: ## Description
+210 |             EXPECTED_PARTS_COUNT = 2
+    |             ^^^^^^^^^^^^^^^^^^^^
+211 |             if "##" in line and ":" in line:
+212 |                 parts = line.split("##", 1)
     |
 
 PIE810 Call `startswith` once with a `tuple`
-   --> AgentQMS/agent_tools/core/tool_registry.py:230:30
+   --> AgentQMS/agent_tools/core/tool_registry.py:231:30
     |
-228 |                         if target_name.startswith("create-"):
-229 |                             category = "artifact_creation"
-230 |                         elif target_name.startswith("validate") or target_name.startswith("compliance"):
+229 |                         if target_name.startswith("create-"):
+230 |                             category = "artifact_creation"
+231 |                         elif target_name.startswith("validate") or target_name.startswith("compliance"):
     |                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-231 |                             category = "validation"
-232 |                         elif target_name.startswith("context"):
+232 |                             category = "validation"
+233 |                         elif target_name.startswith("context"):
     |
 help: Merge into a single `startswith` call
 
 RET504 Unnecessary assignment to `registry` before `return` statement
-   --> AgentQMS/agent_tools/core/tool_registry.py:282:12
+   --> AgentQMS/agent_tools/core/tool_registry.py:283:12
     |
-280 |     }
-281 |
-282 |     return registry
+281 |     }
+282 |
+283 |     return registry
     |            ^^^^^^^^
     |
 help: Remove unnecessary assignment
 
 PLC0415 `import` should be at the top-level of a file
-   --> AgentQMS/agent_tools/core/tool_registry.py:345:5
+   --> AgentQMS/agent_tools/core/tool_registry.py:346:5
     |
-343 | def main() -> int:
-344 |     """Main entry point."""
-345 |     import argparse
+344 | def main() -> int:
+345 |     """Main entry point."""
+346 |     import argparse
     |     ^^^^^^^^^^^^^^^
-346 |
-347 |     parser = argparse.ArgumentParser(description="Generate AgentQMS tool registry")
+347 |
+348 |     parser = argparse.ArgumentParser(description="Generate AgentQMS tool registry")
     |
 
 PLC0415 `import` should be at the top-level of a file
@@ -890,57 +752,59 @@ PLC0415 `import` should be at the top-level of a file
 152 |     project_root = get_project_root()
     |
 
-PLR2004 Magic value used in comparison, consider replacing `3` with a constant variable
-  --> AgentQMS/agent_tools/documentation/reindex_artifacts.py:19:25
+N806 Variable `MIN_PARTS_FOR_FRONTMATTER` in function should be lowercase
+  --> AgentQMS/agent_tools/documentation/reindex_artifacts.py:18:9
    |
-18 |         parts = content.split("---", 2)
-19 |         if len(parts) < 3:
-   |                         ^
-20 |             return {}
+16 |             return {}
+17 |
+18 |         MIN_PARTS_FOR_FRONTMATTER = 3
+   |         ^^^^^^^^^^^^^^^^^^^^^^^^^
+19 |         parts = content.split("---", 2)  # Split by "---" at most 2 times to get [before, frontmatter, after]
+20 |         if len(parts) < MIN_PARTS_FOR_FRONTMATTER:
    |
 
 PLR0915 Too many statements (56 > 50)
-  --> AgentQMS/agent_tools/documentation/reindex_artifacts.py:31:5
+  --> AgentQMS/agent_tools/documentation/reindex_artifacts.py:32:5
    |
-29 |         return {}
-30 |
-31 | def generate_index_content(directory: Path, artifact_type: str) -> str:
+30 |         return {}
+31 |
+32 | def generate_index_content(directory: Path, artifact_type: str) -> str:
    |     ^^^^^^^^^^^^^^^^^^^^^^
-32 |     """Generate INDEX.md content for a directory."""
-33 |     files = sorted([f for f in directory.glob("*.md") if f.name != "INDEX.md"])
+33 |     """Generate INDEX.md content for a directory."""
+34 |     files = sorted([f for f in directory.glob("*.md") if f.name != "INDEX.md"])
    |
 
-PLR2004 Magic value used in comparison, consider replacing `3` with a constant variable
-  --> AgentQMS/agent_tools/documentation/reindex_artifacts.py:51:30
+F821 Undefined name `MIN_PARTS_FOR_FRONTMATTER`
+  --> AgentQMS/agent_tools/documentation/reindex_artifacts.py:52:30
    |
-49 |             content = f.read_text(encoding="utf-8")
-50 |             lines = content.split("---", 2)
-51 |             if len(lines) >= 3:
-   |                              ^
-52 |                 body = lines[2].strip().split("\n")
-53 |                 preview = next((l.strip("# ").strip() for l in body if l.strip() and not l.startswith("#")), "")[:100]
+50 |             content = f.read_text(encoding="utf-8")
+51 |             lines = content.split("---", 2)
+52 |             if len(lines) >= MIN_PARTS_FOR_FRONTMATTER:
+   |                              ^^^^^^^^^^^^^^^^^^^^^^^^^
+53 |                 body = lines[2].strip().split("\n")
+54 |                 preview = next((l.strip("# ").strip() for l in body if l.strip() and not l.startswith("#")), "")[:100]
    |
 
 E741 Ambiguous variable name: `l`
-  --> AgentQMS/agent_tools/documentation/reindex_artifacts.py:53:59
+  --> AgentQMS/agent_tools/documentation/reindex_artifacts.py:54:59
    |
-51 |             if len(lines) >= 3:
-52 |                 body = lines[2].strip().split("\n")
-53 |                 preview = next((l.strip("# ").strip() for l in body if l.strip() and not l.startswith("#")), "")[:100]
+52 |             if len(lines) >= MIN_PARTS_FOR_FRONTMATTER:
+53 |                 body = lines[2].strip().split("\n")
+54 |                 preview = next((l.strip("# ").strip() for l in body if l.strip() and not l.startswith("#")), "")[:100]
    |                                                           ^
-54 |             else:
-55 |                 preview = ""
+55 |             else:
+56 |                 preview = ""
    |
 
 PLC0415 `import` should be at the top-level of a file
-   --> AgentQMS/agent_tools/documentation/reindex_artifacts.py:116:5
+   --> AgentQMS/agent_tools/documentation/reindex_artifacts.py:117:5
     |
-114 | def main():
-115 |     """Main entry point."""
-116 |     from AgentQMS.agent_tools.utils.paths import get_artifacts_dir
+115 | def main():
+116 |     """Main entry point."""
+117 |     from AgentQMS.agent_tools.utils.paths import get_artifacts_dir
     |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-117 |
-118 |     artifacts_root = get_artifacts_dir()
+118 |
+119 |     artifacts_root = get_artifacts_dir()
     |
 
 SIM117 Use a single `with` statement with multiple contexts instead of nested `with` statements
@@ -955,104 +819,176 @@ SIM117 Use a single `with` statement with multiple contexts instead of nested `w
    |
 help: Combine `with` statements
 
-PLR2004 Magic value used in comparison, consider replacing `2` with a constant variable
-  --> AgentQMS/agent_tools/documentation/test_check_links.py:35:41
+N806 Variable `EXPECTED_CALL_COUNT` in function should be lowercase
+  --> AgentQMS/agent_tools/documentation/test_check_links.py:35:9
    |
 34 |         # Assert check_links_in_directory called twice (docs + AgentQMS)
-35 |         assert mock_check.call_count == 2
-   |                                         ^
-36 |
-37 |         # Verify both directories were checked
+35 |         EXPECTED_CALL_COUNT = 2
+   |         ^^^^^^^^^^^^^^^^^^^
+36 |         assert mock_check.call_count == EXPECTED_CALL_COUNT
    |
 
 SIM117 Use a single `with` statement with multiple contexts instead of nested `with` statements
-  --> AgentQMS/agent_tools/documentation/test_check_links.py:55:9
+  --> AgentQMS/agent_tools/documentation/test_check_links.py:56:9
    |
-54 |           # Mock Path.exists() to return True for both directories
-55 | /         with patch.object(Path, "exists", return_value=True):
-56 | |             # Mock sys.argv to simulate --no-agentqms flag
-57 | |             with patch.object(sys, "argv", ["check_links.py", "--no-agentqms"]):
+55 |           # Mock Path.exists() to return True for both directories
+56 | /         with patch.object(Path, "exists", return_value=True):
+57 | |             # Mock sys.argv to simulate --no-agentqms flag
+58 | |             with patch.object(sys, "argv", ["check_links.py", "--no-agentqms"]):
    | |________________________________________________________________________________^
-58 |                   result = main()
+59 |                   result = main()
    |
 help: Combine `with` statements
 
 SIM117 Use a single `with` statement with multiple contexts instead of nested `with` statements
-  --> AgentQMS/agent_tools/documentation/test_check_links.py:79:9
+  --> AgentQMS/agent_tools/documentation/test_check_links.py:80:9
    |
-78 |           # Mock Path.exists() to return True for both directories
-79 | /         with patch.object(Path, "exists", return_value=True):
-80 | |             # Mock sys.argv to simulate --json flag only
-81 | |             with patch.object(sys, "argv", ["check_links.py", "--json"]):
+79 |           # Mock Path.exists() to return True for both directories
+80 | /         with patch.object(Path, "exists", return_value=True):
+81 | |             # Mock sys.argv to simulate --json flag only
+82 | |             with patch.object(sys, "argv", ["check_links.py", "--json"]):
    | |_________________________________________________________________________^
-82 |                   with patch("builtins.print") as mock_print:
-83 |                       result = main()
+83 |                   with patch("builtins.print") as mock_print:
+84 |                       result = main()
    |
 help: Combine `with` statements
 
-PLR2004 Magic value used in comparison, consider replacing `2` with a constant variable
-  --> AgentQMS/agent_tools/documentation/test_check_links.py:86:41
+F821 Undefined name `EXPECTED_CALL_COUNT`
+  --> AgentQMS/agent_tools/documentation/test_check_links.py:87:41
    |
-85 |         # Should check both directories
-86 |         assert mock_check.call_count == 2
-   |                                         ^
-87 |
-88 |         # Verify JSON output was printed
+86 |         # Should check both directories
+87 |         assert mock_check.call_count == EXPECTED_CALL_COUNT
+   |                                         ^^^^^^^^^^^^^^^^^^^
+88 |
+89 |         # Verify JSON output was printed
    |
 
 SIM117 Use a single `with` statement with multiple contexts instead of nested `with` statements
-   --> AgentQMS/agent_tools/documentation/test_check_links.py:106:9
+   --> AgentQMS/agent_tools/documentation/test_check_links.py:107:9
     |
-105 |           # Mock Path.exists() to return True for both directories
-106 | /         with patch.object(Path, "exists", return_value=True):
-107 | |             # Mock sys.argv to simulate both flags
-108 | |             with patch.object(sys, "argv", ["check_links.py", "--json", "--no-agentqms"]):
+106 |           # Mock Path.exists() to return True for both directories
+107 | /         with patch.object(Path, "exists", return_value=True):
+108 | |             # Mock sys.argv to simulate both flags
+109 | |             with patch.object(sys, "argv", ["check_links.py", "--json", "--no-agentqms"]):
     | |__________________________________________________________________________________________^
-109 |                   with patch("builtins.print") as mock_print:
-110 |                       result = main()
+110 |                   with patch("builtins.print") as mock_print:
+111 |                       result = main()
     |
 help: Combine `with` statements
 
 SIM117 Use a single `with` statement with multiple contexts instead of nested `with` statements
-   --> AgentQMS/agent_tools/documentation/test_check_links.py:133:9
+   --> AgentQMS/agent_tools/documentation/test_check_links.py:134:9
     |
-132 |           # Mock Path.exists() to return True for both directories
-133 | /         with patch.object(Path, "exists", return_value=True):
-134 | |             # Mock sys.argv
-135 | |             with patch.object(sys, "argv", ["check_links.py", "--artifacts-only"]):
+133 |           # Mock Path.exists() to return True for both directories
+134 | /         with patch.object(Path, "exists", return_value=True):
+135 | |             # Mock sys.argv
+136 | |             with patch.object(sys, "argv", ["check_links.py", "--artifacts-only"]):
     | |___________________________________________________________________________________^
-136 |                   result = main()
+137 |                   result = main()
     |
 help: Combine `with` statements
 
-PLR2004 Magic value used in comparison, consider replacing `2` with a constant variable
-   --> AgentQMS/agent_tools/documentation/test_check_links.py:139:41
+F821 Undefined name `EXPECTED_CALL_COUNT`
+   --> AgentQMS/agent_tools/documentation/test_check_links.py:140:41
     |
-138 |         # Should check both directories
-139 |         assert mock_check.call_count == 2
-    |                                         ^
-140 |
-141 |         # Verify artifacts_only flag was passed
+139 |         # Should check both directories
+140 |         assert mock_check.call_count == EXPECTED_CALL_COUNT
+    |                                         ^^^^^^^^^^^^^^^^^^^
+141 |
+142 |         # Verify artifacts_only flag was passed
     |
 
 SIM117 Use a single `with` statement with multiple contexts instead of nested `with` statements
-   --> AgentQMS/agent_tools/documentation/test_check_links.py:164:9
+   --> AgentQMS/agent_tools/documentation/test_check_links.py:165:9
     |
-163 |           # Mock Path.exists() to return True for both directories
-164 | /         with patch.object(Path, "exists", return_value=True):
-165 | |             # Mock sys.argv
-166 | |             with patch.object(sys, "argv", ["check_links.py"]):
+164 |           # Mock Path.exists() to return True for both directories
+165 | /         with patch.object(Path, "exists", return_value=True):
+166 | |             # Mock sys.argv
+167 | |             with patch.object(sys, "argv", ["check_links.py"]):
     | |_______________________________________________________________^
-167 |                   result = main()
+168 |                   result = main()
     |
 help: Combine `with` statements
 
-PLR2004 Magic value used in comparison, consider replacing `2` with a constant variable
-   --> AgentQMS/agent_tools/documentation/test_check_links.py:245:27
+RUF059 Unpacked variable `total` is never used
+   --> AgentQMS/agent_tools/documentation/test_check_links.py:219:18
     |
-244 |         # Should count only .md files
-245 |         assert checked == 2
-    |                           ^
+217 |         (git_dir / "test.md").write_text("# Test")
+218 |
+219 |         checked, total, broken = check_links_in_directory(tmp_path, tmp_path, False)
+    |                  ^^^^^
+220 |
+221 |         # Should skip .git directory
+    |
+help: Prefix it with an underscore or any other dummy variable pattern
+
+RUF059 Unpacked variable `broken` is never used
+   --> AgentQMS/agent_tools/documentation/test_check_links.py:219:25
+    |
+217 |         (git_dir / "test.md").write_text("# Test")
+218 |
+219 |         checked, total, broken = check_links_in_directory(tmp_path, tmp_path, False)
+    |                         ^^^^^^
+220 |
+221 |         # Should skip .git directory
+    |
+help: Prefix it with an underscore or any other dummy variable pattern
+
+RUF059 Unpacked variable `total` is never used
+   --> AgentQMS/agent_tools/documentation/test_check_links.py:231:18
+    |
+229 |         (node_dir / "test.md").write_text("# Test")
+230 |
+231 |         checked, total, broken = check_links_in_directory(tmp_path, tmp_path, False)
+    |                  ^^^^^
+232 |
+233 |         # Should skip node_modules
+    |
+help: Prefix it with an underscore or any other dummy variable pattern
+
+RUF059 Unpacked variable `broken` is never used
+   --> AgentQMS/agent_tools/documentation/test_check_links.py:231:25
+    |
+229 |         (node_dir / "test.md").write_text("# Test")
+230 |
+231 |         checked, total, broken = check_links_in_directory(tmp_path, tmp_path, False)
+    |                         ^^^^^^
+232 |
+233 |         # Should skip node_modules
+    |
+help: Prefix it with an underscore or any other dummy variable pattern
+
+RUF059 Unpacked variable `total` is never used
+   --> AgentQMS/agent_tools/documentation/test_check_links.py:243:18
+    |
+241 |         (tmp_path / "not_markdown.txt").write_text("Not markdown")
+242 |
+243 |         checked, total, broken = check_links_in_directory(tmp_path, tmp_path, False)
+    |                  ^^^^^
+244 |
+245 |         # Should count only .md files
+    |
+help: Prefix it with an underscore or any other dummy variable pattern
+
+RUF059 Unpacked variable `broken` is never used
+   --> AgentQMS/agent_tools/documentation/test_check_links.py:243:25
+    |
+241 |         (tmp_path / "not_markdown.txt").write_text("Not markdown")
+242 |
+243 |         checked, total, broken = check_links_in_directory(tmp_path, tmp_path, False)
+    |                         ^^^^^^
+244 |
+245 |         # Should count only .md files
+    |
+help: Prefix it with an underscore or any other dummy variable pattern
+
+N806 Variable `EXPECTED_MD_COUNT` in function should be lowercase
+   --> AgentQMS/agent_tools/documentation/test_check_links.py:246:9
+    |
+245 |         # Should count only .md files
+246 |         EXPECTED_MD_COUNT = 2
+    |         ^^^^^^^^^^^^^^^^^
+247 |         assert checked == EXPECTED_MD_COUNT
     |
 
 N999 Invalid module name: 'AgentQMS'
@@ -1146,17 +1082,6 @@ PLC0415 `import` should be at the top-level of a file
 318 |     from AgentQMS.agent_tools.utils.paths import get_project_root
     |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 319 |     project_root = get_project_root()
-    |
-
-PTH123 `open()` should be replaced by `Path.open()`
-   --> AgentQMS/agent_tools/utilities/autofix_artifacts.py:323:14
-    |
-321 |     # Run validation to get current state
-322 |     if args.validation_json and Path(args.validation_json).exists():
-323 |         with open(args.validation_json) as f:
-    |              ^^^^
-324 |             violations = json.load(f)
-325 |     else:
     |
 
 E402 Module level import not at top of file
@@ -1292,7 +1217,7 @@ PLR0912 Too many branches (16 > 12)
 15 |     print("🤖 Agent AST Analysis Tool (AGENT-ONLY)")
    |
 
-PLR0915 Too many statements (65 > 50)
+PLR0915 Too many statements (66 > 50)
   --> AgentQMS/interface/cli_tools/ast_analysis.py:13:5
    |
 13 | def agent_ast_analysis():
@@ -1301,59 +1226,48 @@ PLR0915 Too many statements (65 > 50)
 15 |     print("🤖 Agent AST Analysis Tool (AGENT-ONLY)")
    |
 
-PLR2004 Magic value used in comparison, consider replacing `2` with a constant variable
-  --> AgentQMS/interface/cli_tools/ast_analysis.py:58:28
+N806 Variable `MIN_ARGS_COUNT` in function should be lowercase
+  --> AgentQMS/interface/cli_tools/ast_analysis.py:58:13
    |
 56 |                 cli_args.append(".")  # Default to current directory
 57 |         elif command == "generate-tests":
-58 |             if len(args) < 2:
-   |                            ^
-59 |                 print("❌ Error: generate-tests requires a file path")
-60 |                 return 1
-   |
-
-PLR2004 Magic value used in comparison, consider replacing `2` with a constant variable
-  --> AgentQMS/interface/cli_tools/ast_analysis.py:63:28
-   |
-61 |             cli_args = ["generate-tests", args[1]]
-62 |         elif command == "extract-docs":
-63 |             if len(args) < 2:
-   |                            ^
-64 |                 print("❌ Error: extract-docs requires a file path")
-65 |                 return 1
+58 |             MIN_ARGS_COUNT = 2
+   |             ^^^^^^^^^^^^^^
+59 |             if len(args) < MIN_ARGS_COUNT:
+60 |                 print("❌ Error: generate-tests requires a file path")
    |
 
 PLC0415 `import` should be at the top-level of a file
-  --> AgentQMS/interface/cli_tools/ast_analysis.py:85:17
+  --> AgentQMS/interface/cli_tools/ast_analysis.py:86:17
    |
-83 |         try:
-84 |             try:
-85 |                 from AgentQMS.scripts.ast_analysis_cli import main
+84 |         try:
+85 |             try:
+86 |                 from AgentQMS.scripts.ast_analysis_cli import main
    |                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-86 |             except ImportError:
-87 |                 from scripts.ast_analysis_cli import main  # pragma: no cover - legacy fallback
+87 |             except ImportError:
+88 |                 from scripts.ast_analysis_cli import main  # pragma: no cover - legacy fallback
    |
 
 PLC0415 `import` should be at the top-level of a file
-  --> AgentQMS/interface/cli_tools/ast_analysis.py:87:17
+  --> AgentQMS/interface/cli_tools/ast_analysis.py:88:17
    |
-85 |                 from AgentQMS.scripts.ast_analysis_cli import main
-86 |             except ImportError:
-87 |                 from scripts.ast_analysis_cli import main  # pragma: no cover - legacy fallback
+86 |                 from AgentQMS.scripts.ast_analysis_cli import main
+87 |             except ImportError:
+88 |                 from scripts.ast_analysis_cli import main  # pragma: no cover - legacy fallback
    |                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-88 |
-89 |             main()
+89 |
+90 |             main()
    |
 
 PTH109 `os.getcwd()` should be replaced by `Path.cwd()`
-  --> AgentQMS/interface/cli_tools/ast_analysis.py:96:42
+  --> AgentQMS/interface/cli_tools/ast_analysis.py:97:42
    |
-94 |         print(f"❌ Error importing AST analysis tool: {e}")
-95 |         print("   Make sure you're running from the agent directory")
-96 |         print(f"   Debug: Current path: {os.getcwd()}")
+95 |         print(f"❌ Error importing AST analysis tool: {e}")
+96 |         print("   Make sure you're running from the agent directory")
+97 |         print(f"   Debug: Current path: {os.getcwd()}")
    |                                          ^^^^^^^^^
-97 |         return 1
-98 |     except Exception as e:
+98 |         return 1
+99 |     except Exception as e:
    |
 help: Replace with `Path.cwd()`
 
@@ -1446,12 +1360,13 @@ S311 Standard pseudo-random generators are not suitable for cryptographic purpos
     |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^
     |
 
-PLR2004 Magic value used in comparison, consider replacing `200` with a constant variable
-   --> AgentQMS/interface/cli_tools/audio/message_templates.py:151:31
+N806 Variable `MAX_MESSAGE_LENGTH` in function should be lowercase
+   --> AgentQMS/interface/cli_tools/audio/message_templates.py:151:5
     |
 150 |     # Check length (rough estimate: should be under 200 characters for ~10 seconds)
-151 |     return not len(message) > 200
-    |                               ^^^
+151 |     MAX_MESSAGE_LENGTH = 200
+    |     ^^^^^^^^^^^^^^^^^^
+152 |     return not len(message) > MAX_MESSAGE_LENGTH
     |
 
 PLC0415 `import` should be at the top-level of a file
@@ -1474,26 +1389,6 @@ PLC0415 `import` should be at the top-level of a file
 26 |         main()
    |
 
-PTH123 `open()` should be replaced by `Path.open()`
-  --> AgentQMS/scripts/legacy/adapt_project.py:49:14
-   |
-47 |     def load_config(self, config_path: Path) -> dict:
-48 |         """Load project configuration from YAML file."""
-49 |         with open(config_path) as f:
-   |              ^^^^
-50 |             return yaml.safe_load(f)
-   |
-
-PTH123 `open()` should be replaced by `Path.open()`
-   --> AgentQMS/scripts/legacy/adapt_project.py:208:10
-    |
-206 |     # Save config
-207 |     config_path = Path("project_config.yaml")
-208 |     with open(config_path, "w") as f:
-    |          ^^^^
-209 |         yaml.dump(config, f, default_flow_style=False, sort_keys=False)
-    |
-
 PLC0415 `import` should be at the top-level of a file
    --> AgentQMS/scripts/legacy/adapt_project.py:216:5
     |
@@ -1503,6 +1398,18 @@ PLC0415 `import` should be at the top-level of a file
 217 |
 218 |     parser = argparse.ArgumentParser(
     |
+
+RUF059 Unpacked variable `config_path` is never used
+   --> AgentQMS/scripts/legacy/adapt_project.py:267:9
+    |
+265 |     # Interactive mode
+266 |     if args.interactive:
+267 |         config_path, config = interactive_setup()
+    |         ^^^^^^^^^^^
+268 |         project_root = Path(config["project"]["structure"]["root"])
+269 |     elif args.config:
+    |
+help: Prefix it with an underscore or any other dummy variable pattern
 
 PLR0913 Too many arguments in function definition (8 > 5)
   --> AgentQMS/scripts/maintenance/elevenlabs_tts.py:33:5
@@ -1635,39 +1542,39 @@ PLW2901 `for` loop variable `line` overwritten by assignment target
 27 |                 line = line.strip()
    |                 ^^^^
 28 |                 if line.startswith("nameserver"):
-29 |                     parts = line.split()
+29 |                     MIN_PARTS_REQUIRED = 2
    |
 
-PLR2004 Magic value used in comparison, consider replacing `2` with a constant variable
-  --> AgentQMS/scripts/maintenance/play_audio.py:30:38
+N806 Variable `MIN_PARTS_REQUIRED` in function should be lowercase
+  --> AgentQMS/scripts/maintenance/play_audio.py:29:21
    |
+27 |                 line = line.strip()
 28 |                 if line.startswith("nameserver"):
-29 |                     parts = line.split()
-30 |                     if len(parts) >= 2:
-   |                                      ^
-31 |                         return parts[1]
-32 |     except (OSError, ValueError):
+29 |                     MIN_PARTS_REQUIRED = 2
+   |                     ^^^^^^^^^^^^^^^^^^
+30 |                     parts = line.split()
+31 |                     if len(parts) >= MIN_PARTS_REQUIRED:
    |
 
 S603 `subprocess` call: check for execution of untrusted input
-  --> AgentQMS/scripts/maintenance/play_audio.py:78:9
+  --> AgentQMS/scripts/maintenance/play_audio.py:79:9
    |
-77 |     try:
-78 |         subprocess.run(
+78 |     try:
+79 |         subprocess.run(
    |         ^^^^^^^^^^^^^^
-79 |             [paplay, str(audio_path)],
-80 |             env=env,
+80 |             [paplay, str(audio_path)],
+81 |             env=env,
    |
 
 S603 `subprocess` call: check for execution of untrusted input
-  --> AgentQMS/scripts/maintenance/play_audio.py:97:9
-   |
-96 |     try:
-97 |         subprocess.run(
-   |         ^^^^^^^^^^^^^^
-98 |             [ffplay, "-autoexit", "-nodisp", str(audio_path)],
-99 |             env=env,
-   |
+   --> AgentQMS/scripts/maintenance/play_audio.py:98:9
+    |
+ 97 |     try:
+ 98 |         subprocess.run(
+    |         ^^^^^^^^^^^^^^
+ 99 |             [ffplay, "-autoexit", "-nodisp", str(audio_path)],
+100 |             env=env,
+    |
 
 N999 Invalid module name: 'AgentQMS'
 --> AgentQMS/toolkit/audit/__init__.py:1:1
@@ -1751,20 +1658,9 @@ PTH110 `os.path.exists()` should be replaced by `Path.exists()`
 112 |         if os.path.exists(self.config_file):
     |            ^^^^^^^^^^^^^^
 113 |             try:
-114 |                 with open(self.config_file) as f:
+114 |                 with Path(self.config_file).open() as f:
     |
 help: Replace with `Path(...).exists()`
-
-PTH123 `open()` should be replaced by `Path.open()`
-   --> AgentQMS/toolkit/compliance/compliance_alert_system.py:114:22
-    |
-112 |         if os.path.exists(self.config_file):
-113 |             try:
-114 |                 with open(self.config_file) as f:
-    |                      ^^^^
-115 |                     config = json.load(f)
-116 |                 # Merge with defaults
-    |
 
 PLR0911 Too many return statements (7 > 6)
    --> AgentQMS/toolkit/compliance/compliance_alert_system.py:245:9
@@ -1803,60 +1699,30 @@ SIM108 Use ternary operator `channels = rule.channels if rule else ["file"]` ins
     |
 help: Replace `if`-`else`-block with `channels = rule.channels if rule else ["file"]`
 
-PLR2004 Magic value used in comparison, consider replacing `200` with a constant variable
-   --> AgentQMS/toolkit/compliance/compliance_alert_system.py:478:44
+N806 Variable `SUCCESS_STATUS_CODE` in function should be lowercase
+   --> AgentQMS/toolkit/compliance/compliance_alert_system.py:478:13
     |
 476 |             )
 477 |
-478 |             return response.status_code == 200
-    |                                            ^^^
-479 |
-480 |         except Exception as e:
-    |
-
-PTH123 `open()` should be replaced by `Path.open()`
-   --> AgentQMS/toolkit/compliance/compliance_alert_system.py:522:26
-    |
-520 |             if alert_file.exists():
-521 |                 try:
-522 |                     with open(alert_file) as f:
-    |                          ^^^^
-523 |                         alerts_data = json.load(f)
-524 |                 except Exception:
-    |
-
-PTH123 `open()` should be replaced by `Path.open()`
-   --> AgentQMS/toolkit/compliance/compliance_alert_system.py:536:18
-    |
-535 |             # Write back
-536 |             with open(alert_file, "w") as f:
-    |                  ^^^^
-537 |                 json.dump(alerts_data, f, indent=2)
+478 |             SUCCESS_STATUS_CODE = 200
+    |             ^^^^^^^^^^^^^^^^^^^
+479 |             return response.status_code == SUCCESS_STATUS_CODE
     |
 
 S608 Possible SQL injection vector through string-based query construction
-   --> AgentQMS/toolkit/compliance/compliance_alert_system.py:597:24
+   --> AgentQMS/toolkit/compliance/compliance_alert_system.py:598:24
     |
-595 |           cursor = conn.cursor()
-596 |
-597 |           cursor.execute(f"""
+596 |           cursor = conn.cursor()
+597 |
+598 |           cursor.execute(f"""
     |  ________________________^
-598 | |             SELECT * FROM compliance_alerts
-599 | |             WHERE timestamp >= datetime('now', '-{days} days')
-600 | |             ORDER BY timestamp DESC
-601 | |         """)
+599 | |             SELECT * FROM compliance_alerts
+600 | |             WHERE timestamp >= datetime('now', '-{days} days')
+601 | |             ORDER BY timestamp DESC
+602 | |         """)
     | |___________^
-602 |
-603 |           alerts = []
-    |
-
-PTH123 `open()` should be replaced by `Path.open()`
-   --> AgentQMS/toolkit/compliance/compliance_alert_system.py:677:14
-    |
-676 |         # Save configuration
-677 |         with open(self.config_file, "w") as f:
-    |              ^^^^
-678 |             json.dump(self.config, f, indent=2)
+603 |
+604 |           alerts = []
     |
 
 S608 Possible SQL injection vector through string-based query construction
@@ -1877,129 +1743,130 @@ S608 Possible SQL injection vector through string-based query construction
 170 |           data_points = []
     |
 
-PLR2004 Magic value used in comparison, consider replacing `2` with a constant variable
-   --> AgentQMS/toolkit/compliance/compliance_trend_tracker.py:189:31
+N806 Variable `MIN_DATA_POINTS_FOR_TREND` in function should be lowercase
+   --> AgentQMS/toolkit/compliance/compliance_trend_tracker.py:189:9
     |
 187 |     def _calculate_linear_trend(self, data_points: list[TrendDataPoint]) -> float:
 188 |         """Calculate linear trend using least squares regression"""
-189 |         if len(data_points) < 2:
-    |                               ^
-190 |             return 0.0
+189 |         MIN_DATA_POINTS_FOR_TREND = 2
+    |         ^^^^^^^^^^^^^^^^^^^^^^^^^
+190 |         if len(data_points) < MIN_DATA_POINTS_FOR_TREND:
+191 |             return 0.0
     |
 
 RET504 Unnecessary assignment to `slope` before `return` statement
-   --> AgentQMS/toolkit/compliance/compliance_trend_tracker.py:214:16
+   --> AgentQMS/toolkit/compliance/compliance_trend_tracker.py:215:16
     |
-213 |         slope = (n * sum_xy - sum_x * sum_y) / (n * sum_x2 - sum_x * sum_x)
-214 |         return slope
+214 |         slope = (n * sum_xy - sum_x * sum_y) / (n * sum_x2 - sum_x * sum_x)
+215 |         return slope
     |                ^^^^^
-215 |
-216 |     def _determine_trend_direction(self, trend: float) -> str:
+216 |
+217 |     def _determine_trend_direction(self, trend: float) -> str:
     |
 help: Remove unnecessary assignment
 
 PLR2004 Magic value used in comparison, consider replacing `0.02` with a constant variable
-   --> AgentQMS/toolkit/compliance/compliance_trend_tracker.py:230:24
+   --> AgentQMS/toolkit/compliance/compliance_trend_tracker.py:231:24
     |
-228 |         abs_trend = abs(trend)
-229 |
-230 |         if abs_trend > 0.02:  # 2% per day
+229 |         abs_trend = abs(trend)
+230 |
+231 |         if abs_trend > 0.02:  # 2% per day
     |                        ^^^^
-231 |             return "strong"
-232 |         if abs_trend > 0.005:  # 0.5% per day
+232 |             return "strong"
+233 |         if abs_trend > 0.005:  # 0.5% per day
     |
 
 PLR2004 Magic value used in comparison, consider replacing `0.005` with a constant variable
-   --> AgentQMS/toolkit/compliance/compliance_trend_tracker.py:232:24
+   --> AgentQMS/toolkit/compliance/compliance_trend_tracker.py:233:24
     |
-230 |         if abs_trend > 0.02:  # 2% per day
-231 |             return "strong"
-232 |         if abs_trend > 0.005:  # 0.5% per day
+231 |         if abs_trend > 0.02:  # 2% per day
+232 |             return "strong"
+233 |         if abs_trend > 0.005:  # 0.5% per day
     |                        ^^^^^
-233 |             return "moderate"
-234 |         return "weak"
+234 |             return "moderate"
+235 |         return "weak"
     |
 
 PLR2004 Magic value used in comparison, consider replacing `3` with a constant variable
-   --> AgentQMS/toolkit/compliance/compliance_trend_tracker.py:240:31
+   --> AgentQMS/toolkit/compliance/compliance_trend_tracker.py:241:31
     |
-238 |     ) -> tuple[float, float, float]:
-239 |         """Generate compliance predictions using trend analysis"""
-240 |         if len(data_points) < 3:
+239 |     ) -> tuple[float, float, float]:
+240 |         """Generate compliance predictions using trend analysis"""
+241 |         if len(data_points) < 3:
     |                               ^
-241 |             return 0.0, 0.0, 0.0
+242 |             return 0.0, 0.0, 0.0
     |
 
 PLR2004 Magic value used in comparison, consider replacing `0.1` with a constant variable
-   --> AgentQMS/toolkit/compliance/compliance_trend_tracker.py:353:34
+   --> AgentQMS/toolkit/compliance/compliance_trend_tracker.py:354:34
     |
-352 |         # Volatility recommendations
-353 |         if analysis.volatility > 0.1:  # 10% volatility
+353 |         # Volatility recommendations
+354 |         if analysis.volatility > 0.1:  # 10% volatility
     |                                  ^^^
-354 |             recommendations.append(
-355 |                 "📊 High volatility detected. Consider stabilizing processes and reducing variability."
+355 |             recommendations.append(
+356 |                 "📊 High volatility detected. Consider stabilizing processes and reducing variability."
     |
 
 PLR2004 Magic value used in comparison, consider replacing `0.9` with a constant variable
-   --> AgentQMS/toolkit/compliance/compliance_trend_tracker.py:359:44
+   --> AgentQMS/toolkit/compliance/compliance_trend_tracker.py:360:44
     |
-358 |         # Prediction recommendations
-359 |         if analysis.next_week_prediction < 0.9:
+359 |         # Prediction recommendations
+360 |         if analysis.next_week_prediction < 0.9:
     |                                            ^^^
-360 |             recommendations.append(
-361 |                 "⚠️  Predicted compliance below 90% next week. Plan proactive fixes."
+361 |             recommendations.append(
+362 |                 "⚠️  Predicted compliance below 90% next week. Plan proactive fixes."
     |
 
 PLR2004 Magic value used in comparison, consider replacing `0.95` with a constant variable
-   --> AgentQMS/toolkit/compliance/compliance_trend_tracker.py:364:45
+   --> AgentQMS/toolkit/compliance/compliance_trend_tracker.py:365:45
     |
-362 |             )
-363 |
-364 |         if analysis.next_month_prediction < 0.95:
+363 |             )
+364 |
+365 |         if analysis.next_month_prediction < 0.95:
     |                                             ^^^^
-365 |             recommendations.append(
-366 |                 "🎯 Predicted compliance below target next month. Implement improvement strategies."
+366 |             recommendations.append(
+367 |                 "🎯 Predicted compliance below target next month. Implement improvement strategies."
     |
 
 PLR2004 Magic value used in comparison, consider replacing `0.7` with a constant variable
-   --> AgentQMS/toolkit/compliance/compliance_trend_tracker.py:370:40
+   --> AgentQMS/toolkit/compliance/compliance_trend_tracker.py:371:40
     |
-369 |         # Confidence recommendations
-370 |         if analysis.confidence_level < 0.7:
+370 |         # Confidence recommendations
+371 |         if analysis.confidence_level < 0.7:
     |                                        ^^^
-371 |             recommendations.append(
-372 |                 "📊 Low prediction confidence. Collect more data points for better forecasting."
+372 |             recommendations.append(
+373 |                 "📊 Low prediction confidence. Collect more data points for better forecasting."
     |
 
 PLR2004 Magic value used in comparison, consider replacing `0.05` with a constant variable
-   --> AgentQMS/toolkit/compliance/compliance_trend_tracker.py:380:43
+   --> AgentQMS/toolkit/compliance/compliance_trend_tracker.py:381:43
     |
-378 |                 "📉 Overall decline detected. Review and address root causes."
-379 |             )
-380 |         elif analysis.total_improvement > 0.05:  # 5% improvement
+379 |                 "📉 Overall decline detected. Review and address root causes."
+380 |             )
+381 |         elif analysis.total_improvement > 0.05:  # 5% improvement
     |                                           ^^^^
-381 |             recommendations.append(
-382 |                 "🎉 Significant improvement achieved. Document successful practices."
+382 |             recommendations.append(
+383 |                 "🎉 Significant improvement achieved. Document successful practices."
     |
 
 A002 Function argument `format` is shadowing a Python builtin
-   --> AgentQMS/toolkit/compliance/compliance_trend_tracker.py:387:58
+   --> AgentQMS/toolkit/compliance/compliance_trend_tracker.py:388:58
     |
-385 |         return recommendations
-386 |
-387 |     def export_trend_data(self, analysis: TrendAnalysis, format: str = "json") -> str:
+386 |         return recommendations
+387 |
+388 |     def export_trend_data(self, analysis: TrendAnalysis, format: str = "json") -> str:
     |                                                          ^^^^^^
-388 |         """Export trend analysis data in specified format"""
-389 |         if format == "json":
+389 |         """Export trend analysis data in specified format"""
+390 |         if format == "json":
     |
 
 PLR0915 Too many statements (52 > 50)
-   --> AgentQMS/toolkit/compliance/compliance_trend_tracker.py:553:5
+   --> AgentQMS/toolkit/compliance/compliance_trend_tracker.py:554:5
     |
-553 | def main():
+554 | def main():
     |     ^^^^
-554 |     """Main execution function"""
-555 |     parser = argparse.ArgumentParser(description="Compliance trend tracking system")
+555 |     """Main execution function"""
+556 |     parser = argparse.ArgumentParser(description="Compliance trend tracking system")
     |
 
 S603 `subprocess` call: check for execution of untrusted input
@@ -2184,17 +2051,6 @@ PLR0912 Too many branches (14 > 12)
 224 |         try:
     |
 
-PTH123 `open()` should be replaced by `Path.open()`
-   --> AgentQMS/toolkit/compliance/validate_artifacts.py:225:18
-    |
-223 |         """Validate frontmatter structure and content."""
-224 |         try:
-225 |             with open(file_path, encoding="utf-8") as f:
-    |                  ^^^^
-226 |                 content = f.read()
-227 |         except Exception as e:
-    |
-
 PLW2901 `for` loop variable `line` overwritten by assignment target
    --> AgentQMS/toolkit/compliance/validate_artifacts.py:244:13
     |
@@ -2238,16 +2094,6 @@ PLR0912 Too many branches (14 > 12)
 520 |     parser = argparse.ArgumentParser(
     |
 
-PTH123 `open()` should be replaced by `Path.open()`
-   --> AgentQMS/toolkit/compliance/validate_artifacts.py:577:14
-    |
-576 |     if args.output:
-577 |         with open(args.output, "w") as f:
-    |              ^^^^
-578 |             f.write(output)
-579 |         print(f"Report written to {args.output}")
-    |
-
 S110 `try`-`except`-`pass` detected, consider logging the exception
    --> AgentQMS/toolkit/core/artifact_templates.py:699:9
     |
@@ -2284,24 +2130,14 @@ PLC0415 `import` should be at the top-level of a file
 831 |         kst = timezone(timedelta(hours=9))  # KST is UTC+9
     |
 
-PLR2004 Magic value used in comparison, consider replacing `300` with a constant variable
-   --> AgentQMS/toolkit/core/artifact_templates.py:939:32
+N806 Variable `RECENT_FILE_THRESHOLD` in function should be lowercase
+   --> AgentQMS/toolkit/core/artifact_templates.py:939:17
     |
 938 |                 # If file was created within the last 5 minutes, reuse it
-939 |                 if time_diff < 300:  # 5 minutes = 300 seconds
-    |                                ^^^
-940 |                     print(f"⚠️  Found recently created file: {existing_file.name}")
-941 |                     print("   Reusing existing file instead of creating duplicate.")
-    |
-
-PTH123 `open()` should be replaced by `Path.open()`
-   --> AgentQMS/toolkit/core/artifact_templates.py:954:14
-    |
-952 |         # Write file
-953 |         full_content = frontmatter + "\n\n" + content
-954 |         with open(file_path, "w", encoding="utf-8") as f:
-    |              ^^^^
-955 |             f.write(full_content)
+939 |                 RECENT_FILE_THRESHOLD = 300  # 5 minutes in seconds
+    |                 ^^^^^^^^^^^^^^^^^^^^^
+940 |                 if time_diff < RECENT_FILE_THRESHOLD:  # 5 minutes = 300 seconds
+941 |                     print(f"⚠️  Found recently created file: {existing_file.name}")
     |
 
 E402 Module level import not at top of file
@@ -2435,33 +2271,23 @@ B006 Do not use mutable data structures for argument defaults
    |
 help: Replace with `None`; initialize within function
 
-PLR2004 Magic value used in comparison, consider replacing `3` with a constant variable
-   --> AgentQMS/toolkit/core/qmf_toolbelt.py:101:25
+N806 Variable `MIN_PARTS_FOR_FRONTMATTER` in function should be lowercase
+   --> AgentQMS/toolkit/core/qmf_toolbelt.py:100:9
     |
  99 |         # Extract frontmatter
-100 |         parts = content.split("---")
-101 |         if len(parts) < 3:
-    |                         ^
-102 |             raise ValueError("Invalid frontmatter format.")
-    |
-
-PTH123 `open()` should be replaced by `Path.open()`
-   --> AgentQMS/toolkit/core/qmf_toolbelt.py:121:14
-    |
-119 |         # Load schema
-120 |         schema_path = self.root_path / artifact_meta["schema"]
-121 |         with open(schema_path) as f:
-    |              ^^^^
-122 |             schema = json.load(f)
+100 |         MIN_PARTS_FOR_FRONTMATTER = 3
+    |         ^^^^^^^^^^^^^^^^^^^^^^^^^
+101 |         parts = content.split("---")
+102 |         if len(parts) < MIN_PARTS_FOR_FRONTMATTER:
     |
 
 PLC0415 `import` should be at the top-level of a file
-   --> AgentQMS/toolkit/core/qmf_toolbelt.py:125:9
+   --> AgentQMS/toolkit/core/qmf_toolbelt.py:126:9
     |
-124 |         # Validate
-125 |         from jsonschema import validate
+125 |         # Validate
+126 |         from jsonschema import validate
     |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-126 |         validate(instance=frontmatter, schema=schema)
+127 |         validate(instance=frontmatter, schema=schema)
     |
 
 PLW2901 `for` loop variable `line` overwritten by assignment target
@@ -2584,6 +2410,18 @@ PLC0415 `import` should be at the top-level of a file
 167 |
 168 |         health = get_docs_health(current_version)
     |
+
+RUF059 Unpacked variable `meta` is never used
+   --> AgentQMS/toolkit/documentation/deprecate_docs.py:181:22
+    |
+179 |             continue
+180 |         scanned += 1
+181 |         did, status, meta = process_file(md_path, current_version, args.dry_run)
+    |                      ^^^^
+182 |         if did:
+183 |             changed += 1
+    |
+help: Prefix it with an underscore or any other dummy variable pattern
 
 RET504 Unnecessary assignment to `date_part` before `return` statement
   --> AgentQMS/toolkit/documentation/generate_changelog_draft.py:39:20
@@ -2728,15 +2566,6 @@ PLR0912 Too many branches (18 > 12)
 89 |         info = {
    |
 
-PTH123 `open()` should be replaced by `Path.open()`
-   --> AgentQMS/toolkit/documentation/update_artifact_indexes.py:100:18
-    |
- 99 |         try:
-100 |             with open(file_path, encoding="utf-8") as f:
-    |                  ^^^^
-101 |                 content = f.read()
-    |
-
 PLW2901 `for` loop variable `line` overwritten by assignment target
    --> AgentQMS/toolkit/documentation/update_artifact_indexes.py:111:25
     |
@@ -2813,17 +2642,6 @@ S110 `try`-`except`-`pass` detected, consider logging the exception
 245 |                       if artifact.get("type"):
     |
 
-PTH123 `open()` should be replaced by `Path.open()`
-   --> AgentQMS/toolkit/documentation/update_artifact_indexes.py:310:18
-    |
-308 |         index_path = directory / "INDEX.md"
-309 |         try:
-310 |             with open(index_path, "w", encoding="utf-8") as f:
-    |                  ^^^^
-311 |                 f.write(index_content)
-312 |             print(f"✅ Updated {index_path}")
-    |
-
 PLR0912 Too many branches (14 > 12)
    --> AgentQMS/toolkit/documentation/update_artifact_indexes.py:337:9
     |
@@ -2844,17 +2662,6 @@ PLR0915 Too many statements (55 > 50)
     |         ^^^^^^^^^^^^^^^^^^^
 338 |         """Update the master INDEX.md in the artifacts root."""
 339 |         master_index_path = self.artifacts_root / "MASTER_INDEX.md"
-    |
-
-PTH123 `open()` should be replaced by `Path.open()`
-   --> AgentQMS/toolkit/documentation/update_artifact_indexes.py:433:18
-    |
-431 |         # Write master index
-432 |         try:
-433 |             with open(master_index_path, "w", encoding="utf-8") as f:
-    |                  ^^^^
-434 |                 f.write("\n".join(lines))
-435 |             print(f"✅ Updated {master_index_path}")
     |
 
 RET503 Missing explicit `return` at the end of function able to return non-`None` value
@@ -2950,17 +2757,6 @@ F821 Undefined name `sys`
     |     ^^^
     |
 
-PTH123 `open()` should be replaced by `Path.open()`
-  --> AgentQMS/toolkit/documentation/validate_links.py:42:18
-   |
-40 |         links = []
-41 |         try:
-42 |             with open(file_path, encoding="utf-8") as f:
-   |                  ^^^^
-43 |                 for line_num, line in enumerate(f, 1):
-44 |                     # Find markdown links: [text](url)
-   |
-
 B007 Loop control variable `text` not used within loop body
   --> AgentQMS/toolkit/documentation/validate_links.py:46:25
    |
@@ -2993,17 +2789,6 @@ S110 `try`-`except`-`pass` detected, consider logging the exception
    | |________________^
 79 |
 80 |           return False
-   |
-
-PTH123 `open()` should be replaced by `Path.open()`
-  --> AgentQMS/toolkit/documentation/validate_links.py:85:18
-   |
-83 |         """Check if an anchor exists in a file."""
-84 |         try:
-85 |             with open(file_path, encoding="utf-8") as f:
-   |                  ^^^^
-86 |                 content = f.read()
-87 |                 # Look for headers that would generate this anchor
    |
 
 PLR2004 Magic value used in comparison, consider replacing `400` with a constant variable
@@ -3133,17 +2918,6 @@ PLR0912 Too many branches (16 > 12)
 48 |     """Main entry point for validation tool.
    |
 
-PTH123 `open()` should be replaced by `Path.open()`
-  --> AgentQMS/toolkit/documentation/validate_templates.py:90:18
-   |
-88 |         template_path = self.templates_dir / f"{template_name}.md"
-89 |         if template_path.exists():
-90 |             with open(template_path, encoding="utf-8") as f:
-   |                  ^^^^
-91 |                 return f.read()
-92 |         return None
-   |
-
 PLW2901 `for` loop variable `h` overwritten by assignment target
    --> AgentQMS/toolkit/documentation/validate_templates.py:102:13
     |
@@ -3164,17 +2938,6 @@ PLW2901 `for` loop variable `h` overwritten by assignment target
     |             ^
 104 |             cleaned_headers.append(h)
 105 |         return cleaned_headers
-    |
-
-PTH123 `open()` should be replaced by `Path.open()`
-   --> AgentQMS/toolkit/documentation/validate_templates.py:119:18
-    |
-117 |         """Validate a file against its template structure."""
-118 |         try:
-119 |             with open(file_path, encoding="utf-8") as f:
-    |                  ^^^^
-120 |                 content = f.read()
-121 |         except Exception as e:
     |
 
 PLR2004 Magic value used in comparison, consider replacing `3` with a constant variable
@@ -3230,17 +2993,6 @@ PLR0915 Too many statements (55 > 50)
 12 |     Validate the UI inference compatibility schema.
    |
 
-PTH123 `open()` should be replaced by `Path.open()`
-  --> AgentQMS/toolkit/documentation/validate_ui_schema.py:21:14
-   |
-19 |     """
-20 |     try:
-21 |         with open(schema_path, encoding="utf-8") as f:
-   |              ^^^^
-22 |             schema = yaml.safe_load(f)
-23 |     except Exception as e:
-   |
-
 PLR0911 Too many return statements (11 > 6)
   --> AgentQMS/toolkit/maintenance/add_frontmatter.py:95:9
    |
@@ -3270,16 +3022,6 @@ PLR2004 Magic value used in comparison, consider replacing `3` with a constant v
 185 |         if len(title) < 3:
     |                         ^
 186 |             title = self._extract_title_from_content(file_path)
-    |
-
-PTH123 `open()` should be replaced by `Path.open()`
-   --> AgentQMS/toolkit/maintenance/add_frontmatter.py:193:18
-    |
-191 |         """Extract title from file content (first heading)"""
-192 |         try:
-193 |             with open(file_path, encoding="utf-8") as f:
-    |                  ^^^^
-194 |                 content = f.read(1000)  # Read first 1000 chars
     |
 
 PLW2901 `for` loop variable `line` overwritten by assignment target
@@ -3315,26 +3057,6 @@ S110 `try`-`except`-`pass` detected, consider logging the exception
 211 |           return "Untitled Document"
     |
 
-PTH123 `open()` should be replaced by `Path.open()`
-   --> AgentQMS/toolkit/maintenance/add_frontmatter.py:260:18
-    |
-258 |         try:
-259 |             # Read current content
-260 |             with open(file_path, encoding="utf-8") as f:
-    |                  ^^^^
-261 |                 content = f.read()
-    |
-
-PTH123 `open()` should be replaced by `Path.open()`
-   --> AgentQMS/toolkit/maintenance/add_frontmatter.py:271:22
-    |
-269 |             if not dry_run:
-270 |                 # Write back to file
-271 |                 with open(file_path, "w", encoding="utf-8") as f:
-    |                      ^^^^
-272 |                     f.write(new_content)
-    |
-
 SIM113 Use `enumerate()` for index variable `count` in `for` loop
    --> AgentQMS/toolkit/maintenance/add_frontmatter.py:295:13
     |
@@ -3367,17 +3089,6 @@ PLC0415 `import` should be at the top-level of a file
 312 |     parser = argparse.ArgumentParser(description="Add frontmatter to files missing it")
     |
 
-PTH123 `open()` should be replaced by `Path.open()`
-   --> AgentQMS/toolkit/maintenance/add_frontmatter.py:351:26
-    |
-349 |                 # Check if file is missing frontmatter
-350 |                 try:
-351 |                     with open(file_path, encoding="utf-8") as f:
-    |                          ^^^^
-352 |                         content = f.read(100)  # Read first 100 chars
-353 |                         if not content.startswith("---"):
-    |
-
 S110 `try`-`except`-`pass` detected, consider logging the exception
    --> AgentQMS/toolkit/maintenance/add_frontmatter.py:355:17
     |
@@ -3390,65 +3101,6 @@ S110 `try`-`except`-`pass` detected, consider logging the exception
 358 |           file_paths = args.files
     |
 
-PTH123 `open()` should be replaced by `Path.open()`
-   --> AgentQMS/toolkit/maintenance/fix_categories.py:264:18
-    |
-263 |         try:
-264 |             with open(file_path, encoding="utf-8") as f:
-    |                  ^^^^
-265 |                 content = f.read()
-266 |         except Exception as e:
-    |
-
-PTH123 `open()` should be replaced by `Path.open()`
-   --> AgentQMS/toolkit/maintenance/fix_categories.py:433:18
-    |
-431 |         try:
-432 |             # Read file
-433 |             with open(fix.file_path, encoding="utf-8") as f:
-    |                  ^^^^
-434 |                 content = f.read()
-    |
-
-PTH123 `open()` should be replaced by `Path.open()`
-   --> AgentQMS/toolkit/maintenance/fix_categories.py:451:22
-    |
-449 |             if new_content != content:
-450 |                 # Write updated content
-451 |                 with open(fix.file_path, "w", encoding="utf-8") as f:
-    |                      ^^^^
-452 |                     f.write(new_content)
-    |
-
-PTH123 `open()` should be replaced by `Path.open()`
-   --> AgentQMS/toolkit/maintenance/fix_categories.py:550:26
-    |
-549 |                 try:
-550 |                     with open(file_path, encoding="utf-8") as f:
-    |                          ^^^^
-551 |                         content = f.read()
-    |
-
-PTH123 `open()` should be replaced by `Path.open()`
-   --> AgentQMS/toolkit/maintenance/fix_categories.py:652:14
-    |
-651 |     if args.output:
-652 |         with open(args.output, "w") as f:
-    |              ^^^^
-653 |             f.write(report)
-654 |         print(f"Report saved to {args.output}")
-    |
-
-PTH123 `open()` should be replaced by `Path.open()`
-   --> AgentQMS/toolkit/maintenance/fix_naming_conventions.py:313:18
-    |
-311 |         """Detect artifact type from content analysis"""
-312 |         try:
-313 |             with open(file_path, encoding="utf-8") as f:
-    |                  ^^^^
-314 |                 content = f.read().lower()
-    |
-
 RUF001 String contains ambiguous `ℹ` (INFORMATION SOURCE). Did you mean `i` (LATIN SMALL LETTER I)?
    --> AgentQMS/toolkit/maintenance/fix_naming_conventions.py:452:26
     |
@@ -3457,16 +3109,6 @@ RUF001 String contains ambiguous `ℹ` (INFORMATION SOURCE). Did you mean `i` (L
 452 |                 print("\nℹ️  No changes will be made. Use --dry-run to preview.")
     |                          ^
 453 |                 return {}
-    |
-
-PTH123 `open()` should be replaced by `Path.open()`
-   --> AgentQMS/toolkit/maintenance/fix_naming_conventions.py:526:14
-    |
-525 |     if args.output:
-526 |         with open(args.output, "w") as f:
-    |              ^^^^
-527 |             f.write(report)
-528 |         print(f"Report saved to {args.output}")
     |
 
 PLR0911 Too many return statements (7 > 6)
@@ -3520,17 +3162,6 @@ PLR0912 Too many branches (15 > 12)
 260 |     def _determine_directory_from_content(self, file_path: Path) -> tuple[str | None, float]:
     |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 261 |         """Determine correct directory from file content analysis
-    |
-
-PTH123 `open()` should be replaced by `Path.open()`
-   --> AgentQMS/toolkit/maintenance/reorganize_files.py:267:18
-    |
-265 |         """
-266 |         try:
-267 |             with open(file_path, encoding="utf-8") as f:
-    |                  ^^^^
-268 |                 content = f.read()
-269 |         except Exception:
     |
 
 C416 Unnecessary list comprehension (rewrite using `list()`)
@@ -3637,16 +3268,6 @@ B007 Loop control variable `info` not used within loop body
     |
 help: Rename unused `info` to `_info`
 
-PTH123 `open()` should be replaced by `Path.open()`
-   --> AgentQMS/toolkit/maintenance/reorganize_files.py:688:14
-    |
-687 |     if args.output:
-688 |         with open(args.output, "w") as f:
-    |              ^^^^
-689 |             f.write(report)
-690 |         print(f"Report saved to {args.output}")
-    |
-
 E402 Module level import not at top of file
  --> AgentQMS/toolkit/maintenance/update_docs.py:9:1
   |
@@ -3709,26 +3330,6 @@ RET504 Unnecessary assignment to `state` before `return` statement
     |
 help: Remove unnecessary assignment
 
-PTH123 `open()` should be replaced by `Path.open()`
-  --> AgentQMS/toolkit/utilities/adapt_project.py:49:14
-   |
-47 |     def load_config(self, config_path: Path) -> dict:
-48 |         """Load project configuration from YAML file."""
-49 |         with open(config_path) as f:
-   |              ^^^^
-50 |             return yaml.safe_load(f)
-   |
-
-PTH123 `open()` should be replaced by `Path.open()`
-   --> AgentQMS/toolkit/utilities/adapt_project.py:208:10
-    |
-206 |     # Save config
-207 |     config_path = Path("project_config.yaml")
-208 |     with open(config_path, "w") as f:
-    |          ^^^^
-209 |         yaml.dump(config, f, default_flow_style=False, sort_keys=False)
-    |
-
 PLC0415 `import` should be at the top-level of a file
    --> AgentQMS/toolkit/utilities/adapt_project.py:216:5
     |
@@ -3738,6 +3339,18 @@ PLC0415 `import` should be at the top-level of a file
 217 |
 218 |     parser = argparse.ArgumentParser(
     |
+
+RUF059 Unpacked variable `config_path` is never used
+   --> AgentQMS/toolkit/utilities/adapt_project.py:267:9
+    |
+265 |     # Interactive mode
+266 |     if args.interactive:
+267 |         config_path, config = interactive_setup()
+    |         ^^^^^^^^^^^
+268 |         project_root = Path(config["project"]["structure"]["root"])
+269 |     elif args.config:
+    |
+help: Prefix it with an underscore or any other dummy variable pattern
 
 PLR0913 Too many arguments in function definition (6 > 5)
   --> AgentQMS/toolkit/utilities/agent_feedback.py:22:9
@@ -3954,5 +3567,5 @@ PLW0603 Using the global statement to update `_DEFAULT_MANAGER` is discouraged
 67 |         _DEFAULT_MANAGER = StateManager()
    |
 
-Found 362 errors.
-No fixes available (38 hidden fixes can be enabled with the `--unsafe-fixes` option).
+Found 323 errors.
+No fixes available (47 hidden fixes can be enabled with the `--unsafe-fixes` option).

@@ -19,9 +19,9 @@ from AgentQMS.toolkit.utils.runtime import ensure_project_root_on_sys_path
 
 ensure_project_root_on_sys_path()
 
-from AgentQMS.toolkit.utils.config import load_config
-from AgentQMS.toolkit.utils.migration import log_migration_event
-from AgentQMS.toolkit.utils.paths import (
+from AgentQMS.toolkit.utils.config import load_config  # noqa: E402
+from AgentQMS.toolkit.utils.migration import log_migration_event  # noqa: E402
+from AgentQMS.toolkit.utils.paths import (  # noqa: E402
     get_config_defaults_dir,
     get_framework_root,
     get_project_root,

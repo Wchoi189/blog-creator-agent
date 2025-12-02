@@ -251,6 +251,7 @@ class DailyComplianceMonitor:
 
     def _calculate_trend(self, days: int) -> float:
         """Calculate compliance trend over specified days"""
+        MIN_RATES_FOR_TREND_CALCULATION = 2
         conn = sqlite3.connect(self.db_path)
         cursor = conn.cursor()
 
@@ -264,7 +265,7 @@ class DailyComplianceMonitor:
         rates = [row[0] for row in cursor.fetchall()]
         conn.close()
 
-        if len(rates) < 2:
+        if len(rates) < MIN_RATES_FOR_TREND_CALCULATION:
             return 0.0
 
         # Calculate trend (positive = improving, negative = declining)
@@ -360,6 +361,10 @@ class DailyComplianceMonitor:
         """Generate actionable recommendations based on metrics"""
         recommendations = []
 
+        # Define constants for trend recommendations
+        DECLINING_TREND_THRESHOLD = -0.05  # -5% per day
+        IMPROVING_TREND_THRESHOLD = 0.05  # 5% per day
+
         # Compliance rate recommendations
         if metrics["compliance_rate"] < self.thresholds["critical"]:
             recommendations.append(
@@ -379,11 +384,11 @@ class DailyComplianceMonitor:
             )
 
         # Trend recommendations
-        if trend_7day < -0.05:
+        if trend_7day < DECLINING_TREND_THRESHOLD:
             recommendations.append(
                 "📉 DECLINING: 7-day trend shows declining compliance. Investigate recent changes."
             )
-        elif trend_7day > 0.05:
+        elif trend_7day > IMPROVING_TREND_THRESHOLD:
             recommendations.append(
                 "📈 IMPROVING: 7-day trend shows improving compliance. Continue current efforts."
             )
@@ -470,14 +475,17 @@ class DailyComplianceMonitor:
                 }
             )
 
+        # Define constants for trend alerts
+        DECLINING_TREND_ALERT_THRESHOLD = -0.05  # -5% per day
+
         # Trend alerts
-        if report.trend_7day < -0.05:
+        if report.trend_7day < DECLINING_TREND_ALERT_THRESHOLD:
             alerts.append(
                 {
                     "alert_type": "declining_trend",
                     "severity": "warning",
                     "message": f"Declining trend: 7-day change {report.trend_7day:.1%}",
-                    "threshold": -0.05,
+                    "threshold": DECLINING_TREND_ALERT_THRESHOLD,
                     "current_value": report.trend_7day,
                 }
             )

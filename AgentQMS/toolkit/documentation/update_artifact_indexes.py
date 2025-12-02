@@ -20,7 +20,7 @@ from AgentQMS.agent_tools.utils.runtime import ensure_project_root_on_sys_path
 
 ensure_project_root_on_sys_path()
 
-from AgentQMS.agent_tools.utils.paths import get_project_root
+from AgentQMS.agent_tools.utils.paths import get_project_root  # noqa: E402
 
 
 class ArtifactIndexUpdater:
@@ -141,14 +141,16 @@ class ArtifactIndexUpdater:
                 if in_content and line and not line.startswith("#"):
                     if line.startswith("##"):
                         break
+                    MAX_DESCRIPTION_LINES = 2  # Take first 2 lines
                     description_lines.append(line)
-                    if len(description_lines) >= 2:  # Take first 2 lines
+                    if len(description_lines) >= MAX_DESCRIPTION_LINES:  # Take first 2 lines
                         break
 
             if description_lines:
+                DESCRIPTION_LENGTH_LIMIT = 200
                 info["description"] = (
-                    " ".join(description_lines)[:200] + "..."
-                    if len(" ".join(description_lines)) > 200
+                    " ".join(description_lines)[:DESCRIPTION_LENGTH_LIMIT] + "..."
+                    if len(" ".join(description_lines)) > DESCRIPTION_LENGTH_LIMIT
                     else " ".join(description_lines)
                 )
 
@@ -520,4 +522,5 @@ def main():
 
 
 if __name__ == "__main__":
+    import sys
     sys.exit(main())

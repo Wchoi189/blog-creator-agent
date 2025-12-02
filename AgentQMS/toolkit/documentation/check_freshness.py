@@ -98,12 +98,14 @@ class FreshnessChecker:
 
 def main() -> None:
     """Main entry point."""
-    if len(sys.argv) < 2:
+    MIN_ARGS_REQUIRED = 2
+    MAX_AGE_DAYS_DEFAULT = 30
+    if len(sys.argv) < MIN_ARGS_REQUIRED:
         print("Usage: python check_freshness.py <docs_root> [max_age_days]")
         sys.exit(1)
 
     docs_root = sys.argv[1]
-    max_age_days = int(sys.argv[2]) if len(sys.argv) > 2 else 30
+    max_age_days = int(sys.argv[2]) if len(sys.argv) > MIN_ARGS_REQUIRED else MAX_AGE_DAYS_DEFAULT
 
     if not os.path.exists(docs_root):
         print(f"Error: Documentation root '{docs_root}' does not exist")

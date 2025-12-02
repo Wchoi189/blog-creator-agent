@@ -57,7 +57,7 @@ __all__ = [
 
 def main() -> int:
     """CLI entry point - delegates to plugins.cli."""
-    from AgentQMS.agent_tools.core.plugins.cli import main as cli_main
+    from AgentQMS.agent_tools.core.plugins.cli import main as cli_main  # noqa: PLC0415  # justified: conditional import for performance
     return cli_main()
 
 

@@ -171,8 +171,9 @@ def load_bundle_definition(bundle_name: str) -> dict[str, Any]:
             plugin_bundle = registry.get_context_bundle(bundle_name)
             if plugin_bundle:
                 return plugin_bundle
-        except Exception:
-            pass  # Fall through to error
+        except Exception as e:
+            import logging
+            logging.warning(f"Failed to get context bundle from plugin registry: {e}")  # Fall through to error
 
     # Not found in either location
     available = list_available_bundles()
@@ -357,8 +358,9 @@ def list_available_bundles() -> list[str]:
             registry = get_plugin_registry()
             plugin_bundles = registry.get_context_bundles()
             bundles.update(plugin_bundles.keys())
-        except Exception:
-            pass  # Continue with framework bundles only
+        except Exception as e:
+            import logging
+            logging.warning(f"Failed to get context bundles from plugin registry: {e}")  # Continue with framework bundles only
 
     return sorted(bundles)
 
@@ -402,7 +404,7 @@ def auto_suggest_context(task_description: str) -> dict[str, Any]:
     }
 
     try:
-        from AgentQMS.agent_tools.core.workflow_detector import suggest_workflows
+        from AgentQMS.agent_tools.core.workflow_detector import suggest_workflows  # noqa: PLC0415  # justified: conditional import for performance
 
         workflow_suggestions = suggest_workflows(task_description)
         suggestions["suggested_workflows"] = workflow_suggestions.get("workflows", [])
@@ -429,7 +431,7 @@ def auto_suggest_context(task_description: str) -> dict[str, Any]:
 
 def main():
     """Main entry point for CLI usage."""
-    import argparse
+    import argparse  # noqa: PLC0415  # justified: conditional import for performance
 
     parser = argparse.ArgumentParser(
         description="Generate context bundles for AI agent tasks"

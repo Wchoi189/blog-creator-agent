@@ -17,8 +17,9 @@ VERSION_FILE = REPO_ROOT / "project_version.yaml"
 def parse_frontmatter(text: str) -> tuple[dict, str]:
     if not text.startswith("---\n"):
         return {}, text
+    REQUIRED_FRONTMATTER_PARTS = 2
     parts = text.split("\n---\n", 1)
-    if len(parts) != 2:
+    if len(parts) != REQUIRED_FRONTMATTER_PARTS:
         return {}, text
     fm = yaml.safe_load(parts[0].split("---\n", 1)[1]) or {}
     return fm, parts[1]

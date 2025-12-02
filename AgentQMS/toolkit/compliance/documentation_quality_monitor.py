@@ -270,7 +270,7 @@ class DocumentationQualityMonitor:
 
 
 def main():
-    import argparse
+    import argparse  # noqa: PLC0415
 
     parser = argparse.ArgumentParser(description="Documentation Quality Monitor")
     parser.add_argument("--check", action="store_true", help="Run quality checks")

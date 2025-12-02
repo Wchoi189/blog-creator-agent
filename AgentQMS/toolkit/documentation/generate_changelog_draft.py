@@ -127,8 +127,10 @@ def get_git_commits(since_date: str | None = None) -> list[dict]:
         for line in result.stdout.strip().split("\n"):
             if not line:
                 continue
-            parts = line.split("|", 2)
-            if len(parts) != 3:
+            MAX_SPLIT_PARTS = 2  # Split into max 3 parts
+            REQUIRED_PARTS_COUNT = 3
+            parts = line.split("|", MAX_SPLIT_PARTS)
+            if len(parts) != REQUIRED_PARTS_COUNT:
                 continue
             hash_val, date, message = parts
             # Parse conventional commit format: type(scope): description
@@ -174,8 +176,9 @@ def get_deprecated_docs() -> list[dict]:
         deprecated = []
         for md_path in archived_dir.rglob("*.md"):
             # Check modification time (recently moved)
+            RECENCY_THRESHOLD_DAYS = 7  # Last 7 days
             mtime = datetime.fromtimestamp(md_path.stat().st_mtime)
-            if (datetime.now() - mtime).days < 7:  # Last 7 days
+            if (datetime.now() - mtime).days < RECENCY_THRESHOLD_DAYS:  # Last 7 days
                 deprecated.append(
                     {
                         "path": str(md_path.relative_to(REPO_ROOT)),

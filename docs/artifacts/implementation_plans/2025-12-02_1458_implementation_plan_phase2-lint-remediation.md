@@ -11,15 +11,15 @@ date: "2025-12-02 14:58 (KST)"
 # Phase 2 Lint Remediation – Qwen Coder Execution Plan
 
 ## Baseline Metrics (Stage A Complete)
-- Total violations: 362 (as of Phase 1 completion, confirmed by ruff check)
+- Total violations: 323 (as of current state, confirmed by ruff check)
 - Top violation categories:
-  - PLR2004 (Magic numbers): 47 occurrences
-  - PLC0415 (Import positioning): 43 occurrences
-  - PTH123 (Pathlib conversions): 37 occurrences
+  - PLC0415 (Import positioning): 39 occurrences
   - PLR0912 (Too many branches): 28 occurrences
+  - PLR2004 (Magic numbers): 28 occurrences
   - E402 (Import not at top): 28 occurrences
-  - S110 (Silent exceptions): 15 occurrences
-  - Targeted rules count (PLR2004, PTH123, E402, PLC0415, S110): 178 occurrences
+  - PTH110 (Pathlib conversions): 5 occurrences (note: PTH110 is what ruff reports)
+  - S110 (Silent exceptions): 13 occurrences
+  - Targeted rules count (PLR2004, PTH110, E402, PLC0415, S110): 115 occurrences
 
 ## Stage B Complete - Pathlib Completion (PTH123)
 - Fixed: 37/37 PTH123 violations (100% reduction)

@@ -64,7 +64,8 @@ def list_log_files(logs_dir: Path) -> None:
 
 def main() -> None:
     """Main function."""
-    if len(sys.argv) < 2:
+    MIN_ARGS_REQUIRED = 2  # script name + 1 argument
+    if len(sys.argv) < MIN_ARGS_REQUIRED:
         print("Usage:")
         print("  python scripts/agent_tools/view_logs.py <log_file> [lines]")
         print("  python scripts/agent_tools/view_logs.py --list")
@@ -82,7 +83,7 @@ def main() -> None:
         return
 
     file_path = Path(sys.argv[1])
-    lines = int(sys.argv[2]) if len(sys.argv) > 2 else None
+    lines = int(sys.argv[2]) if len(sys.argv) > MIN_ARGS_REQUIRED else None
 
     view_log_file(file_path, lines)
 
