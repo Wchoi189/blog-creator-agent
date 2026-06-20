@@ -15,9 +15,6 @@ on:
         description: 'Update links after moves (true/false)'
         required: false
         default: 'true'
-  schedule:
-    # Run weekly on Sundays at 2:00 AM UTC
-    - cron: '0 2 * * 0'
 
 jobs:
   autofix:
