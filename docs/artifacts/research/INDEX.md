@@ -1,21 +1,22 @@
-# 🔬 Research
+# Research
 
-Research findings, investigations, and analysis.
+Active research and development roadmaps.
 
-**Last Updated**: 2025-11-30 16:05:05
+**Last Updated**: 2026-09-06 06:49:40
 **Total Artifacts**: 3
 
 ## Active (3)
 
-- [Hello World Research](2025-11-28_1948_research-hello-world.md) (📅 2025-11-28 19:48 (KS, 🔬 research) - What question is this research trying to answer? What do we expect to find?
-- [Editor Page SSE Authentication Issue](2025-11-26_0000_research-editor-sse-auth-note.md) (📅 2025-11-26 00:00 (KS, 🔬 research) - **File**: `frontend/src/app/(dashboard)/dashboard/editor/[draftId]/page.tsx` **Issue**: Line 67 uses `localStorage.getItem('access_token')` for SSE
-- [Quick Reference Guide - Next.js Audit](2025-11-25_0000_research-quick-reference.md) (📅 2025-11-25 00:00 (KS, 🔬 research) - **For:** Development Team **Purpose:** Quick lookup of common issues and fixes
+- [Quick Reference Guide - Next.js Audit](2025-11-25_0000_research-quick-reference.md) (📅 2025-11-25 00:00 (KST), 📄 research) - 
+- [Editor Page SSE Authentication Issue](2025-11-26_0000_research-editor-sse-auth-note.md) (📅 2025-11-26 00:00 (KST), 📄 research) - 
+- [Hello World Research](2025-11-28_1948_research-hello-world.md) (📅 2025-11-28 19:48 (KST), 📄 research) - 
 
 ## Summary
 
 | Status | Count |
 |--------|-------|
 | Active | 3 |
+| Completed | 0 |
 
 ---
 

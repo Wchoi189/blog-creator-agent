@@ -1,8 +1,17 @@
-# 📋 Templates
+# Templates
 
-Reusable templates and guidelines for creating artifacts.
+Active templates and development roadmaps.
 
-**Last Updated**: 2025-11-30 16:05:05
+**Last Updated**: 2026-09-06 06:49:40
 **Total Artifacts**: 0
 
-*No artifacts found in this directory.*
+## Summary
+
+| Status | Count |
+|--------|-------|
+| Active | 0 |
+| Completed | 0 |
+
+---
+
+*This index is automatically generated. Do not edit manually.*
